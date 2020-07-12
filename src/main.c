@@ -6,6 +6,7 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <limits.h>
+#include <time.h>
 
 #define NELEMS(arr) (sizeof(arr) / sizeof(arr[0]))
 
@@ -122,9 +123,12 @@ return (tok_s){tk_NUM, err_line, err_col, {n}};
 static tok_s div_or_cmt(int err_line, int err_col) {  /* (divide)'/' or comment */
     if(the_ch != '*')
         return (tok_s){tk_DIV, err_line, err_col, {0}};
+    if (the_ch == '/')
+        printf("\nsingle comment\n");
    /* when comment found */
    next_ch();
     for (;;) {
+        
         if (the_ch == '*') {
             if (next_ch() == '/') {
                 next_ch();
@@ -290,18 +294,60 @@ static tok_s lookahead2(int except1, int except2, TokenType foundl2, TokenType f
 }
 
 
-
+clock_t begin = NULL;
 tok_s gettok(){
+    
     /* skip whitespace */
     while(isspace(the_ch))
         next_ch();
     int err_line = line;
     int err_col = col;
     switch(the_ch){
-        case '+': next_ch(); return (tok_s){tk_ADD, err_line, err_col, {0}};
-        case '-': next_ch(); return (tok_s){tk_SUB, err_line, err_col, {0}};
-        case '*': next_ch(); return (tok_s){tk_MUL, err_line, err_col, {0}};
-        case '/': next_ch(); return div_or_cmt(err_line, err_col);
+        case '+':
+        {
+            next_ch();
+            tok_s token = lookahead('+', tk_INC, tk_ADD, err_line, err_col);
+            if (token.tok == tk_INC)
+                return token;
+            token = lookahead('=', tk_EQADD, tk_ADD, err_line, err_col);
+            if (token.tok == tk_EQADD)
+                return token;
+            if (token.tok == tk_ADD)
+                return token;
+        }
+        case '-':
+        {
+            next_ch();
+            tok_s token = lookahead('>', tk_PTRSELECT, tk_SUB, err_line, err_col);
+            if (token.tok == tk_PTRSELECT)
+                return token;
+            token = lookahead('-', tk_DEC, tk_SUB, err_line, err_col);
+            if (token.tok == tk_DEC)
+                return token;
+            token = lookahead('=', tk_EQSUB, tk_SUB, err_line, err_col);
+            if (token.tok == tk_EQSUB)
+                return token;
+            return token; // return self, if whole lookahead false
+        }
+        case '*': next_ch(); return lookahead('=', tk_EQMUL, tk_MUL, err_line,err_col);
+        case '/':
+        {
+          next_ch();
+          /* skip single comment before '\n' */
+          if (the_ch == '/'){ 
+              do{
+                  next_ch();
+              }while(the_ch != '\n');
+              next_ch(); return gettok();
+          }
+
+          tok_s token = lookahead('=', tk_EQDIV, tk_DIV, err_line, err_col);
+          if (token.tok == tk_EQDIV)
+                return token;
+          /* skip multi comment before */
+          return div_or_cmt(err_line, err_col); 
+        }
+
         case '%': next_ch(); return lookahead('=', tk_EQMOD, tk_MOD, err_line, err_col);
         case '&': 
         {   
@@ -319,6 +365,78 @@ tok_s gettok(){
                 return token;
             
         }
+        case '|':
+        {
+            next_ch();
+            tok_s token = lookahead('|', tk_LOGICOR, tk_OR, err_line, err_col);
+            if (token.tok == tk_LOGICOR)
+                return token;
+            token = lookahead('=', tk_EQOR, tk_OR, err_line, err_col);
+            if (token.tok == tk_EQOR)
+                return token;
+            if (token.tok == tk_OR)
+                return token;
+        }
+        case '^': next_ch(); return lookahead('=', tk_EQXOR, tk_XOR, err_line, err_col);
+        case '=': next_ch(); return lookahead('=', tk_EQ, tk_ASSIGN, err_line, err_col );
+        case '(': next_ch(); return (tok_s){tk_LPAREN, err_line, err_col, {0}};
+        case ')': next_ch(); return (tok_s){tk_RPAREN, err_line, err_col, {0}};
+        case '[': next_ch(); return (tok_s){tk_LSBRACKET, err_line, err_col, {0}};
+        case ']': next_ch(); return (tok_s){tk_RSBRACKET, err_line, err_col, {0}};
+        case '{': next_ch(); return (tok_s){tk_LCBRACKET, err_line, err_col, {0}};
+        case '}': next_ch(); return (tok_s){tk_RCBRACKET, err_line, err_col, {0}};
+        case ',': next_ch(); return (tok_s){tk_COMMA, err_line, err_col, {0}};
+        case '.':
+        {
+            next_ch();
+            if (the_ch == '.'){
+                next_ch();
+                if (the_ch == '.'){
+                    next_ch();
+                    return (tok_s){tk_ELLIPSIS, err_line,err_col,{0}};
+                }else 
+                   error(err_line, err_col, "follow: unrecognized character .\n", the_ch, the_ch);
+                
+            }
+            return (tok_s){tk_DOT, err_line, err_col, {0}};
+
+        } 
+        case ';': next_ch(); return (tok_s){tk_SEMI, err_line, err_col, {0}};
+        case '_': next_ch(); return (tok_s){tk_UNDERSCORE, err_line, err_col, {0}};
+        case ':': next_ch(); return (tok_s){tk_COLON, err_line, err_col, {0}};
+        case '<':
+        {
+            next_ch();
+            tok_s token = lookahead('=', tk_EQLSS, tk_LSS, err_line, err_col);
+            if (token.tok == tk_EQLSS)
+                return token;
+            token = lookahead('-', tk_ARROW, tk_LSS, err_line, err_col);
+            if (token.tok == tk_ARROW)
+                return token;
+            token = lookahead2('<', '=', tk_EQLSHIFT, tk_LSHIFT, tk_LSS, err_line, err_col);
+            if (token.tok == tk_EQLSHIFT || token.tok == tk_LSHIFT)
+                return token;
+            if (token.tok == tk_LSS)
+                return token;
+
+        } 
+        case '>':
+        {
+            next_ch();
+            tok_s token = lookahead('=', tk_EQGRT, tk_GRT, err_line, err_col);
+            if (token.tok == tk_EQGRT)
+                return token;
+            token = lookahead2('>', '=', tk_RSHIFT, tk_EQRSHIFT, tk_GRT , err_line, err_col );
+            if (token.tok == tk_RSHIFT || token.tok == tk_EQRSHIFT)
+                return token;
+            if (token.tok == tk_GRT)
+                return token;
+        }
+        case '"': return string_lit(the_ch, err_line, err_col);
+         
+       // return lookahead2('<', '=', tk_EQLSHIFT, tk_LSHIFT, tk_LSS, err_line, err_col);
+
+
         //   tok_s token = lookahead2('^', '=', tk_EQANDXOR, tk_AND, err_line, err_col);
         //   if (token.tok == tk_AND){
         //         token = lookahead('=', tk_EQAND, tk_AND, err_line, err_col);
@@ -365,6 +483,7 @@ tok_s gettok(){
 
 void lex(){
     tok_s tok;
+    begin = clock();
     do{
         tok = gettok();
       
@@ -463,9 +582,9 @@ void lex(){
             case tk_LSS: printf("%d:%d              tk_LSS\n", tok.err_ln, tok.err_col); break;
             case tk_GRT: printf("%d:%d              tk_GRT\n", tok.err_ln, tok.err_col); break;
             case tk_NOTEQ: printf("%d:%d            tk_NOTEQ\n", tok.err_ln, tok.err_col); break;
-            case tk_EQ: printf("%d:%d               tk_EQ", tok.err_ln, tok.err_col ); break;
-            case tk_EQLSS: printf("%d:%d            tk_BREAK\n", tok.err_ln, tok.err_col); break;
-            case tk_EQGRT: printf("%d:%d            tk_BREAK\n", tok.err_ln, tok.err_col); break;
+            case tk_EQ: printf("%d:%d               tk_EQ\n", tok.err_ln, tok.err_col ); break;
+            case tk_EQLSS: printf("%d:%d            tk_EQLSS\n", tok.err_ln, tok.err_col); break;
+            case tk_EQGRT: printf("%d:%d            tk_EQGRT\n", tok.err_ln, tok.err_col); break;
             case tk_SHORTDECL: printf("%d:%d        tk_SHORTDECL\n", tok.err_ln, tok.err_col); break;
             case tk_ARROW: printf("%d:%d            tk_ARROW\n", tok.err_ln, tok.err_col); break;
             case tk_INC: printf("%d:%d              tk_INC\n", tok.err_ln, tok.err_col); break;
@@ -477,41 +596,26 @@ void lex(){
 
         }
 
-
-        // fprintf(dest_fp, "%5d %5d %.15s",
-        // tok.err_ln, tok.err_col,
-        // &"End_of_input    tk_BREAK        tk_CASE         tk_mod          Op_add          "
-        //  "Op_subtract     Op_negate       Op_not          Op_less         Op_lessequal    "
-        //  "Op_greater      Op_greaterequal Op_equal        Op_notequal     Op_assign       "
-        //  "Op_and          Op_or           Keyword_if      Keyword_else    Keyword_while   "
-        //  "Keyword_print   Keyword_putc    LeftParen       RightParen      LeftBrace       "
-        //  "RightBrace      Semicolon       Comma           Identifier      Integer         "
-        //  "String          "           
-        // [tok.tok *16]);
-        // if(tok.tok == tk_NUM)   fprintf(dest_fp, "  %4d",   tok.n);
-        // else if(tok.tok == tk_SYM) fprintf(dest_fp, " %s", tok.text);
-        // else if(tok.tok == tk_STRINGLIT) fprintf(dest_fp, "\"%s\"", tok.text);
-        //fprintf(dest_fp, "\n");
     }while(tok.tok != tk_EOI);
-    if (dest_fp != stdout)
-        fclose(dest_fp);
+    clock_t end = clock();
+    double time_spent = (double)(end-begin);
+    printf("\ntime: %f", time_spent);
+    fclose(source_fp);
+   
 }
 
-void init_io(FILE **fp, FILE *std, const char mode[], const char fn[]){
-    if(fn[0] == '\0')
-        *fp = std;
-    else if((fopen_s(fp, fn, mode)) == NULL)
-        error(0,0, "Can't open %s\n", fn);
-}
 
 int main(int argc, char *argv[]){
-    init_io(&source_fp, stdin, "r", argc > 1 ? argv[1]: "" );
-    init_io(&dest_fp, stdout, "wb", argc > 2 ? argv[2]: "");
-    lex();
+    if (argc >= 2){
+        errno_t err = fopen_s(&source_fp, argv[1], "r");
+        if (err == 0){
+            lex();
+        }else{
+          fprintf(stderr, "Error: can't open source file %s ", argv[1]); exit(1);
+        }
+    }else{
+        fprintf(stderr, "Error, source file not specified"); exit(1);
+    }
+
     return 0;
 }
-
-
-
-
-// TODO: tok_s string_lit ...
