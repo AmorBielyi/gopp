@@ -8,8 +8,6 @@
 #include <limits.h>
 #include <sys\timeb.h> 
 
-
-
 #define NELEMS(arr) (sizeof(arr) / sizeof(arr[0]))
 
 
@@ -76,7 +74,7 @@ static FILE *source_fp, *dest_fp;
 static int line =1, col = 0, the_ch = ' ';
 da_dim(text, char);
 
-Token getToken();
+Token get_token();
 
 static void error(int err_line, int err_col, const char *fmt, ...){
     char buf[1000];
@@ -90,8 +88,7 @@ static void error(int err_line, int err_col, const char *fmt, ...){
 
 static int next_ch(){  /* get next char from our input */
     the_ch = getc(source_fp);
-    // save line 
-    
+   
     ++col;
     if(the_ch == '\n'){
         ++line;
@@ -134,7 +131,7 @@ static Token div_or_cmt(int err_line, int err_col) {  /* (divide)'/' or comment 
         if (the_ch == '*') {
             if (next_ch() == '/') {
                 next_ch();
-                return getToken();
+                return get_token();
             }
         } else if (the_ch == EOF)
             error(err_line, err_col, "EOF in comment");
@@ -162,7 +159,7 @@ static int kwd_cmp(const void *p1, const void *p2){
     return strcmp(*(char **)p1, *(char **)p2);
 }
 
-static TokenType get_ident_type(const char *ident){
+static TokenType get_keyword_type(const char *ident){
     static struct{
         char *s;
         TokenType sym;
@@ -261,7 +258,7 @@ static Token sym_or_num(int err_line, int err_col)
             error(err_line, err_col, "Syntax error: Number exceeds maximum value");
         return (Token){tk_NUM, err_line, err_col, {n}};
     }
-    return (Token) {get_ident_type(text), err_line, err_col, {.text=text}};
+    return (Token) {get_keyword_type(text), err_line, err_col, {.text=text}};
 }
 
 
@@ -298,7 +295,7 @@ static Token lookahead2(int except1, int except2, TokenType foundl2, TokenType f
 }
 
 
-Token getToken(){
+Token get_token(){
     
     /* skip whitespace */
     while(isspace(the_ch))
@@ -341,7 +338,7 @@ Token getToken(){
               do{
                   next_ch();
               }while(the_ch != '\n');
-              next_ch(); return getToken();
+              next_ch(); return get_token();
           }
 
           Token token = lookahead('=', tk_EQDIV, tk_DIV, err_line, err_col);
@@ -568,9 +565,8 @@ void lex(){
     struct timeb start, end;
     ftime(&start);
 
-
     do{
-        token = getToken();
+        token = get_token();
         if (token.tokenType == tk_SYM){
             fwprintf(outFile, L"%hs\n", token.text);
         }
