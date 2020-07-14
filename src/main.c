@@ -57,7 +57,7 @@ typedef enum {
   tk_NEG, tk_LSS, tk_GRT, tk_NOTEQ, tk_EQ, tk_EQLSS, tk_EQGRT,
 
    /* Original misc */
-  tk_SHORTDECL, tk_ARROW, tk_INC, tk_DEC, tk_ELLIPSIS, tk_STRINGLIT, tk_NUM, tk_SYM
+  tk_SHORTDECL, tk_ARROW, tk_INC, tk_DEC, tk_ELLIPSIS, tk_STRINGLIT, tk_NUM, tk_IDENT
 
 } TokenType;
 
@@ -227,7 +227,7 @@ static TokenType get_keyword_type(const char *ident){
     },*kwp; 
     qsort(kwds, NELEMS(kwds), sizeof(kwds[0]), kwd_cmp);
 
-    return (kwp = bsearch(&ident, kwds, NELEMS(kwds), sizeof(kwds[0]), kwd_cmp)) == NULL ? tk_SYM : kwp->sym;
+    return (kwp = bsearch(&ident, kwds, NELEMS(kwds), sizeof(kwds[0]), kwd_cmp)) == NULL ? tk_IDENT : kwp->sym;
 }
 
 int isutf8unicode(int c)
@@ -235,24 +235,31 @@ int isutf8unicode(int c)
     return !isascii(c); 
 }
 
-static Token sym_or_num(int err_line, int err_col)
+static Token ident_or_num(int err_line, int err_col)
 {
-    int n, is_number = true;
+   
+    int n, is_ident = false;
     da_rewind(text);
     while(isalnum(the_ch) || the_ch == '_' || isutf8unicode(the_ch) ){
         da_append(text, the_ch);
         if (!isdigit(the_ch))
-            is_number = false;
+            is_ident = true;
         next_ch();
     }
+
     if (da_len(text) == 0)
         error(err_line, err_col, "Syntax error: Syntax error: unrecognized character, code:  (%d) '%c'\n", the_ch, the_ch);
+
+    // if (isdigit(text[0]))
+    //     error(err_line,err_col, "Syntax error: invalid identifier, can't begin with code: (%d) '%c'", text[0], text[0]);
     
     da_append(text, '\0');
-    if (text[0] >=1) /* only for chars that >= 1 (non-unicode chars) to avoid debug assetion failed error in isdigit() */
-        if(isdigit(text[0])){
-            if(!is_number)
-                error(err_line, err_col, "Syntax error: invalid number: %s\n", text);
+    
+    /* only for chars that >= 1 (non-unicode chars) to avoid debug assetion failed error in isdigit() 
+    and if first char of ident is digit return syntax error according to Go rule  */
+        if(text[0] >=1 && isdigit(text[0])){
+            if(is_ident)
+                error(err_line,err_col, "Syntax error: invalid identifier, can't begin with code: (%d) '%c'", text[0], text[0]);
             n = strtol(text, NULL, 0);
             if (n == LONG_MAX && errno == ERANGE)
                 error(err_line, err_col, "Syntax error: Number exceeds maximum value");
@@ -437,7 +444,7 @@ Token get_token(){
          
         // case '\'': next_ch(); return char_lit(the_ch, err_line, err_col);
 
-        default: return sym_or_num(err_line, err_col);
+        default: return ident_or_num(err_line, err_col);
         case EOF: return (Token){tk_EOF, err_line, err_col, {0}}; // WHATTTTTTTTTTT????
     }
 }
@@ -552,7 +559,7 @@ void lexPrint(Token token){
             case tk_ELLIPSIS: printf("Source: Ln %d, Col %d\t\tToken: tk_ELLIPSIS\t\tValue: ...\n", token.err_ln, token.err_col); break;
             case tk_NUM: printf("Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: %d\n", token.err_ln, token.err_col, token.n); break;
             case tk_STRINGLIT: printf("Source: Ln %d, Col %d\t\tToken: tk_STRINGLIT\t\tSemanticValue: %s\n", token.err_ln, token.err_col, token.text); break;
-            case tk_SYM:  printf("Source: Ln %d, Col %d\t\tToken: tk_SYM\t\tSemanticValue: %s\n", token.err_ln, token.err_col, token.text); break;
+            case tk_IDENT:  printf("Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: %s\n", token.err_ln, token.err_col, token.text); break;
 
         }
 }
@@ -567,7 +574,7 @@ void lex(){
 
     do{
         token = get_token();
-        if (token.tokenType == tk_SYM){
+        if (token.tokenType == tk_IDENT){
             fwprintf(outFile, L"%hs\n", token.text);
         }
     if (LEXOUTPUT == 1)
