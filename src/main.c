@@ -7,7 +7,6 @@
 #include <stdbool.h>
 #include <limits.h>
 #include <sys\timeb.h> 
-
 #define NELEMS(arr) (sizeof(arr) / sizeof(arr[0]))
 
 
@@ -31,9 +30,9 @@ typedef enum {
   tk_PACKAGE, tk_RANGE, tk_RETURN, tk_SELECT, tk_STRUCT, tk_SWITCH,
   tk_TYPE, tk_VAR,
 
-  /* GoToClass' original keywords */ 
+  /* Up' original keywords */ 
   tk_CLASS, tk_EXTENDS, tk_IMPLEMENTS, tk_THIS, tk_NEW, tk_SUPER,
-  tk_PUBLIC, tk_PRIVATE, tk_INSTANCEOF, tk_PTRSELECT, tk_OVERRIDE,
+  tk_PUBLIC, tk_PRIVATE, tk_PTRSELECT, tk_OVERRIDE,
   tk_VOID, tk_INCLUDE, tk_GOINCLUDE,
 
   /* Original built-in types */ 
@@ -83,7 +82,7 @@ static void error(int err_line, int err_col, const char *fmt, ...){
     va_start(ap, fmt);
     vsprintf_s(buf, sizeof(buf), fmt, ap);
     va_end(ap);
-    printf("(%d, %d) error: %s\n", err_line, err_col, buf);
+    printf("(Ln %d, Col %d)  %s\n", err_line, err_col, buf);
     exit(1);
 }
 
@@ -200,8 +199,6 @@ static TokenType get_keyword_type(const char *ident){
         {"public", tk_PUBLIC},
         {"private", tk_PRIVATE},
         {"void", tk_VOID},
-        {"#include", tk_INCLUDE},
-        {"#goinclude", tk_GOINCLUDE},
         {"override", tk_OVERRIDE},
         /* Original built-in types */ 
         {"string", tk_T_STRING},
@@ -237,24 +234,24 @@ int isutf8unicode(int c)
 
 static Token ident_or_num(int err_line, int err_col)
 {
-   
     int n, is_ident = false;
     da_rewind(text);
-    while(isalnum(the_ch) || the_ch == '_' || isutf8unicode(the_ch) || the_ch == '#' ){
+   
+    while(isalnum(the_ch) || the_ch == '_' || isutf8unicode(the_ch) ){
+        
         da_append(text, the_ch);
         if (!isdigit(the_ch))
             is_ident = true;
         next_ch();
     }
-
+    
     if (da_len(text) == 0)
         error(err_line, err_col, "Syntax error: Syntax error: unrecognized character, code:  (%d) '%c'\n", the_ch, the_ch);
 
-    // if (isdigit(text[0]))
-    //     error(err_line,err_col, "Syntax error: invalid identifier, can't begin with code: (%d) '%c'", text[0], text[0]);
+  
     
     da_append(text, '\0');
-    
+  
     /* only for chars that >= 1 (non-unicode chars) to avoid debug assetion failed error in isdigit() 
     and if first char of ident is digit return syntax error according to Go rule  */
         if(text[0] >=1 && isdigit(text[0])){
@@ -264,7 +261,8 @@ static Token ident_or_num(int err_line, int err_col)
             if (n == LONG_MAX && errno == ERANGE)
                 error(err_line, err_col, "Syntax error: Number exceeds maximum value");
             return (Token){tk_NUM, err_line, err_col, {n}};
-        }
+        } 
+
     return (Token) {get_keyword_type(text), err_line, err_col, {.text=text}};
 }
 
@@ -441,6 +439,18 @@ Token get_token(){
                 return token;
         }
         case '"': return string_lit(the_ch, err_line, err_col);
+        case '#':
+        {
+            next_ch();
+            ident_or_num(err_line, err_col); 
+            if (strcmp(text, "goinclude") != 0 && strcmp(text, "include") !=0 )
+                error(err_line, err_col, "Syntax error: invalid include statement, expected 'include' or 'goinclude' after '#'");
+            if (strcmp(text, "goinclude") == 0)
+                return (Token){tk_GOINCLUDE, err_line, err_col, {0}};
+            if (strcmp(text, "include") == 0)
+                return (Token){tk_INCLUDE, err_line, err_col, {0}};
+            error(err_line, err_col, "Syntax error: unrecognized character (%d) '%c'", the_ch, the_ch);
+        }
          
         // case '\'': next_ch(); return char_lit(the_ch, err_line, err_col);
 
