@@ -8,7 +8,10 @@
 #include <limits.h>
 #include <sys\timeb.h> 
 
+
+
 #define NELEMS(arr) (sizeof(arr) / sizeof(arr[0]))
+
 
 #define da_dim(name, type)  type *name = NULL;          \
                             int _qy_ ## name ## _p = 0;  \
