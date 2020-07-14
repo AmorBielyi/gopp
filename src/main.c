@@ -6,7 +6,7 @@
 #include <errno.h>
 #include <stdbool.h>
 #include <limits.h>
-#include <time.h>
+#include <sys\timeb.h> 
 
 #define NELEMS(arr) (sizeof(arr) / sizeof(arr[0]))
 
@@ -87,6 +87,8 @@ static void error(int err_line, int err_col, const char *fmt, ...){
 
 static int next_ch(){  /* get next char from our input */
     the_ch = getc(source_fp);
+    // save line 
+    
     ++col;
     if(the_ch == '\n'){
         ++line;
@@ -228,18 +230,26 @@ static TokenType get_ident_type(const char *ident){
     return (kwp = bsearch(&ident, kwds, NELEMS(kwds), sizeof(kwds[0]), kwd_cmp)) == NULL ? tk_SYM : kwp->sym;
 }
 
-static Token sym_or_num(int err_line, int err_col){
+int isutf8unicode(int c)
+{
+    return !isascii(c); 
+}
+
+static Token sym_or_num(int err_line, int err_col)
+{
     int n, is_number = true;
     da_rewind(text);
-    while(isalnum(the_ch) || the_ch == "_"){
-        da_append(text, (char)the_ch);
+    while(isalnum(the_ch) || the_ch == '_' || isutf8unicode(the_ch) ){
+        da_append(text, the_ch);
         if (!isdigit(the_ch))
             is_number = false;
         next_ch();
     }
     if (da_len(text) == 0)
         error(err_line, err_col, "Syntax error: Syntax error: unrecognized character, code:  (%d) '%c'\n", the_ch, the_ch);
+    
     da_append(text, '\0');
+            
     if(isdigit(text[0])){
         if(!is_number)
             error(err_line, err_col, "Syntax error: invalid number: %s\n", text);
@@ -285,7 +295,6 @@ static Token lookahead2(int except1, int except2, TokenType foundl2, TokenType f
 }
 
 
-clock_t begin = NULL;
 Token getToken(){
     
     /* skip whitespace */
@@ -465,6 +474,7 @@ void lexPrint(Token token){
             case tk_TYPE: printf("Source: Ln %d, Col %d\t\tToken: tk_TYPE\t\tValue: type\n", token.err_ln, token.err_col); break;
             case tk_VAR: printf("Source: Ln %d, Col %d\t\tToken: tk_VAR\t\tValue: var\n", token.err_ln, token.err_col); break;
             case tk_CLASS: printf("Source: Ln %d, Col %d\t\tToken: tk_CLASS\t\tValue: class\n", token.err_ln, token.err_col); break;
+            case tk_THIS: printf("Source: Ln %d, Col %d\t\tToken: tk_THIS\t\tValue: this\n", token.err_ln, token.err_col); break;
             case tk_EXTENDS: printf("Source: Ln %d, Col %d\t\tToken: tk_EXTENDS\t\tValue: extends\n", token.err_ln, token.err_col); break;
             case tk_IMPLEMENTS: printf("Source: Ln %d, Col %d\t\tToken: tk_IMPLEMENTS\t\tValue: implements\n", token.err_ln, token.err_col); break;
             case tk_NEW: printf("Source: Ln %d, Col %d\t\tToken: tk_NEW\t\tValue: new\n", token.err_ln, token.err_col); break;
@@ -496,7 +506,7 @@ void lexPrint(Token token){
             case tk_SUB: printf("Source: Ln %d, Col %d\t\tToken: tk_SUB\t\tValue: -\n", token.err_ln, token.err_col); break;
             case tk_MUL: printf("Source: Ln %d, Col %d\t\tToken: tk_MUL\t\tValue: *\n", token.err_ln, token.err_col); break;
             case tk_DIV: printf("Source: Ln %d, Col %d\t\tToken: tk_DIV\t\tValue: /\n", token.err_ln, token.err_col); break;
-            case tk_MOD: printf("Source: Ln %d, Col %d\t\tToken: tk_MOD\t\tValue: %\n", token.err_ln, token.err_col); break;
+            case tk_MOD: printf("Source: Ln %d, Col %d\t\tToken: tk_MOD\t\tValue: 'todo'\n", token.err_ln, token.err_col); break;
             case tk_AND: printf("Source: Ln %d, Col %d\t\tToken: tk_AND\t\tValue: &\n", token.err_ln, token.err_col); break;
             case tk_OR: printf("Source: Ln %d, Col %d\t\tToken: tk_OR\t\tValue: |\n", token.err_ln, token.err_col); break;
             case tk_XOR: printf("Source: Ln %d, Col %d\t\tToken: tk_XOR\t\tValue: ^\n", token.err_ln, token.err_col); break;
@@ -526,7 +536,7 @@ void lexPrint(Token token){
             case tk_EQSUB: printf("Source: Ln %d, Col %d\t\tToken: tk_EQSUB\t\tValue: -=\n", token.err_ln, token.err_col); break;
             case tk_EQMUL: printf("Source: Ln %d, Col %d\t\tToken: tk_EQMUL\t\tValue: *=\n", token.err_ln, token.err_col); break;
             case tk_EQDIV: printf("Source: Ln %d, Col %d\t\tToken: tk_EQDIV\t\tValue: /=\n", token.err_ln, token.err_col); break;
-            case tk_EQMOD: printf("Source: Ln %d, Col %d\t\tToken: tk_EQMOD\t\tValue: %=\n", token.err_ln, token.err_col); break;
+            case tk_EQMOD: printf("Source: Ln %d, Col %d\t\tToken: tk_EQMOD\t\tValue: amp=\n", token.err_ln, token.err_col); break;
             case tk_ANDXOR: printf("Source: Ln %d, Col %d\t\tToken: tk_ANDXOR\t\tValue: &^\n", token.err_ln, token.err_col); break;
             case tk_NEG: printf("Source: Ln %d, Col %d\t\tToken: tk_NEG\t\tValue: !\n", token.err_ln, token.err_col ); break;
             case tk_LSS: printf("Source: Ln %d, Col %d\t\tToken: tk_LSS\t\tValue: <\n", token.err_ln, token.err_col); break;
@@ -542,28 +552,38 @@ void lexPrint(Token token){
             case tk_ELLIPSIS: printf("Source: Ln %d, Col %d\t\tToken: tk_ELLIPSIS\t\tValue: ...\n", token.err_ln, token.err_col); break;
             case tk_NUM: printf("Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: %d\n", token.err_ln, token.err_col, token.n); break;
             case tk_STRINGLIT: printf("Source: Ln %d, Col %d\t\tToken: tk_STRINGLIT\t\tSemanticValue: %s\n", token.err_ln, token.err_col, token.text); break;
-            case tk_SYM: printf("Source: Ln %d, Col %d\t\tToken: tk_SYM\t\tSemanticValue: %s\n", token.err_ln, token.err_col, token.text); break;
+            case tk_SYM:  printf("Source: Ln %d, Col %d\t\tToken: tk_SYM\t\tSemanticValue: %s\n", token.err_ln, token.err_col, token.text); break;
 
         }
 }
 
 void lex(){
+    FILE* outFile;
+    fopen_s(&outFile,"Serialize.txt", "a+,ccs=UNICODE");
     Token token;
-    begin = clock();
+
+    struct timeb start, end;
+    ftime(&start);
+
+
     do{
         token = getToken();
+        if (token.tokenType == tk_SYM){
+            fwprintf(outFile, L"%hs\n", token.text);
+        }
     if (LEXOUTPUT == 1)
         lexPrint(token);
     }while(token.tokenType != tk_EOF);
-    clock_t end = clock();
-    double time_spent = (double)((double)end-(double)begin);
-    printf("\nLexing time: %f", time_spent);
+    ftime(&end);
+    int diff = (int) (1000.0 * (end.time - start.time) + (end.millitm - start.millitm));
+   
+    printf("\nLexing time: %u milliseconds = %u microseconds", diff, diff*1000);
+    fclose(outFile);
     fclose(source_fp);
 }
 
-
 int main(int argc, char *argv[]){
-    
+  
     if (argc >= 2){
         LEXOUTPUT  = strtol(argv[2], NULL, 10);
         errno_t err = fopen_s(&source_fp, argv[1], "r");

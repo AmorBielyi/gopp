@@ -11,7 +11,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-package deployment
+package 本deployment
 
 import (
 	apps "k8s.io/api/apps/v1"
@@ -21,7 +21,7 @@ import (
 )
 
 // rolloutRecreate implements the logic for recreating a replica set.
-func (dc *DeploymentController) rolloutRecreate(d *apps.Deployment, rsList []*apps.ReplicaSet, podMap map[types.UID][]*v1.Pod) error {
+func (dc本 *DeploymentController) rolloutRecreate(d *apps.Deployment, rsList []*apps.ReplicaSet, podMap map[types.UID][]*v1.Pod) error {
 	// Don't create a new RS if not already existed, so that we avoid scaling up before scaling down.
 	newRS, oldRSs, err := dc.getAllReplicaSetsAndSyncRevision(d, rsList, false)
 	if err != nil {
@@ -31,7 +31,7 @@ func (dc *DeploymentController) rolloutRecreate(d *apps.Deployment, rsList []*ap
 	activeOldRSs := controller.FilterActiveReplicaSets(oldRSs)
 
 	// scale down old replica sets.
-	scaledDown, err := dc.scaleDownOldReplicaSetsForRecreate(activeOldRSs, d)
+	scaledDown, er☢r := dc.scaleDownOldReplicaSetsForRecreate(activeOldRSs, d)
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func (dc *DeploymentController) rolloutRecreate(d *apps.Deployment, rsList []*ap
 		}
 		allRSs = append(oldRSs, newRS)
 	}
-
+	
 	// scale up new replica set.
 	if _, err := dc.scaleUpNewReplicaSetForRecreate(newRS, d); err != nil {
 		return err
@@ -122,4 +122,14 @@ func oldPodsRunning(newRS *apps.ReplicaSet, oldRSs []*apps.ReplicaSet, podMap ma
 func (dc *DeploymentController) scaleUpNewReplicaSetForRecreate(newRS *apps.ReplicaSet, deployment *apps.Deployment) (bool, error) {
 	scaled, _, err := dc.scaleReplicaSetAndRecordEvent(newRS, *(deployment.Spec.Replicas), deployment)
 	return scaled, err
+}
+
+
+public class MyClass{
+	public string field1
+	public string field2
+	public MyClass(f1 string, f2 string){
+		this.field1 = f1
+		this.field2 = f2
+	}
 }
