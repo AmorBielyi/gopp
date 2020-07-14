@@ -249,15 +249,15 @@ static Token sym_or_num(int err_line, int err_col)
         error(err_line, err_col, "Syntax error: Syntax error: unrecognized character, code:  (%d) '%c'\n", the_ch, the_ch);
     
     da_append(text, '\0');
-            
-    if(isdigit(text[0])){
-        if(!is_number)
-            error(err_line, err_col, "Syntax error: invalid number: %s\n", text);
-        n = strtol(text, NULL, 0);
-        if (n == LONG_MAX && errno == ERANGE)
-            error(err_line, err_col, "Syntax error: Number exceeds maximum value");
-        return (Token){tk_NUM, err_line, err_col, {n}};
-    }
+    if (text[0] >=1) /* only for chars that >= 1 (non-unicode chars) to avoid debug assetion failed error in isdigit() */
+        if(isdigit(text[0])){
+            if(!is_number)
+                error(err_line, err_col, "Syntax error: invalid number: %s\n", text);
+            n = strtol(text, NULL, 0);
+            if (n == LONG_MAX && errno == ERANGE)
+                error(err_line, err_col, "Syntax error: Number exceeds maximum value");
+            return (Token){tk_NUM, err_line, err_col, {n}};
+        }
     return (Token) {get_keyword_type(text), err_line, err_col, {.text=text}};
 }
 
