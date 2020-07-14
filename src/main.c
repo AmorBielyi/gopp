@@ -27,13 +27,14 @@ typedef enum {
   /* Original keywords */ 
   tk_BREAK, tk_CASE, tk_CHAN, tk_CONST, tk_CONTINUE,
   tk_DEFAULT, tk_DEFER, tk_ELSE, tk_FALLTHROUGH, tk_FOR,
-  tk_FUNC, tk_GO, tk_GOTO, tk_IF, tk_IMPORT, tk_INTERFACE, tk_MAP,
+  tk_GO, tk_GOTO, tk_IF, tk_IMPORT, tk_INTERFACE, tk_MAP,
   tk_PACKAGE, tk_RANGE, tk_RETURN, tk_SELECT, tk_STRUCT, tk_SWITCH,
   tk_TYPE, tk_VAR,
 
   /* GoToClass' original keywords */ 
   tk_CLASS, tk_EXTENDS, tk_IMPLEMENTS, tk_THIS, tk_NEW, tk_SUPER,
   tk_PUBLIC, tk_PRIVATE, tk_INSTANCEOF, tk_PTRSELECT, tk_OVERRIDE,
+  tk_VOID, tk_INCLUDE, tk_GOINCLUDE,
 
   /* Original built-in types */ 
   tk_T_STRING, tk_T_BOOL, tk_T_INT8, tk_T_UINT8, tk_T_BYTE, tk_T_INT16,
@@ -176,11 +177,9 @@ static TokenType get_keyword_type(const char *ident){
         {"else", tk_ELSE},
         {"fallthrough", tk_FALLTHROUGH},
         {"for", tk_FOR},
-        {"func", tk_FUNC},
         {"goto", tk_GOTO},
         {"go", tk_GO},
         {"if", tk_IF},
-        {"import", tk_IMPORT},
         {"interface", tk_INTERFACE},
         {"map", tk_MAP},
         {"package", tk_PACKAGE},
@@ -200,8 +199,9 @@ static TokenType get_keyword_type(const char *ident){
         {"super", tk_SUPER},
         {"public", tk_PUBLIC},
         {"private", tk_PRIVATE},
-        {"instanceof", tk_INSTANCEOF},
-        //{"->", tk_ARROW},
+        {"void", tk_VOID},
+        {"#include", tk_INCLUDE},
+        {"#goinclude", tk_GOINCLUDE},
         {"override", tk_OVERRIDE},
         /* Original built-in types */ 
         {"string", tk_T_STRING},
@@ -240,7 +240,7 @@ static Token ident_or_num(int err_line, int err_col)
    
     int n, is_ident = false;
     da_rewind(text);
-    while(isalnum(the_ch) || the_ch == '_' || isutf8unicode(the_ch) ){
+    while(isalnum(the_ch) || the_ch == '_' || isutf8unicode(the_ch) || the_ch == '#' ){
         da_append(text, the_ch);
         if (!isdigit(the_ch))
             is_ident = true;
@@ -465,11 +465,12 @@ void lexPrint(Token token){
             case tk_ELSE: printf("Source: Ln %d, Col %d\t\tToken: tk_ELSE\t\tValue: else\n", token.err_ln, token.err_col); break;
             case tk_FALLTHROUGH: printf("Source: Ln %d, Col %d\t\tToken: tk_FALLTHROUGH\t\tValue: fallthrough\n", token.err_ln, token.err_col); break;
             case tk_FOR: printf("Source: Ln %d, Col %d\t\tToken: tk_FOR\t\tValue: for\n", token.err_ln, token.err_col); break;
-            case tk_FUNC: printf("Source: Ln %d, Col %d\t\tToken: tk_FUNC\t\tValue: func\n", token.err_ln, token.err_col); break;
             case tk_GO: printf("Source: Ln %d, Col %d\t\tToken: tk_GO\t\tValue: go\n", token.err_ln, token.err_col); break;
             case tk_GOTO: printf("Source: Ln %d, Col %d\t\tToken: tk_GOTO\t\tValue: goto\n", token.err_ln, token.err_col); break;
             case tk_IF: printf("Source: Ln %d, Col %d\t\tToken: tk_IF\t\tValue: if\n", token.err_ln, token.err_col); break;
-            case tk_IMPORT: printf("Source: Ln %d, Col %d\t\tToken: tk_IMPORT\t\tValue: import\n", token.err_ln, token.err_col); break;
+            case tk_VOID: printf("Source: Ln %d, Col %d\t\tToken: tk_VOID\t\tValue: void\n", token.err_ln, token.err_col); break;
+            case tk_INCLUDE: printf("Source: Ln %d, Col %d\t\tToken: tk_INCLUDE\t\tValue: #include\n", token.err_ln, token.err_col); break;
+            case tk_GOINCLUDE: printf("Source: Ln %d, Col %d\t\tToken: tk_GOINCLUDE\t\tValue: #goinclude\n", token.err_ln, token.err_col); break;
             case tk_INTERFACE: printf("Source: Ln %d, Col %d\t\tToken: tk_INTERFACE\t\tValue: interface\n", token.err_ln, token.err_col); break;
             case tk_MAP: printf("Source: Ln %d, Col %d\t\tToken: tk_MAP\t\tValue: map\n", token.err_ln, token.err_col); break;
             case tk_PACKAGE: printf("Source: Ln %d, Col %d\t\tToken: tk_PACKAGE\t\tValue: package\n", token.err_ln, token.err_col); break;
@@ -488,7 +489,6 @@ void lexPrint(Token token){
             case tk_SUPER: printf("Source: Ln %d, Col %d\t\tToken: tk_SUPER\t\tValue: super\n", token.err_ln, token.err_col); break;
             case tk_PUBLIC: printf("Source: Ln %d, Col %d\t\tToken: tk_PUBLIC\t\tValue: public\n", token.err_ln, token.err_col);  break;
             case tk_PRIVATE: printf("Source: Ln %d, Col %d\t\tToken: tk_PRIVATE\t\tValue: private\n", token.err_ln, token.err_col); break;
-            case tk_INSTANCEOF: printf("Source: Ln %d, Col %d\t\tToken: tk_INSTANCEOF\t\tValue: instanceof\n", token.err_ln, token.err_col ); break;
             case tk_PTRSELECT: printf("Source: Ln %d, Col %d\t\tToken: tk_PTRSELECT\t\tValue: ->\n", token.err_ln, token.err_col); break;
             case tk_OVERRIDE: printf("Source: Ln %d, Col %d\t\tToken: tk_OVERRIDE\t\tValue: override\n", token.err_ln, token.err_col); break;
             case tk_T_STRING: printf("Source: Ln %d, Col %d\t\tToken: tk_T_STRING\t\tValue: string\n", token.err_ln, token.err_col); break;

@@ -3,6 +3,7 @@ package chat;
 #goinclude "io"
 #goinclude "log"
 #goinclude "golang.org/x/net/websocket"
+#include "restMessageHandler"
 
 const int channelBufSize = 100;
 int maxId = 0;
