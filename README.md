@@ -1,3 +1,3 @@
-GoToClass - experimental syntax superset of Go with classes.
+Object-Go - experimental class-based syntax extension of Go.
 
-<img src="https://github.com/AmorBielyi/gotoclass/blob/master/assets/logo.png" width="680"/>
+<img src="https://github.com/AmorBielyi/gotoclass/blob/master/assets/logo.png" width="400"/>
