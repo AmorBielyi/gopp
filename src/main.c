@@ -647,10 +647,10 @@ void lex()
     }while(token.tokenType != tk_EOF);
 
     ftime(&end);
-    float diff = (float) (1000.0 * (end.time - start.time) + (end.millitm - start.millitm));
+    double diff = (double) (1000.0 * (end.time - start.time) + (end.millitm - start.millitm));
     if (TOKENSDUMP == 1)
         close_dump();
-    printf("\nLexing time: %f seconds = %f milliseconds = %f microseconds",diff/1000, diff, diff*1000);
+    printf("\nLexing time: %f seconds = %f milliseconds = %f microseconds",diff/1000, diff, diff*(double)1000);
     fclose(source_fp);
 }
 

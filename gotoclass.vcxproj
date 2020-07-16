@@ -143,14 +143,14 @@
   <ItemGroup>
     <CustomBuild Include="grammar\mw.y">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">win_bison -o $(ProjectDir)src\parser\parser.c %(Identity)</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)src\parser\parser.c;$(ProjectDir)src\parser\parser.h</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">win_bison -o $(ProjectDir)src\parser\parser.c %(Identity)</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)src\parser\parser.c;$(ProjectDir)src\parser\parser.h</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">win_bison -o $(ProjectDir)src\parser\parser.c %(Identity)</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)src\parser\parser.c;$(ProjectDir)src\parser\parser.h</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">win_bison -o $(ProjectDir)src\parser\parser.c %(Identity)</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)src\parser\parser.c;$(ProjectDir)src\parser\parser.h</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">win_bison -o $(ProjectDir)src\bisonparser\parser.c %(Identity)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)src\bisonparser\parser.c;$(ProjectDir)src\bisonparser\parser.h</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">win_bison -o $(ProjectDir)src\bisonparser\parser.c %(Identity)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)src\bisonparser\parser.c;$(ProjectDir)src\bisonparser\parser.h</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">win_bison -o $(ProjectDir)src\bisonparser\parser.c %(Identity)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)src\bisonparser\parser.c;$(ProjectDir)src\bisonparser\parser.h</Outputs>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">win_bison -o $(ProjectDir)src\bisonparser\parser.c %(Identity)</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)src\bisonparser\parser.c;$(ProjectDir)src\bisonparser\parser.h</Outputs>
     </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

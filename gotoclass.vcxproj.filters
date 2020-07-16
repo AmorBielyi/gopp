@@ -14,7 +14,7 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="Grammar">
-      <UniqueIdentifier>{0871d8da-25b2-4f19-bfa7-212c94a48de3}</UniqueIdentifier>
+      <UniqueIdentifier>{77ae01d9-2afa-4144-beb3-c73879883c20}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -23,8 +23,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="grammar\mw.y">
+    <CustomBuild Include="grammar\mw.y">
       <Filter>Grammar</Filter>
-    </None>
+    </CustomBuild>
   </ItemGroup>
 </Project>

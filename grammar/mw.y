@@ -1,4 +1,4 @@
-%defines "src/parser/parser.h"
+%defines "src/bisonparser/parser.h"
 
 /*Original keywords*/
 %token tk_EOF

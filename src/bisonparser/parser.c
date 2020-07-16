@@ -97,8 +97,8 @@
 
 /* Use api.header.include to #include this header
    instead of duplicating it here.  */
-#ifndef YY_YY_SRC_PARSER_PARSER_H_INCLUDED
-# define YY_YY_SRC_PARSER_PARSER_H_INCLUDED
+#ifndef YY_YY_SRC_BISONPARSER_PARSER_H_INCLUDED
+# define YY_YY_SRC_BISONPARSER_PARSER_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -236,7 +236,7 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 
-#endif /* !YY_YY_SRC_PARSER_PARSER_H_INCLUDED  */
+#endif /* !YY_YY_SRC_BISONPARSER_PARSER_H_INCLUDED  */
 
 
 
@@ -1425,7 +1425,7 @@ yyreduce:
   switch (yyn)
     {
 
-#line 1429 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\parser\\parser.c"
+#line 1429 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
 
       default: break;
     }
