@@ -497,7 +497,7 @@ void create_dump()
    {
        fprintf(stderr, "\nError: failed to create tokens stream dump file"); exit(1);
    } 
-   fwprintf(tokens_stream_dump, L"*** Begin Tokens Stream Dump ***\nThis file was automatically generated with Up lexer\n");
+   fwprintf(tokens_stream_dump, L"*** Begin Tokens Stream Dump ***\nThis file was automatically generated with Milkomeda lexer\n");
    fwprintf(tokens_stream_dump, L"--------------------------------------------------------------------------------\n");
 }
 
@@ -633,8 +633,8 @@ void start_dump(Token token)
 }
 
 void lex()
-{
-    create_dump();
+{   if (TOKENSDUMP == 1)
+        create_dump();
     Token token;
     struct timeb start, end;
     ftime(&start);
@@ -647,9 +647,10 @@ void lex()
     }while(token.tokenType != tk_EOF);
 
     ftime(&end);
-    int diff = (int) (1000.0 * (end.time - start.time) + (end.millitm - start.millitm));
-    close_dump();
-    printf("\nLexing time: %u milliseconds = %u microseconds", diff, diff*1000);
+    float diff = (float) (1000.0 * (end.time - start.time) + (end.millitm - start.millitm));
+    if (TOKENSDUMP == 1)
+        close_dump();
+    printf("\nLexing time: %f seconds = %f milliseconds = %f microseconds",diff/1000, diff, diff*1000);
     fclose(source_fp);
 }
 
