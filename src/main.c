@@ -58,7 +58,7 @@ typedef enum
   tk_NEG, tk_LSS, tk_GRT, tk_NOTEQ, tk_EQ, tk_EQLSS, tk_EQGRT,
 
    /* Original misc */
-  tk_SHORTDECL, tk_ARROW, tk_INC, tk_DEC, tk_ELLIPSIS, tk_STRINGLIT, tk_NUM, tk_IDENT
+  tk_SHORTDECL, tk_ARROW, tk_INC, tk_DEC, tk_ELLIPSIS, tk_STRINGLIT, tk_NUM, tk_IDENT, tk_TRUE, tk_FALSE
 
 } TokenType;
 
@@ -78,7 +78,7 @@ da_dim(text, char);
 
 Token get_token();
 
-static void error(int err_line, int err_col, const char *fmt, ...)
+static void lexerror(int err_line, int err_col, const char *fmt, ...)
 {
     char buf[1000];
     va_list ap;
@@ -92,7 +92,6 @@ static void error(int err_line, int err_col, const char *fmt, ...)
 static int next_ch()
 {  /* get next char from our input */
     the_ch = getc(source_fp);
-   
     ++col;
     if(the_ch == '\n'){
         ++line;
@@ -110,17 +109,17 @@ static int back_ch(int ch)
 static Token char_lit(int n, int err_line, int err_col)
 { /* 'x' */
  if (the_ch == '\'')
-    error(err_line, err_col, "Syntax error: empty character constant");
+    lexerror(err_line, err_col, "Syntax error: empty character constant");
 if (the_ch == '\\'){
     next_ch();
     if(the_ch == 'n')
         n = 10;
     else if (the_ch == '\\')
         n = '\\';
-    else error(err_line, err_col, "Syntax error: unknown escape sequence \\%c", the_ch);
+    else lexerror(err_line, err_col, "Syntax error: unknown escape sequence \\%c", the_ch);
 } 
 if(next_ch() != '\'')
-    error(err_line, err_col, "Syntax error: multi-character constant");
+    lexerror(err_line, err_col, "Syntax error: multi-character constant");
 next_ch();
 return (Token){tk_NUM, err_line, err_col, {n}};
 }
@@ -140,7 +139,7 @@ static Token div_or_cmt(int err_line, int err_col) {  /* (divide)'/' or comment 
                 return get_token();
             }
         } else if (the_ch == EOF)
-            error(err_line, err_col, "EOF in comment");
+            lexerror(err_line, err_col, "EOF in comment");
         else
             next_ch();
     }
@@ -153,8 +152,8 @@ static Token string_lit(int start, int err_line, int err_col)
     da_rewind(text);
 
     while(next_ch() != start){
-        if(the_ch == '\n') error(err_line, err_col, "Syntax error: EOL in string");
-        if (the_ch == EOF) error(err_line, err_col, "Syntax error: EOF in string");
+        if(the_ch == '\n') lexerror(err_line, err_col, "Syntax error: EOL in string");
+        if (the_ch == EOF) lexerror(err_line, err_col, "Syntax error: EOF in string");
         da_append(text, (char)the_ch);
     }
     da_append(text, '\0');
@@ -228,7 +227,10 @@ static TokenType get_keyword_type(const char *ident)
         {"float32", tk_T_FLOAT32},
         {"float64", tk_T_FLOAT64},
         {"complex64", tk_T_COMPLEX64},
-        {"complex128", tk_T_COMPLEX128}
+        {"complex128", tk_T_COMPLEX128},
+        /*Original misc*/
+        {"true", tk_TRUE},
+        {"false", tk_FALSE}
 
     },*kwp; 
     qsort(kwds, NELEMS(kwds), sizeof(kwds[0]), kwd_cmp);
@@ -255,7 +257,7 @@ static Token ident_or_num(int err_line, int err_col)
     }
     
     if (da_len(text) == 0)
-        error(err_line, err_col, "Syntax error: Syntax error: unrecognized character, code:  (%d) '%c'\n", the_ch, the_ch);
+        lexerror(err_line, err_col, "Syntax error: Syntax error: unrecognized character, code:  (%d) '%c'\n", the_ch, the_ch);
 
   
     
@@ -265,10 +267,10 @@ static Token ident_or_num(int err_line, int err_col)
     and if first char of ident is digit return syntax error according to Go rule  */
         if(text[0] >=1 && isdigit(text[0])){
             if(is_ident)
-                error(err_line,err_col, "Syntax error: invalid identifier, can't begin with digit '%c'", text[0], text[0]);
+                lexerror(err_line,err_col, "Syntax error: invalid identifier, can't begin with digit '%c'", text[0], text[0]);
             n = strtol(text, NULL, 0);
             if (n == LONG_MAX && errno == ERANGE)
-                error(err_line, err_col, "Syntax error: Number exceeds maximum value");
+                lexerror(err_line, err_col, "Syntax error: Number exceeds maximum value");
             return (Token){tk_NUM, err_line, err_col, {n}};
         } 
 
@@ -291,7 +293,7 @@ static Token lookahead
         return (Token){foundnext, err_line, err_col, {0}};
     }
     if(self == tk_EOF)
-        error(err_line, err_col, "Syntax error (lookahead): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
+        lexerror(err_line, err_col, "Syntax error (lookahead): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
       
     return (Token){self, err_line, err_col, {0}};
 }
@@ -308,7 +310,7 @@ static Token lookahead2
 )
 {
     if (self == tk_EOF)
-            error(err_line, err_col, "Syntax error (lookahead n2): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
+            lexerror(err_line, err_col, "Syntax error (lookahead n2): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
 
     if (the_ch == except1){
         next_ch();
@@ -427,7 +429,7 @@ Token get_token()
                     next_ch();
                     return (Token){tk_ELLIPSIS, err_line,err_col,{0}};
                 }else 
-                   error(err_line, err_col, "Syntax error (lookahead): unrecognized character, code:  .\n", the_ch, the_ch);
+                   lexerror(err_line, err_col, "Syntax error (lookahead): unrecognized character, code:  .\n", the_ch, the_ch);
                 
             }
             return (Token){tk_DOT, err_line, err_col, {0}};
@@ -471,12 +473,12 @@ Token get_token()
             next_ch();
             ident_or_num(err_line, err_col); 
             if (strcmp(text, "goinclude") != 0 && strcmp(text, "include") !=0 )
-                error(err_line, err_col, "Syntax error: invalid include statement, expected 'include' or 'goinclude' after '#'");
+                lexerror(err_line, err_col, "Syntax error: invalid include statement, expected 'include' or 'goinclude' after '#'");
             if (strcmp(text, "goinclude") == 0)
                 return (Token){tk_GOINCLUDE, err_line, err_col, {0}};
             if (strcmp(text, "include") == 0)
                 return (Token){tk_INCLUDE, err_line, err_col, {0}};
-            error(err_line, err_col, "Syntax error: unrecognized character (%d) '%c'", the_ch, the_ch);
+            lexerror(err_line, err_col, "Syntax error: unrecognized character (%d) '%c'", the_ch, the_ch);
         }
          
         // case '\'': next_ch(); return char_lit(the_ch, err_line, err_col);
@@ -495,15 +497,18 @@ void create_dump()
    {
        fprintf(stderr, "\nError: failed to create tokens stream dump file"); exit(1);
    } 
+   fwprintf(tokens_stream_dump, L"*** Begin Tokens Stream Dump ***\nThis file was automatically generated with Up lexer\n");
+   fwprintf(tokens_stream_dump, L"--------------------------------------------------------------------------------\n");
 }
 
 void write_dump(char *token_name, char *token_value, int err_line, int err_col)
 {
-   fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: %hs\t\tValue: %hs\n",err_line, err_col, token_name, token_value);
+   fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: %hs\t\tValue: '%hs'\n",err_line, err_col, token_name, token_value);
 }
 
 void close_dump()
 {
+   fwprintf(tokens_stream_dump, L"--------------------------------------------------------------------------------\nDone! EOF has been reached.");
    errno_t res = fclose(tokens_stream_dump);
    if (res != 0)
    {
@@ -516,7 +521,7 @@ void start_dump(Token token)
 {
     switch(token.tokenType)
     {
-        case tk_EOF: fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_EOF\nDone! EOF has been reached\n",token.err_ln, token.err_col);break;  
+        case tk_EOF: fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_EOF\n",token.err_ln, token.err_col);break;  
         case tk_BREAK: write_dump("tk_BREAK","break",token.err_ln, token.err_col); break; 
         case tk_CASE: write_dump( "tk_CASE", "case", token.err_ln, token.err_col); break; 
         case tk_CHAN: write_dump( "tk_CHAN","chan", token.err_ln, token.err_col);break; 
@@ -619,9 +624,11 @@ void start_dump(Token token)
         case tk_INC:write_dump( "tk_INC","++", token.err_ln, token.err_col);break; 
         case tk_DEC:write_dump( "tk_DEC","--", token.err_ln, token.err_col);break; 
         case tk_ELLIPSIS:write_dump( "tk_ELLIPSIS","...", token.err_ln, token.err_col);break;
-        case tk_NUM: fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: %d\n", token.err_ln, token.err_col, token.n); break;     
-        case tk_STRINGLIT: fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_STRINGLIT\t\tSemanticValue: %hs\n", token.err_ln, token.err_col, token.text); break;
-        case tk_IDENT:  fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: %hs\n", token.err_ln, token.err_col, token.text); break;
+        case tk_NUM: fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%d'\n", token.err_ln, token.err_col, token.n); break;     
+        case tk_STRINGLIT: fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_STRINGLIT\t\tSemanticValue: '%hs'\n", token.err_ln, token.err_col, token.text); break;
+        case tk_IDENT:  fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: '%hs'\n", token.err_ln, token.err_col, token.text); break;
+        case tk_TRUE: write_dump("tk_TRUE", "true", token.err_ln, token.err_col);break;
+        case tk_FALSE: write_dump("tk_FALSE", "false", token.err_ln, token.err_col); break;
         }
 }
 
