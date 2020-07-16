@@ -19,9 +19,10 @@
 #define da_append(name, x)  do {da_redim(name); name[_qy_ ## name ## _p++] = x;} while (0)
 #define da_len(name)        _qy_ ## name ## _p
 
-long LEXOUTPUT;
+long TOKENSDUMP;
 
-typedef enum {
+typedef enum 
+{
   tk_EOF,
   /* Original keywords */ 
   tk_BREAK, tk_CASE, tk_CHAN, tk_CONST, tk_CONTINUE,
@@ -61,7 +62,8 @@ typedef enum {
 
 } TokenType;
 
-typedef struct {
+typedef struct 
+{
  TokenType tokenType;
  int err_ln, err_col;
  union {
@@ -76,7 +78,8 @@ da_dim(text, char);
 
 Token get_token();
 
-static void error(int err_line, int err_col, const char *fmt, ...){
+static void error(int err_line, int err_col, const char *fmt, ...)
+{
     char buf[1000];
     va_list ap;
     va_start(ap, fmt);
@@ -86,7 +89,8 @@ static void error(int err_line, int err_col, const char *fmt, ...){
     exit(1);
 }
 
-static int next_ch(){  /* get next char from our input */
+static int next_ch()
+{  /* get next char from our input */
     the_ch = getc(source_fp);
    
     ++col;
@@ -98,11 +102,13 @@ static int next_ch(){  /* get next char from our input */
 }
 
 
-static int back_ch(int ch){
+static int back_ch(int ch)
+{
     ungetc(ch , source_fp);
 }
 
-static Token char_lit(int n, int err_line, int err_col){ /* 'x' */
+static Token char_lit(int n, int err_line, int err_col)
+{ /* 'x' */
  if (the_ch == '\'')
     error(err_line, err_col, "Syntax error: empty character constant");
 if (the_ch == '\\'){
@@ -141,7 +147,9 @@ static Token div_or_cmt(int err_line, int err_col) {  /* (divide)'/' or comment 
 }
 
 
-static Token string_lit(int start, int err_line, int err_col){ /* "string literal" */
+static Token string_lit(int start, int err_line, int err_col)
+{ 
+    /* "string literal" */
     da_rewind(text);
 
     while(next_ch() != start){
@@ -159,7 +167,8 @@ static int kwd_cmp(const void *p1, const void *p2){
     return strcmp(*(char **)p1, *(char **)p2);
 }
 
-static TokenType get_keyword_type(const char *ident){
+static TokenType get_keyword_type(const char *ident)
+{
     static struct{
         char *s;
         TokenType sym;
@@ -256,7 +265,7 @@ static Token ident_or_num(int err_line, int err_col)
     and if first char of ident is digit return syntax error according to Go rule  */
         if(text[0] >=1 && isdigit(text[0])){
             if(is_ident)
-                error(err_line,err_col, "Syntax error: invalid identifier, can't begin with code: (%d) '%c'", text[0], text[0]);
+                error(err_line,err_col, "Syntax error: invalid identifier, can't begin with digit '%c'", text[0], text[0]);
             n = strtol(text, NULL, 0);
             if (n == LONG_MAX && errno == ERANGE)
                 error(err_line, err_col, "Syntax error: Number exceeds maximum value");
@@ -267,7 +276,15 @@ static Token ident_or_num(int err_line, int err_col)
 }
 
 
-static Token lookahead(int except, TokenType foundnext, TokenType self, int err_line, int err_col){
+static Token lookahead
+(
+    int except, 
+    TokenType foundnext, 
+    TokenType self, 
+    int err_line, 
+    int err_col
+    )
+{
   
     if (the_ch == except){
          next_ch();
@@ -279,8 +296,17 @@ static Token lookahead(int except, TokenType foundnext, TokenType self, int err_
     return (Token){self, err_line, err_col, {0}};
 }
 
-static Token lookahead2(int except1, int except2, TokenType foundl2, TokenType foundl1, TokenType self, int err_line, int err_col){
-  
+static Token lookahead2
+(
+    int except1, 
+    int except2, 
+    TokenType foundl2, 
+    TokenType foundl1, 
+    TokenType self, 
+    int err_line, 
+    int err_col
+)
+{
     if (self == tk_EOF)
             error(err_line, err_col, "Syntax error (lookahead n2): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
 
@@ -300,7 +326,8 @@ static Token lookahead2(int except1, int except2, TokenType foundl2, TokenType f
 }
 
 
-Token get_token(){
+Token get_token()
+{
     
     /* skip whitespace */
     while(isspace(the_ch))
@@ -459,149 +486,171 @@ Token get_token(){
     }
 }
 
+FILE *tokens_stream_dump;
 
-void lexPrint(Token token){
-    
-        switch(token.tokenType){
-           
-            case tk_EOF: printf("Source: Ln %d, Col %d\t\tToken: tk_EOF\n\nDone! EOF has been reached.", token.err_ln, token.err_col); break;
-            case tk_BREAK: printf("Source: Ln %d, Col %d\t\tToken: tk_BREAK\t\tValue: break\n", token.err_ln, token.err_ln); break;
-            case tk_CASE: printf("Source: Ln %d, Col %d\t\tToken: tk_CASE\t\tValue: case\n", token.err_ln, token.err_col); break;
-            case tk_CHAN: printf("Source: Ln %d, Col %d\t\tToken: tk_CHAN\t\tValue: chan\n", token.err_ln, token.err_col); break;
-            case tk_CONST: printf("Source: Ln %d, Col %d\t\tToken: tk_CONST\t\tValue: const\n", token.err_ln, token.err_col); break;
-            case tk_CONTINUE: printf("Source: Ln %d, Col %d\t\tToken: tk_CONTINUE\t\tValue: continue\n", token.err_ln, token.err_col); break;
-            case tk_DEFAULT: printf("Source: Ln %d, Col %d\t\tToken: tk_DEFAULT\t\tValue: default\n", token.err_ln, token.err_col); break;
-            case tk_DEFER: printf("Source: Ln %d, Col %d\t\tToken: tk_DEFER\t\tValue: defer\n", token.err_ln, token.err_col); break;
-            case tk_ELSE: printf("Source: Ln %d, Col %d\t\tToken: tk_ELSE\t\tValue: else\n", token.err_ln, token.err_col); break;
-            case tk_FALLTHROUGH: printf("Source: Ln %d, Col %d\t\tToken: tk_FALLTHROUGH\t\tValue: fallthrough\n", token.err_ln, token.err_col); break;
-            case tk_FOR: printf("Source: Ln %d, Col %d\t\tToken: tk_FOR\t\tValue: for\n", token.err_ln, token.err_col); break;
-            case tk_GO: printf("Source: Ln %d, Col %d\t\tToken: tk_GO\t\tValue: go\n", token.err_ln, token.err_col); break;
-            case tk_GOTO: printf("Source: Ln %d, Col %d\t\tToken: tk_GOTO\t\tValue: goto\n", token.err_ln, token.err_col); break;
-            case tk_IF: printf("Source: Ln %d, Col %d\t\tToken: tk_IF\t\tValue: if\n", token.err_ln, token.err_col); break;
-            case tk_VOID: printf("Source: Ln %d, Col %d\t\tToken: tk_VOID\t\tValue: void\n", token.err_ln, token.err_col); break;
-            case tk_INCLUDE: printf("Source: Ln %d, Col %d\t\tToken: tk_INCLUDE\t\tValue: #include\n", token.err_ln, token.err_col); break;
-            case tk_GOINCLUDE: printf("Source: Ln %d, Col %d\t\tToken: tk_GOINCLUDE\t\tValue: #goinclude\n", token.err_ln, token.err_col); break;
-            case tk_INTERFACE: printf("Source: Ln %d, Col %d\t\tToken: tk_INTERFACE\t\tValue: interface\n", token.err_ln, token.err_col); break;
-            case tk_MAP: printf("Source: Ln %d, Col %d\t\tToken: tk_MAP\t\tValue: map\n", token.err_ln, token.err_col); break;
-            case tk_PACKAGE: printf("Source: Ln %d, Col %d\t\tToken: tk_PACKAGE\t\tValue: package\n", token.err_ln, token.err_col); break;
-            case tk_RANGE: printf("Source: Ln %d, Col %d\t\tToken: tk_RANGE\t\tValue: range\n", token.err_ln, token.err_col); break;
-            case tk_RETURN: printf("Source: Ln %d, Col %d\t\tToken: tk_RETURN\t\tValue: return\n", token.err_ln, token.err_col); break;
-            case tk_SELECT: printf("Source: Ln %d, Col %d\t\tToken: tk_SELECT\t\tValue: select\n", token.err_ln, token.err_col); break;
-            case tk_STRUCT: printf("Source: Ln %d, Col %d\t\tToken: tk_STRUCT\t\tValue: struct\n", token.err_ln, token.err_col); break;
-            case tk_SWITCH: printf("Source: Ln %d, Col %d\t\tToken: tk_SWITCH\t\tValue: switch\n", token.err_ln, token.err_col); break;
-            case tk_TYPE: printf("Source: Ln %d, Col %d\t\tToken: tk_TYPE\t\tValue: type\n", token.err_ln, token.err_col); break;
-            case tk_VAR: printf("Source: Ln %d, Col %d\t\tToken: tk_VAR\t\tValue: var\n", token.err_ln, token.err_col); break;
-            case tk_CLASS: printf("Source: Ln %d, Col %d\t\tToken: tk_CLASS\t\tValue: class\n", token.err_ln, token.err_col); break;
-            case tk_THIS: printf("Source: Ln %d, Col %d\t\tToken: tk_THIS\t\tValue: this\n", token.err_ln, token.err_col); break;
-            case tk_EXTENDS: printf("Source: Ln %d, Col %d\t\tToken: tk_EXTENDS\t\tValue: extends\n", token.err_ln, token.err_col); break;
-            case tk_IMPLEMENTS: printf("Source: Ln %d, Col %d\t\tToken: tk_IMPLEMENTS\t\tValue: implements\n", token.err_ln, token.err_col); break;
-            case tk_NEW: printf("Source: Ln %d, Col %d\t\tToken: tk_NEW\t\tValue: new\n", token.err_ln, token.err_col); break;
-            case tk_SUPER: printf("Source: Ln %d, Col %d\t\tToken: tk_SUPER\t\tValue: super\n", token.err_ln, token.err_col); break;
-            case tk_PUBLIC: printf("Source: Ln %d, Col %d\t\tToken: tk_PUBLIC\t\tValue: public\n", token.err_ln, token.err_col);  break;
-            case tk_PRIVATE: printf("Source: Ln %d, Col %d\t\tToken: tk_PRIVATE\t\tValue: private\n", token.err_ln, token.err_col); break;
-            case tk_PTRSELECT: printf("Source: Ln %d, Col %d\t\tToken: tk_PTRSELECT\t\tValue: ->\n", token.err_ln, token.err_col); break;
-            case tk_OVERRIDE: printf("Source: Ln %d, Col %d\t\tToken: tk_OVERRIDE\t\tValue: override\n", token.err_ln, token.err_col); break;
-            case tk_T_STRING: printf("Source: Ln %d, Col %d\t\tToken: tk_T_STRING\t\tValue: string\n", token.err_ln, token.err_col); break;
-            case tk_T_BOOL: printf("Source: Ln %d, Col %d\t\tToken: tk_T_BOOL\t\tValue: bool\n", token.err_ln, token.err_col); break;
-            case tk_T_INT8: printf("Source: Ln %d, Col %d\t\tToken: tk_T_INT8\t\tValue: int8\n", token.err_ln, token.err_col); break;
-            case tk_T_UINT8: printf("Source: Ln %d, Col %d\t\tToken: tk_T_UINT8\t\tValue: uint8\n", token.err_ln, token.err_col); break;
-            case tk_T_BYTE: printf("Source: Ln %d, Col %d\t\tToken: tk_T_BYTE\t\tValue: byte\n", token.err_ln, token.err_col); break;
-            case tk_T_INT16: printf("Source: Ln %d, Col %d\t\tToken: tk_T_INT16\t\tValue: int16\n", token.err_ln, token.err_col); break;
-            case tk_T_UINT16: printf("Source: Ln %d, Col %d\t\tToken: tk_T_UINT16\t\tValue: uint16\n", token.err_ln, token.err_col); break;
-            case tk_T_INT32: printf("Source: Ln %d, Col %d\t\tToken: tk_T_INT32\t\tValue: int32\n", token.err_ln, token.err_col); break;
-            case tk_T_UINT32: printf("Source: Ln %d, Col %d\t\tToken: tk_T_UINT32\t\tValue: uint32\n",token.err_ln, token.err_col); break;
-            case tk_T_RUNE: printf("Source: Ln %d, Col %d\t\tToken: tk_T_RUNE\t\tValue: rune\n", token.err_ln, token.err_col); break;
-            case tk_T_INT64: printf("Source: Ln %d, Col %d\t\tToken: tk_T_INT64\t\tValue: int64\n", token.err_ln, token.err_col); break;
-            case tk_T_UINT64: printf("Source: Ln %d, Col %d\t\tToken: tk_T_UINT64\t\tValue: uint64\n", token.err_ln, token.err_col); break;
-            case tk_T_INT: printf("Source: Ln %d, Col %d\t\tToken: tk_T_INT\t\tValue: int\n", token.err_ln, token.err_col); break;
-            case tk_T_UINTPTR: printf("Source: Ln %d, Col %d\t\tToken: tk_UINTPTR\t\tValue: uintptr\n", token.err_ln, token.err_col); break;
-            case tk_T_FLOAT32: printf("Source: Ln %d, Col %d\t\tToken: tk_T_FLOAT32\t\tValue: float32\n", token.err_ln, token.err_col); break;
-            case tk_T_FLOAT64: printf("Source: Ln %d, Col %d\t\tToken: tk_T_FLOAT64\t\tValue: float64\n", token.err_ln, token.err_col); break;
-            case tk_T_COMPLEX64: printf("Source: Ln %d, Col %d\t\tToken: tk_T_COMPLEX64\t\tValue: complex64\n", token.err_ln, token.err_col); break;
-            case tk_T_COMPLEX128: printf("Source: Ln %d, Col %d\t\tToken: tk_T_COMPLEX128\t\tValue: complex128\n", token.err_ln, token.err_col); break;
-            case tk_ADD: printf("Source: Ln %d, Col %d\t\tToken: tk_ADD\t\tValue: +\n", token.err_ln, token.err_col); break;
-            case tk_SUB: printf("Source: Ln %d, Col %d\t\tToken: tk_SUB\t\tValue: -\n", token.err_ln, token.err_col); break;
-            case tk_MUL: printf("Source: Ln %d, Col %d\t\tToken: tk_MUL\t\tValue: *\n", token.err_ln, token.err_col); break;
-            case tk_DIV: printf("Source: Ln %d, Col %d\t\tToken: tk_DIV\t\tValue: /\n", token.err_ln, token.err_col); break;
-            case tk_MOD: printf("Source: Ln %d, Col %d\t\tToken: tk_MOD\t\tValue: 'todo'\n", token.err_ln, token.err_col); break;
-            case tk_AND: printf("Source: Ln %d, Col %d\t\tToken: tk_AND\t\tValue: &\n", token.err_ln, token.err_col); break;
-            case tk_OR: printf("Source: Ln %d, Col %d\t\tToken: tk_OR\t\tValue: |\n", token.err_ln, token.err_col); break;
-            case tk_XOR: printf("Source: Ln %d, Col %d\t\tToken: tk_XOR\t\tValue: ^\n", token.err_ln, token.err_col); break;
-            case tk_ASSIGN: printf("Source: Ln %d, Col %d\t\tToken: tk_ASSIGN\t\tValue: =\n", token.err_ln, token.err_col); break;
-            case tk_LPAREN: printf("Source: Ln %d, Col %d\t\tToken: tk_LPAREN\t\tValue: (\n", token.err_ln, token.err_col); break;
-            case tk_RPAREN: printf("Source: Ln %d, Col %d\t\tToken: tk_RPAREN\t\tValue: )\n", token.err_ln, token.err_col); break;
-            case tk_LSBRACKET: printf("Source: Ln %d, Col %d\t\tToken: tk_LSBRACKET\t\tValue: [\n", token.err_ln, token.err_col); break;
-            case tk_RSBRACKET: printf("Source: Ln %d, Col %d\t\tToken: tk_RSBRACKET\t\tValue:]\n", token.err_ln, token.err_col); break;
-            case tk_LCBRACKET: printf("Source: Ln %d, Col %d\t\tToken: tk_LCBRACKET\t\tValue: {\n", token.err_ln, token.err_col); break;
-            case tk_RCBRACKET: printf("Source: Ln %d, Col %d\t\tToken: tk_RCBRACKET\t\tValue: }\n", token.err_ln, token.err_col); break;
-            case tk_COMMA: printf("Source: Ln %d, Col %d\t\tToken: tk_COMMA\t\tValue: ,\n", token.err_ln, token.err_col); break;
-            case tk_DOT: printf("Source: Ln %d, Col %d\t\tToken: tk_DOT\t\tValue: .\n", token.err_ln, token.err_col); break;
-            case tk_SEMI: printf("Source: Ln %d, Col %d\t\tToken: tk_SEMI\t\tValue: ;\n", token.err_ln, token.err_col); break;
-            case tk_UNDERSCORE: printf("Source: Ln %d, Col %d\t\tToken: tk_UNDERSCORE\t\tValue: _\n", token.err_ln, token.err_col); break;
-            case tk_COLON: printf("Source: Ln %d, Col %d\t\tToken: tk_COLON\t\tValue: :\n", token.err_ln, token.err_col); break;
-            case tk_LSHIFT: printf("Source: Ln %d, Col %d\t\tToken: tk_LSHIFT\t\tValue: <<\n", token.err_ln, token.err_col); break;
-            case tk_RSHIFT: printf("Source: Ln %d, Col %d\t\tToken: tk_RSHIFT\t\tValue: >>\n", token.err_ln, token.err_col); break;
-            case tk_EQXOR: printf("Source: Ln %d, Col %d\t\tToken: tk_EQXOR\t\tValue: ^=\n", token.err_ln, token.err_col); break;
-            case tk_EQOR: printf("Source: Ln %d, Col %d\t\tToken: tk_EQOR\t\tValue: |=\n", token.err_ln, token.err_col); break;
-            case tk_EQAND: printf("Source: Ln %d, Col %d\t\tToken: tk_EQAND\t\tValue: &=\n", token.err_ln, token.err_col); break;
-            case tk_EQANDXOR: printf("Source: Ln %d, Col %d\t\tToken: tk_EQANDXOR\t\tValue: &^=\n", token.err_ln, token.err_col); break;
-            case tk_EQRSHIFT: printf("Source: Ln %d, Col %d\t\tToken: tk_EQRSHIFT\t\tValue: >>=\n", token.err_ln, token.err_col); break;
-            case tk_LOGICAND: printf("Source: Ln %d, Col %d\t\tToken: tk_LOGICKAND\t\tValue: &&\n", token.err_ln, token.err_col); break;
-            case tk_EQLSHIFT: printf("Source: Ln %d, Col %d\t\tToken: tk_EQLSHIFT\t\tValue: <<=\n", token.err_ln, token.err_col); break;
-            case tk_LOGICOR: printf("Source: Ln %d, Col %d\t\tToken: tk_LOGICOR\t\tValue: ||\n", token.err_ln, token.err_col); break;
-            case tk_EQADD: printf("Source: Ln %d, Col %d\t\tToken: tk_EQADD\t\tValue: +=\n", token.err_ln, token.err_col); break;
-            case tk_EQSUB: printf("Source: Ln %d, Col %d\t\tToken: tk_EQSUB\t\tValue: -=\n", token.err_ln, token.err_col); break;
-            case tk_EQMUL: printf("Source: Ln %d, Col %d\t\tToken: tk_EQMUL\t\tValue: *=\n", token.err_ln, token.err_col); break;
-            case tk_EQDIV: printf("Source: Ln %d, Col %d\t\tToken: tk_EQDIV\t\tValue: /=\n", token.err_ln, token.err_col); break;
-            case tk_EQMOD: printf("Source: Ln %d, Col %d\t\tToken: tk_EQMOD\t\tValue: amp=\n", token.err_ln, token.err_col); break;
-            case tk_ANDXOR: printf("Source: Ln %d, Col %d\t\tToken: tk_ANDXOR\t\tValue: &^\n", token.err_ln, token.err_col); break;
-            case tk_NEG: printf("Source: Ln %d, Col %d\t\tToken: tk_NEG\t\tValue: !\n", token.err_ln, token.err_col ); break;
-            case tk_LSS: printf("Source: Ln %d, Col %d\t\tToken: tk_LSS\t\tValue: <\n", token.err_ln, token.err_col); break;
-            case tk_GRT: printf("Source: Ln %d, Col %d\t\tToken: tk_GRT\t\tValue: >\n", token.err_ln, token.err_col); break;
-            case tk_NOTEQ: printf("Source: Ln %d, Col %d\t\tToken: tk_NOTEQ\t\tValue: !=\n", token.err_ln, token.err_col); break;
-            case tk_EQ: printf("Source: Ln %d, Col %d\t\tToken: tk_EQ\t\tValue: ==\n", token.err_ln, token.err_col ); break;
-            case tk_EQLSS: printf("Source: Ln %d, Col %d\t\tToken: tk_EQLSS\t\tValue: <=\n", token.err_ln, token.err_col); break;
-            case tk_EQGRT: printf("Source: Ln %d, Col %d\t\tToken: tk_EQGRT\t\tValue: >=\n", token.err_ln, token.err_col); break;
-            case tk_SHORTDECL: printf("Source: Ln %d, Col %d\t\tToken: tk_SHORTDECL\t\tValue: :=\n", token.err_ln, token.err_col); break;
-            case tk_ARROW: printf("Source: Ln %d, Col %d\t\tToken: tk_ARROW\t\tValue: <-\n", token.err_ln, token.err_col); break;
-            case tk_INC: printf("Source: Ln %d, Col %d\t\tToken: tk_INC\t\tValue: ++\n", token.err_ln, token.err_col); break;
-            case tk_DEC: printf("Source: Ln %d, Col %d\t\tToken: tk_DEC\t\tValue: --\n", token.err_ln, token.err_col); break;
-            case tk_ELLIPSIS: printf("Source: Ln %d, Col %d\t\tToken: tk_ELLIPSIS\t\tValue: ...\n", token.err_ln, token.err_col); break;
-            case tk_NUM: printf("Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: %d\n", token.err_ln, token.err_col, token.n); break;
-            case tk_STRINGLIT: printf("Source: Ln %d, Col %d\t\tToken: tk_STRINGLIT\t\tSemanticValue: %s\n", token.err_ln, token.err_col, token.text); break;
-            case tk_IDENT:  printf("Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: %s\n", token.err_ln, token.err_col, token.text); break;
+void create_dump()
+{
+   errno_t res = fopen_s(&tokens_stream_dump, "tokens_stream_dump.txt", "a+,ccs=UNICODE");
+   if (res != 0 )
+   {
+       fprintf(stderr, "\nError: failed to create tokens stream dump file"); exit(1);
+   } 
+}
 
+void write_dump(char *token_name, char *token_value, int err_line, int err_col)
+{
+   fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: %hs\t\tValue: %hs\n",err_line, err_col, token_name, token_value);
+}
+
+void close_dump()
+{
+   errno_t res = fclose(tokens_stream_dump);
+   if (res != 0)
+   {
+       fprintf(stderr, "\nError: failed to close tokens stream dump file"); exit(1);
+   }
+}
+
+
+void start_dump(Token token)
+{
+    switch(token.tokenType)
+    {
+        case tk_EOF: fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_EOF\nDone! EOF has been reached\n",token.err_ln, token.err_col);break;  
+        case tk_BREAK: write_dump("tk_BREAK","break",token.err_ln, token.err_col); break; 
+        case tk_CASE: write_dump( "tk_CASE", "case", token.err_ln, token.err_col); break; 
+        case tk_CHAN: write_dump( "tk_CHAN","chan", token.err_ln, token.err_col);break; 
+        case tk_CONST: write_dump( "tk_CONST","const", token.err_ln, token.err_col);break;
+        case tk_CONTINUE:write_dump( "tk_CONTINUE","continue", token.err_ln, token.err_col);break;
+        case tk_DEFAULT:write_dump( "tk_DEFAULT","default", token.err_ln, token.err_col);break;
+        case tk_DEFER: write_dump( "tk_DEFER","defer", token.err_ln, token.err_col);break; 
+        case tk_ELSE: write_dump( "tk_ELSE","else", token.err_ln, token.err_col);break;
+        case tk_FALLTHROUGH:write_dump( "tk_FALLTHROUGH","fallthrough", token.err_ln, token.err_col);break; 
+        case tk_FOR:write_dump( "tk_FOR","for", token.err_ln, token.err_col);break;
+        case tk_GO:write_dump( "tk_GO","go", token.err_ln, token.err_col);break;
+        case tk_GOTO: write_dump( "tk_GOTO","goto", token.err_ln, token.err_col);break;
+        case tk_IF: write_dump( "tk_IF","if", token.err_ln, token.err_col);break; 
+        case tk_VOID: write_dump( "tk_VOID","void", token.err_ln, token.err_col);break; 
+        case tk_INCLUDE:write_dump( "tk_INCLUDE","#include", token.err_ln, token.err_col);break; 
+        case tk_GOINCLUDE: write_dump( "tk_GOINCLUDE","#goinclude", token.err_ln, token.err_col);break; 
+        case tk_INTERFACE:write_dump( "tk_INTERFACE","interface", token.err_ln, token.err_col);break; 
+        case tk_MAP:write_dump( "tk_MAP","map", token.err_ln, token.err_col);break; 
+        case tk_PACKAGE:write_dump( "tk_PACKAGE","package", token.err_ln, token.err_col);break; 
+        case tk_RANGE:write_dump( "tk_RANGE","range", token.err_ln, token.err_col);break;
+        case tk_RETURN:write_dump( "tk_RETURN","return", token.err_ln, token.err_col);break; 
+        case tk_SELECT:write_dump( "tk_SELECT","select", token.err_ln, token.err_col);break; 
+        case tk_STRUCT:write_dump( "tk_STRUCT","struct", token.err_ln, token.err_col);break; 
+        case tk_SWITCH:write_dump( "tk_SWITCH","switch", token.err_ln, token.err_col);break; 
+        case tk_TYPE:write_dump( "tk_TYPE","type", token.err_ln, token.err_col);break; 
+        case tk_VAR:write_dump( "tk_VAR","var", token.err_ln, token.err_col);break; 
+        case tk_CLASS:write_dump( "tk_CLASS","class", token.err_ln, token.err_col);break; 
+        case tk_THIS:write_dump( "tk_THIS","this", token.err_ln, token.err_col);break;
+        case tk_EXTENDS:write_dump( "tk_EXTENDS","extends", token.err_ln, token.err_col);break; 
+        case tk_IMPLEMENTS:write_dump( "tk_IMPLEMENTS","implements", token.err_ln, token.err_col);break; 
+        case tk_NEW:write_dump( "tk_NEW","new", token.err_ln, token.err_col);break; 
+        case tk_SUPER:write_dump( "tk_SUPER","super", token.err_ln, token.err_col);break; 
+        case tk_PUBLIC:write_dump( "tk_PUBLIC","public", token.err_ln, token.err_col);break; 
+        case tk_PRIVATE:write_dump( "tk_PRIVATE","private", token.err_ln, token.err_col);break; 
+        case tk_PTRSELECT:write_dump( "tk_PTRSELECT","->", token.err_ln, token.err_col);break; 
+        case tk_OVERRIDE:write_dump( "tk_OVERRIDE","override", token.err_ln, token.err_col);break; 
+        case tk_T_STRING:write_dump( "tk_T_STRING","string", token.err_ln, token.err_col);break; 
+        case tk_T_BOOL:write_dump( "tk_T_BOOL","bool", token.err_ln, token.err_col);break; 
+        case tk_T_INT8:write_dump( "tk_T_INT8","int8", token.err_ln, token.err_col);break; 
+        case tk_T_UINT8:write_dump( "tk_T_UINT8","uint8", token.err_ln, token.err_col);break;
+        case tk_T_BYTE:write_dump( "tk_T_BYTE","byte", token.err_ln, token.err_col);break; 
+        case tk_T_INT16:write_dump( "tk_T_INT16","int16", token.err_ln, token.err_col);break; 
+        case tk_T_UINT16:write_dump( "tk_T_UINT16","uint16", token.err_ln, token.err_col);break; 
+        case tk_T_INT32:write_dump( "tk_T_INT32","int32", token.err_ln, token.err_col);break; 
+        case tk_T_UINT32:write_dump( "tk_T_UINT32","uint32", token.err_ln, token.err_col);break; 
+        case tk_T_RUNE:write_dump( "tk_T_RUNE","rune", token.err_ln, token.err_col);break; 
+        case tk_T_INT64:write_dump( "tk_T_INT64","int64", token.err_ln, token.err_col);break; 
+        case tk_T_UINT64:write_dump( "tk_T_UINT64","uint64", token.err_ln, token.err_col);break; 
+        case tk_T_INT:write_dump( "tk_T_INT","int", token.err_ln, token.err_col);break; 
+        case tk_T_UINTPTR:write_dump( "tk_T_UINTPTR","uintptr", token.err_ln, token.err_col);break; 
+        case tk_T_FLOAT32:write_dump( "tk_T_FLOAT32","float32", token.err_ln, token.err_col);break; 
+        case tk_T_FLOAT64:write_dump( "tk_FLOAT64","float64", token.err_ln, token.err_col);break; 
+        case tk_T_COMPLEX64:write_dump( "tk_T_COMPLEX64","complex64", token.err_ln, token.err_col);break; 
+        case tk_T_COMPLEX128:write_dump( "tk_T_COMPLEX128","complex128", token.err_ln, token.err_col);break;
+        case tk_ADD:write_dump( "tk_ADD","+", token.err_ln, token.err_col);break;
+        case tk_SUB:write_dump( "tk_SUB","-", token.err_ln, token.err_col);break; 
+        case tk_MUL:write_dump( "tk_MUL","*", token.err_ln, token.err_col);break; 
+        case tk_DIV:write_dump( "tk_DIV","/", token.err_ln, token.err_col);break; 
+        case tk_MOD:write_dump( "tk_MOD","%", token.err_ln, token.err_col);break; 
+        case tk_AND:write_dump( "tk_AND","&", token.err_ln, token.err_col);break; 
+        case tk_OR:write_dump( "tk_OR","|", token.err_ln, token.err_col);break; 
+        case tk_XOR:write_dump( "tk_XOR","^", token.err_ln, token.err_col);break; 
+        case tk_ASSIGN:write_dump( "tk_ASSIGN","=", token.err_ln, token.err_col);break; 
+        case tk_LPAREN:write_dump( "tk_LPAREN","(", token.err_ln, token.err_col);break; 
+        case tk_RPAREN:write_dump( "tk_RPAREN",")", token.err_ln, token.err_col);break; 
+        case tk_LSBRACKET:write_dump( "tk_LSBRACKET","[", token.err_ln, token.err_col);break; 
+        case tk_RSBRACKET:write_dump( "tk_RSBRACKET","]", token.err_ln, token.err_col);break; 
+        case tk_LCBRACKET:write_dump( "tk_LCBRACKET","{", token.err_ln, token.err_col);break; 
+        case tk_RCBRACKET:write_dump( "tk_RCBRACKET","}", token.err_ln, token.err_col);break; 
+        case tk_COMMA:write_dump( "tk_COMMA",",", token.err_ln, token.err_col);break; 
+        case tk_DOT:write_dump( "tk_DOT",".", token.err_ln, token.err_col);break; 
+        case tk_SEMI:write_dump( "tk_SEMI",";", token.err_ln, token.err_col);break; 
+        case tk_UNDERSCORE:write_dump( "tk_UNDERSCORE","_", token.err_ln, token.err_col);break; 
+        case tk_COLON:write_dump( "tk_COLON",":", token.err_ln, token.err_col);break; 
+        case tk_LSHIFT:write_dump( "tk_LSHIFT","<<", token.err_ln, token.err_col);break; 
+        case tk_RSHIFT:write_dump( "tk_RSHIFT",">>", token.err_ln, token.err_col);break;
+        case tk_EQXOR:write_dump( "tk_EQXOR","^=", token.err_ln, token.err_col);break; 
+        case tk_EQOR: write_dump( "tk_EQOR","|=", token.err_ln, token.err_col);break;
+        case tk_EQAND:write_dump( "tk_EQAND","&=", token.err_ln, token.err_col);break; 
+        case tk_EQANDXOR:write_dump( "tk_EQANDXOR","&^=", token.err_ln, token.err_col);break; 
+        case tk_EQRSHIFT:write_dump( "tk_EQRSHIFT",">>=", token.err_ln, token.err_col);break; 
+        case tk_LOGICAND:write_dump( "tk_LOGICAND","&&", token.err_ln, token.err_col);break; 
+        case tk_EQLSHIFT:write_dump( "tk_EQLSHIFT","<<=", token.err_ln, token.err_col);break; 
+        case tk_LOGICOR:write_dump( "tk_LOGICOR","||", token.err_ln, token.err_col);break;
+        case tk_EQADD:write_dump( "tk_EQADD","+=", token.err_ln, token.err_col);break;
+        case tk_EQSUB:write_dump( "tk_EQSUB","-=", token.err_ln, token.err_col);break; 
+        case tk_EQMUL:write_dump( "tk_EQMUL","*=", token.err_ln, token.err_col);break; 
+        case tk_EQDIV:write_dump( "tk_EQDIV","/=", token.err_ln, token.err_col);break;
+        case tk_EQMOD:write_dump( "tk_EQMOD","%=", token.err_ln, token.err_col);break; 
+        case tk_ANDXOR:write_dump( "tk_ANDXOR","&^", token.err_ln, token.err_col);break; 
+        case tk_NEG:write_dump( "tk_NEG","!", token.err_ln, token.err_col);break; 
+        case tk_LSS:write_dump( "tk_LSS","<", token.err_ln, token.err_col);break;
+        case tk_GRT:write_dump( "tk_GRT",">", token.err_ln, token.err_col);break; 
+        case tk_NOTEQ:write_dump( "tk_NOTEQ","!=", token.err_ln, token.err_col);break; 
+        case tk_EQ:write_dump( "tk_EQ","==", token.err_ln, token.err_col);break; 
+        case tk_EQLSS:write_dump( "tk_EQLSS","<=", token.err_ln, token.err_col);break; 
+        case tk_EQGRT:write_dump( "tk_EQGRT",">=", token.err_ln, token.err_col);break; 
+        case tk_SHORTDECL:write_dump( "tk_SHORTDECL",":=", token.err_ln, token.err_col);break; 
+        case tk_ARROW:write_dump( "tk_ARROW","<-", token.err_ln, token.err_col);break; 
+        case tk_INC:write_dump( "tk_INC","++", token.err_ln, token.err_col);break; 
+        case tk_DEC:write_dump( "tk_DEC","--", token.err_ln, token.err_col);break; 
+        case tk_ELLIPSIS:write_dump( "tk_ELLIPSIS","...", token.err_ln, token.err_col);break;
+        case tk_NUM: fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: %d\n", token.err_ln, token.err_col, token.n); break;     
+        case tk_STRINGLIT: fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_STRINGLIT\t\tSemanticValue: %hs\n", token.err_ln, token.err_col, token.text); break;
+        case tk_IDENT:  fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: %hs\n", token.err_ln, token.err_col, token.text); break;
         }
 }
 
-void lex(){
-    FILE* outFile;
-    fopen_s(&outFile,"Serialize.txt", "a+,ccs=UNICODE");
+void lex()
+{
+    create_dump();
     Token token;
-
     struct timeb start, end;
     ftime(&start);
-
     do{
         token = get_token();
-        if (token.tokenType == tk_IDENT){
-            fwprintf(outFile, L"%hs\n", token.text);
-        }
-    if (LEXOUTPUT == 1)
-        lexPrint(token);
+
+    if (TOKENSDUMP == 1)
+        start_dump(token);
+
     }while(token.tokenType != tk_EOF);
+
     ftime(&end);
     int diff = (int) (1000.0 * (end.time - start.time) + (end.millitm - start.millitm));
-   
+    close_dump();
     printf("\nLexing time: %u milliseconds = %u microseconds", diff, diff*1000);
-    fclose(outFile);
     fclose(source_fp);
 }
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[])
+{
   
     if (argc >= 2){
-        LEXOUTPUT  = strtol(argv[2], NULL, 10);
+        TOKENSDUMP  = strtol(argv[2], NULL, 10);
         errno_t err = fopen_s(&source_fp, argv[1], "r");
         if (err == 0){
             printf("\nBegin lexing %s\n\n", argv[1]);

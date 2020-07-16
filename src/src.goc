@@ -1,4 +1,4 @@
-package chat;
+package ☢chat;
 #goinclude "fmt"
 #goinclude "io"
 #goinclude "log"
@@ -20,7 +20,7 @@ void main(){
 
 class Client {
     private:
-        int id;
+        int id☢;
         websocket.Conn *ws;
         Server *server;
         Message chan *ch;
