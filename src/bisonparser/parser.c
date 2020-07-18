@@ -65,6 +65,14 @@
 
 
 
+/* First part of user prologue.  */
+#line 2 "grammar\\mw.y"
+
+    #include <stdio.h> /* for printf and e.g */
+    extern int yylex(); /*interface to the handwritten lexer*/
+    extern void yyerror(const char *fmt, ...); /*iterface to the handwritten lexer */
+
+#line 76 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -112,86 +120,86 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    tk_EOF = 258,
-    tk_BREAK = 259,
-    tk_CASE = 260,
-    tk_CHAN = 261,
-    tk_CONST = 262,
-    tk_CONTINUE = 263,
-    tk_DEFAULT = 264,
-    tk_DEFER = 265,
-    tk_ELSE = 266,
-    tk_FALLTHROUGH = 267,
-    tk_FOR = 268,
-    tk_GO = 269,
-    tk_GOTO = 270,
-    tk_IF = 271,
-    tk_IMPORT = 272,
-    tk_INTERFACE = 273,
-    tk_MAP = 274,
-    tk_PACKAGE = 275,
-    tk_RANGE = 276,
-    tk_RETURN = 277,
-    tk_SELECT = 278,
-    tk_STRUCT = 279,
-    tk_SWITCH = 280,
-    tk_TYPE = 281,
-    tk_VAR = 282,
-    tk_CLASS = 283,
-    tk_EXTENDS = 284,
-    tk_IMPLEMENTS = 285,
-    tk_THIS = 286,
-    tk_NEW = 287,
-    tk_SUPER = 288,
-    tk_PUBLIC = 289,
-    tk_PRIVATE = 290,
-    tk_PTRSELECT = 291,
-    tk_OVERRIDE = 292,
-    tk_VOID = 293,
-    tk_INCLUDE = 294,
-    tk_GOINCLUDE = 295,
-    tk_T_STRING = 296,
-    tk_T_BOOL = 297,
-    tk_T_INT8 = 298,
-    tk_T_UINT8 = 299,
-    tk_T_BYTE = 300,
-    tk_T_INT16 = 301,
-    tk_T_UINT16 = 302,
-    tk_T_INT32 = 303,
-    tk_T_UINT32 = 304,
-    tk_T_RUNE = 305,
-    tk_T_INT64 = 306,
-    tk_T_UINT64 = 307,
-    tk_T_INT = 308,
-    tk_T_UINT = 309,
-    tk_T_UINTPTR = 310,
-    tk_T_FLOAT32 = 311,
-    tk_T_FLOAT64 = 312,
-    tk_T_COMPLEX64 = 313,
-    tk_T_COMPLEX128 = 314,
-    tk_ADD = 315,
-    tk_SUB = 316,
-    tk_MUL = 317,
-    tk_DIV = 318,
-    tk_MOD = 319,
-    tk_AND = 320,
-    tk_OR = 321,
-    tk_XOR = 322,
-    tk_ASSIGN = 323,
-    tk_LPAREN = 324,
-    tk_RPAREN = 325,
-    tk_LSBRACKET = 326,
-    tk_RSBRACKET = 327,
-    tk_LCBRACKET = 328,
-    tk_RCBRACKET = 329,
-    tk_COMMA = 330,
-    tk_DOT = 331,
-    tk_SEMI = 332,
-    tk_UNDERSCORE = 333,
-    tk_COLON = 334,
-    tk_LSHIFT = 335,
-    tk_RSHIFT = 336,
-    tk_EQXOR = 337,
+    tk_BREAK = 258,
+    tk_CASE = 259,
+    tk_CHAN = 260,
+    tk_CONST = 261,
+    tk_CONTINUE = 262,
+    tk_DEFAULT = 263,
+    tk_DEFER = 264,
+    tk_ELSE = 265,
+    tk_FALLTHROUGH = 266,
+    tk_FOR = 267,
+    tk_GO = 268,
+    tk_GOTO = 269,
+    tk_IF = 270,
+    tk_IMPORT = 271,
+    tk_INTERFACE = 272,
+    tk_MAP = 273,
+    tk_PACKAGE = 274,
+    tk_RANGE = 275,
+    tk_RETURN = 276,
+    tk_SELECT = 277,
+    tk_STRUCT = 278,
+    tk_SWITCH = 279,
+    tk_TYPE = 280,
+    tk_VAR = 281,
+    tk_CLASS = 282,
+    tk_EXTENDS = 283,
+    tk_IMPLEMENTS = 284,
+    tk_THIS = 285,
+    tk_NEW = 286,
+    tk_SUPER = 287,
+    tk_PUBLIC = 288,
+    tk_PRIVATE = 289,
+    tk_PTRSELECT = 290,
+    tk_OVERRIDE = 291,
+    tk_VOID = 292,
+    tk_INCLUDE = 293,
+    tk_GOINCLUDE = 294,
+    tk_T_STRING = 295,
+    tk_T_BOOL = 296,
+    tk_T_INT8 = 297,
+    tk_T_UINT8 = 298,
+    tk_T_BYTE = 299,
+    tk_T_INT16 = 300,
+    tk_T_UINT16 = 301,
+    tk_T_INT32 = 302,
+    tk_T_UINT32 = 303,
+    tk_T_RUNE = 304,
+    tk_T_INT64 = 305,
+    tk_T_UINT64 = 306,
+    tk_T_INT = 307,
+    tk_T_UINT = 308,
+    tk_T_UINTPTR = 309,
+    tk_T_FLOAT32 = 310,
+    tk_T_FLOAT64 = 311,
+    tk_T_COMPLEX64 = 312,
+    tk_T_COMPLEX128 = 313,
+    tk_ADD = 314,
+    tk_SUB = 315,
+    tk_MUL = 316,
+    tk_DIV = 317,
+    tk_MOD = 318,
+    tk_AND = 319,
+    tk_OR = 320,
+    tk_XOR = 321,
+    tk_ASSIGN = 322,
+    tk_LPAREN = 323,
+    tk_RPAREN = 324,
+    tk_LSBRACKET = 325,
+    tk_RSBRACKET = 326,
+    tk_LCBRACKET = 327,
+    tk_RCBRACKET = 328,
+    tk_COMMA = 329,
+    tk_DOT = 330,
+    tk_SEMI = 331,
+    tk_UNDERSCORE = 332,
+    tk_COLON = 333,
+    tk_LSHIFT = 334,
+    tk_RSHIFT = 335,
+    tk_EQXOR = 336,
+    tk_EQOR = 337,
     tk_EQAND = 338,
     tk_EQANDXOR = 339,
     tk_EQRSHIFT = 340,
@@ -226,7 +234,16 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+union YYSTYPE
+{
+#line 8 "grammar\\mw.y"
+
+    char *semantic_value; // for storing semantic values from stringlit, num or ident
+
+#line 244 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+
+};
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -540,18 +557,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  4
+#define YYFINAL  6
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   1
+#define YYLAST   4
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  112
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  3
+#define YYNNTS  4
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  3
+#define YYNRULES  5
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  5
+#define YYNSTATES  9
 
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   366
@@ -607,9 +624,9 @@ static const yytype_int8 yytranslate[] =
 
 #if YYDEBUG
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
-static const yytype_int8 yyrline[] =
+static const yytype_uint8 yyrline[] =
 {
-       0,   122,   122,   124
+       0,   133,   133,   137,   138,   142
 };
 #endif
 
@@ -618,28 +635,28 @@ static const yytype_int8 yyrline[] =
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "$end", "error", "$undefined", "tk_EOF", "tk_BREAK", "tk_CASE",
-  "tk_CHAN", "tk_CONST", "tk_CONTINUE", "tk_DEFAULT", "tk_DEFER",
-  "tk_ELSE", "tk_FALLTHROUGH", "tk_FOR", "tk_GO", "tk_GOTO", "tk_IF",
-  "tk_IMPORT", "tk_INTERFACE", "tk_MAP", "tk_PACKAGE", "tk_RANGE",
-  "tk_RETURN", "tk_SELECT", "tk_STRUCT", "tk_SWITCH", "tk_TYPE", "tk_VAR",
-  "tk_CLASS", "tk_EXTENDS", "tk_IMPLEMENTS", "tk_THIS", "tk_NEW",
-  "tk_SUPER", "tk_PUBLIC", "tk_PRIVATE", "tk_PTRSELECT", "tk_OVERRIDE",
-  "tk_VOID", "tk_INCLUDE", "tk_GOINCLUDE", "tk_T_STRING", "tk_T_BOOL",
-  "tk_T_INT8", "tk_T_UINT8", "tk_T_BYTE", "tk_T_INT16", "tk_T_UINT16",
-  "tk_T_INT32", "tk_T_UINT32", "tk_T_RUNE", "tk_T_INT64", "tk_T_UINT64",
-  "tk_T_INT", "tk_T_UINT", "tk_T_UINTPTR", "tk_T_FLOAT32", "tk_T_FLOAT64",
+  "$end", "error", "$undefined", "tk_BREAK", "tk_CASE", "tk_CHAN",
+  "tk_CONST", "tk_CONTINUE", "tk_DEFAULT", "tk_DEFER", "tk_ELSE",
+  "tk_FALLTHROUGH", "tk_FOR", "tk_GO", "tk_GOTO", "tk_IF", "tk_IMPORT",
+  "tk_INTERFACE", "tk_MAP", "tk_PACKAGE", "tk_RANGE", "tk_RETURN",
+  "tk_SELECT", "tk_STRUCT", "tk_SWITCH", "tk_TYPE", "tk_VAR", "tk_CLASS",
+  "tk_EXTENDS", "tk_IMPLEMENTS", "tk_THIS", "tk_NEW", "tk_SUPER",
+  "tk_PUBLIC", "tk_PRIVATE", "tk_PTRSELECT", "tk_OVERRIDE", "tk_VOID",
+  "tk_INCLUDE", "tk_GOINCLUDE", "tk_T_STRING", "tk_T_BOOL", "tk_T_INT8",
+  "tk_T_UINT8", "tk_T_BYTE", "tk_T_INT16", "tk_T_UINT16", "tk_T_INT32",
+  "tk_T_UINT32", "tk_T_RUNE", "tk_T_INT64", "tk_T_UINT64", "tk_T_INT",
+  "tk_T_UINT", "tk_T_UINTPTR", "tk_T_FLOAT32", "tk_T_FLOAT64",
   "tk_T_COMPLEX64", "tk_T_COMPLEX128", "tk_ADD", "tk_SUB", "tk_MUL",
   "tk_DIV", "tk_MOD", "tk_AND", "tk_OR", "tk_XOR", "tk_ASSIGN",
   "tk_LPAREN", "tk_RPAREN", "tk_LSBRACKET", "tk_RSBRACKET", "tk_LCBRACKET",
   "tk_RCBRACKET", "tk_COMMA", "tk_DOT", "tk_SEMI", "tk_UNDERSCORE",
-  "tk_COLON", "tk_LSHIFT", "tk_RSHIFT", "tk_EQXOR", "tk_EQAND",
+  "tk_COLON", "tk_LSHIFT", "tk_RSHIFT", "tk_EQXOR", "tk_EQOR", "tk_EQAND",
   "tk_EQANDXOR", "tk_EQRSHIFT", "tk_EQLSHIFT", "tk_LOGICAND", "tk_LOGICOR",
   "tk_EQADD", "tk_EQSUB", "tk_EQMUL", "tk_EQDIV", "tk_EQMOD", "tk_ANDXOR",
   "tk_NEG", "tk_LSS", "tk_GRT", "tk_NOTEQ", "tk_EQ", "tk_EQLSS",
   "tk_EQGRT", "tk_SHORTDECL", "tk_ARROW", "tk_INC", "tk_DEC",
   "tk_ELLIPSIS", "tk_STRINGLIT", "tk_NUM", "tk_IDENT", "tk_TRUE",
-  "tk_FALSE", "$accept", "file", "package", YY_NULLPTR
+  "tk_FALSE", "$accept", "file", "package_decl", "package", YY_NULLPTR
 };
 #endif
 
@@ -663,7 +680,7 @@ static const yytype_int16 yytoknum[] =
 };
 # endif
 
-#define YYPACT_NINF (-21)
+#define YYPACT_NINF (-109)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -677,7 +694,7 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -20,   -21,     1,   -21,   -21
+     -19,  -108,     2,   -19,  -109,   -73,  -109,  -109,  -109
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -685,19 +702,19 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     3,     0,     2,     1
+       0,     0,     0,     2,     3,     0,     1,     4,     5
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -21,   -21,   -21
+    -109,  -109,  -109,     1
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     2,     3
+      -1,     2,     3,     4
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -705,31 +722,31 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-       1,     4
+       1,     5,     6,     8,     7
 };
 
 static const yytype_int8 yycheck[] =
 {
-      20,     0
+      19,   109,     0,    76,     3
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    20,   113,   114,     0
+       0,    19,   113,   114,   115,   109,     0,   115,    76
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,   112,   113,   114
+       0,   112,   113,   114,   114,   115
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     1
+       0,     2,     1,     1,     2,     3
 };
 
 
@@ -1425,7 +1442,7 @@ yyreduce:
   switch (yyn)
     {
 
-#line 1429 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 1446 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
 
       default: break;
     }

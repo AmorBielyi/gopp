@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include <limits.h>
 #include <sys\timeb.h> 
+#include "..\bisonparser\parser.h"
 #define NELEMS(arr) (sizeof(arr) / sizeof(arr[0]))
 
 
@@ -19,74 +20,80 @@
 #define da_append(name, x)  do {da_redim(name); name[_qy_ ## name ## _p++] = x;} while (0)
 #define da_len(name)        _qy_ ## name ## _p
 
-long TOKENSDUMP;
+extern long TOKENSDUMP;
+extern FILE* tokens_stream_dump;
+typedef int TokenType;
+int yylex();
+void write_dump(char* token_name, char* token_value);
+void dump_keywords(TokenType token);
+// typedef enum 
+// {
+//   tk_EOF,
+//   /* Original keywords */ 
+//   tk_BREAK, tk_CASE, tk_CHAN, tk_CONST, tk_CONTINUE,
+//   tk_DEFAULT, tk_DEFER, tk_ELSE, tk_FALLTHROUGH, tk_FOR,
+//   tk_GO, tk_GOTO, tk_IF, tk_INTERFACE, tk_MAP,
+//   tk_PACKAGE, tk_RANGE, tk_RETURN, tk_SELECT, tk_STRUCT, tk_SWITCH,
+//   tk_TYPE, tk_VAR,
 
-typedef enum 
-{
-  tk_EOF,
-  /* Original keywords */ 
-  tk_BREAK, tk_CASE, tk_CHAN, tk_CONST, tk_CONTINUE,
-  tk_DEFAULT, tk_DEFER, tk_ELSE, tk_FALLTHROUGH, tk_FOR,
-  tk_GO, tk_GOTO, tk_IF, tk_IMPORT, tk_INTERFACE, tk_MAP,
-  tk_PACKAGE, tk_RANGE, tk_RETURN, tk_SELECT, tk_STRUCT, tk_SWITCH,
-  tk_TYPE, tk_VAR,
+//   /* Up' original keywords */ 
+//   tk_CLASS, tk_EXTENDS, tk_IMPLEMENTS, tk_THIS, tk_NEW, tk_SUPER,
+//   tk_PUBLIC, tk_PRIVATE, tk_PTRSELECT, tk_OVERRIDE,
+//   tk_VOID, tk_INCLUDE, tk_GOINCLUDE,
 
-  /* Up' original keywords */ 
-  tk_CLASS, tk_EXTENDS, tk_IMPLEMENTS, tk_THIS, tk_NEW, tk_SUPER,
-  tk_PUBLIC, tk_PRIVATE, tk_PTRSELECT, tk_OVERRIDE,
-  tk_VOID, tk_INCLUDE, tk_GOINCLUDE,
-
-  /* Original built-in types */ 
-  tk_T_STRING, tk_T_BOOL, tk_T_INT8, tk_T_UINT8, tk_T_BYTE, tk_T_INT16,
-  tk_T_UINT16, tk_T_INT32, tk_T_UINT32, tk_T_RUNE, tk_T_INT64, tk_T_UINT64,
-  tk_T_INT, tk_T_UINT, tk_T_UINTPTR, tk_T_FLOAT32, tk_T_FLOAT64,
-  tk_T_COMPLEX64, tk_T_COMPLEX128, 
+//   /* Original built-in types */ 
+//   tk_T_STRING, tk_T_BOOL, tk_T_INT8, tk_T_UINT8, tk_T_BYTE, tk_T_INT16,
+//   tk_T_UINT16, tk_T_INT32, tk_T_UINT32, tk_T_RUNE, tk_T_INT64, tk_T_UINT64,
+//   tk_T_INT, tk_T_UINT, tk_T_UINTPTR, tk_T_FLOAT32, tk_T_FLOAT64,
+//   tk_T_COMPLEX64, tk_T_COMPLEX128, 
 
 
-  /* Original operators */ 
-  tk_ADD, tk_SUB, tk_MUL, tk_DIV, tk_MOD, tk_AND, tk_OR, tk_XOR, tk_ASSIGN,
-  tk_LPAREN, tk_RPAREN, tk_LSBRACKET, tk_RSBRACKET, tk_LCBRACKET, tk_RCBRACKET,
+//   /* Original operators */ 
+//   tk_ADD, tk_SUB, tk_MUL, tk_DIV, tk_MOD, tk_AND, tk_OR, tk_XOR, tk_ASSIGN,
+//   tk_LPAREN, tk_RPAREN, tk_LSBRACKET, tk_RSBRACKET, tk_LCBRACKET, tk_RCBRACKET,
   
-  /* Original punctuation */
-  tk_COMMA, tk_DOT, tk_SEMI, tk_UNDERSCORE, tk_COLON,
+//   /* Original punctuation */
+//   tk_COMMA, tk_DOT, tk_SEMI, tk_UNDERSCORE, tk_COLON,
  
-  /* Original boolean operators and assigment operatoes */
-  tk_LSHIFT, tk_RSHIFT, tk_EQXOR, tk_EQOR, tk_EQAND, tk_EQANDXOR, tk_EQRSHIFT, tk_EQLSHIFT,
-  tk_LOGICAND, tk_LOGICOR, tk_EQADD, tk_EQSUB, tk_EQMUL, tk_EQDIV, tk_EQMOD, tk_ANDXOR, 
+//   /* Original boolean operators and assigment operatoes */
+//   tk_LSHIFT, tk_RSHIFT, tk_EQXOR, tk_EQOR, tk_EQAND, tk_EQANDXOR, tk_EQRSHIFT, tk_EQLSHIFT,
+//   tk_LOGICAND, tk_LOGICOR, tk_EQADD, tk_EQSUB, tk_EQMUL, tk_EQDIV, tk_EQMOD, tk_ANDXOR, 
 
-  /* Original relational operators */
-  tk_NEG, tk_LSS, tk_GRT, tk_NOTEQ, tk_EQ, tk_EQLSS, tk_EQGRT,
+//   /* Original relational operators */
+//   tk_NEG, tk_LSS, tk_GRT, tk_NOTEQ, tk_EQ, tk_EQLSS, tk_EQGRT,
 
-   /* Original misc */
-  tk_SHORTDECL, tk_ARROW, tk_INC, tk_DEC, tk_ELLIPSIS, tk_STRINGLIT, tk_NUM, tk_IDENT, tk_TRUE, tk_FALSE
+//    /* Original misc */
+//   tk_SHORTDECL, tk_ARROW, tk_INC, tk_DEC, tk_ELLIPSIS, tk_STRINGLIT, tk_NUM, tk_IDENT, tk_TRUE, tk_FALSE
 
-} TokenType;
+// } TokenType ;
 
-typedef struct 
-{
- TokenType tokenType;
- int err_ln, err_col;
- union {
-     int n; /* value for constants */
-     char* text; /* text for idents */
- };
-} Token;
+// typedef struct 
+// {
+//  TokenType tokenType;
+//  int err_ln, err_col;
+//  char* text; /* text for idents, stringlit and nums */
+// } Token;
+
+// typedef struct 
+// {
+//  TokenType tokenType;
+//  int err_ln, err_col;
+//  char* text; /* text for idents */
+// } Token;
 
 extern FILE *source_fp;
 
 static int line =1, col = 0, the_ch = ' ';
 da_dim(text, char);
 
-Token get_token();
-
-static void lexerror(int err_line, int err_col, const char *fmt, ...)
+void yyerror(const char *fmt, ...)
 {
     char buf[1000];
     va_list ap;
     va_start(ap, fmt);
     vsprintf_s(buf, sizeof(buf), fmt, ap);
     va_end(ap);
-    printf("(Ln %d, Col %d)  %s\n", err_line, err_col, buf);
+    printf("(Ln %d, Col %d)  %s\n", line, col, buf);
     exit(1);
 }
 
@@ -107,27 +114,38 @@ static int back_ch(int ch)
     ungetc(ch , source_fp);
 }
 
-static Token char_lit(int n, int err_line, int err_col)
+static TokenType char_lit(int n)
 { /* 'x' */
  if (the_ch == '\'')
-    lexerror(err_line, err_col, "Syntax error: empty character constant");
+    yyerror("Syntax error: empty character constant");
 if (the_ch == '\\'){
     next_ch();
     if(the_ch == 'n')
         n = 10;
     else if (the_ch == '\\')
         n = '\\';
-    else lexerror(err_line, err_col, "Syntax error: unknown escape sequence \\%c", the_ch);
+    else yyerror( "Syntax error: unknown escape sequence \\%c", the_ch);
 } 
 if(next_ch() != '\'')
-    lexerror(err_line, err_col, "Syntax error: multi-character constant");
+    yyerror("Syntax error: multi-character constant");
 next_ch();
-return (Token){tk_NUM, err_line, err_col, {n}};
+yylval.semantic_value = (char *)n; // maybe error here 
+
+if(TOKENSDUMP == 1)
+    fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n",line, col, yylval.semantic_value);
+
+return tk_NUM;
+//return (Token){tk_NUM, err_line, err_col, {n}};
 }
 
-static Token div_or_cmt(int err_line, int err_col) {  /* (divide)'/' or comment */
-    if(the_ch != '*')
-        return (Token){tk_DIV, err_line, err_col, {0}};
+static TokenType div_or_cmt() {  /* (divide)'/' or comment */
+    if (the_ch != '*')
+
+        if (TOKENSDUMP == 1)
+             write_dump("tk_DIV", "/");
+
+        return tk_DIV;
+        //return (Token){tk_DIV, err_line, err_col, {0}};
     if (the_ch == '/')
         printf("\nsingle comment\n");
    /* when comment found */
@@ -137,30 +155,35 @@ static Token div_or_cmt(int err_line, int err_col) {  /* (divide)'/' or comment 
         if (the_ch == '*') {
             if (next_ch() == '/') {
                 next_ch();
-                return get_token();
+                return yylex();
             }
         } else if (the_ch == EOF)
-            lexerror(err_line, err_col, "EOF in comment");
+            yyerror("EOF in comment");
         else
             next_ch();
     }
 }
 
 
-static Token string_lit(int start, int err_line, int err_col)
+static TokenType string_lit(int start)
 { 
     /* "string literal" */
     da_rewind(text);
 
     while(next_ch() != start){
-        if(the_ch == '\n') lexerror(err_line, err_col, "Syntax error: EOL in string");
-        if (the_ch == EOF) lexerror(err_line, err_col, "Syntax error: EOF in string");
+        if(the_ch == '\n') yyerror( "Syntax error: EOL in string");
+        if (the_ch == EOF) yyerror( "Syntax error: EOF in string");
         da_append(text, (char)the_ch);
     }
     da_append(text, '\0');
 
     next_ch();
-    return (Token){tk_STRINGLIT, err_line, err_col, {.text=text}};
+    yylval.semantic_value = text;
+    if (TOKENSDUMP == 1)
+        fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_STRINGLIT\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value);
+            
+    return tk_STRINGLIT;
+    //return (Token){tk_STRINGLIT, err_line, err_col, text=text};
 }
 
 static int kwd_cmp(const void *p1, const void *p2){
@@ -235,8 +258,19 @@ static TokenType get_keyword_type(const char *ident)
 
     },*kwp; 
     qsort(kwds, NELEMS(kwds), sizeof(kwds[0]), kwd_cmp);
-
-    return (kwp = bsearch(&ident, kwds, NELEMS(kwds), sizeof(kwds[0]), kwd_cmp)) == NULL ? tk_IDENT : kwp->sym;
+    kwp = bsearch(&ident, kwds, NELEMS(kwds), sizeof(kwds[0]), kwd_cmp);
+    if (kwp == NULL) {
+        if (TOKENSDUMP == 1)
+            fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value);
+        return tk_IDENT;
+    }
+    
+    if (TOKENSDUMP == 1) {
+        TokenType token = kwp->sym;
+        dump_keywords(token);
+    }
+  
+    return kwp->sym;
 }
 
 int isutf8unicode(int c)
@@ -244,9 +278,9 @@ int isutf8unicode(int c)
     return !isascii(c); 
 }
 
-static Token ident_or_num(int err_line, int err_col)
-{
-    int n, is_ident = false;
+static TokenType ident_or_num()
+{   int n = 0;
+    int is_ident = false;
     da_rewind(text);
    
     while(isalnum(the_ch) || the_ch == '_' || isutf8unicode(the_ch) ){
@@ -258,7 +292,7 @@ static Token ident_or_num(int err_line, int err_col)
     }
     
     if (da_len(text) == 0)
-        lexerror(err_line, err_col, "Syntax error: Syntax error: unrecognized character, code:  (%d) '%c'\n", the_ch, the_ch);
+        yyerror("Syntax error: Syntax error: unrecognized character, code:  (%d) '%c'\n", the_ch, the_ch);
 
   
     
@@ -268,103 +302,151 @@ static Token ident_or_num(int err_line, int err_col)
     and if first char of ident is digit return syntax error according to Go rule  */
         if(text[0] >=1 && isdigit(text[0])){
             if(is_ident)
-                lexerror(err_line,err_col, "Syntax error: invalid identifier, can't begin with digit '%c'", text[0], text[0]);
-            n = strtol(text, NULL, 0);
+                yyerror("Syntax error: invalid identifier, can't begin with digit '%c'", text[0], text[0]);
+             n = strtol(text, NULL, 0);
             if (n == LONG_MAX && errno == ERANGE)
-                lexerror(err_line, err_col, "Syntax error: Number exceeds maximum value");
-            return (Token){tk_NUM, err_line, err_col, {n}};
+                yyerror("Syntax error: Number exceeds maximum value");
+            yylval.semantic_value = text;
+            if (TOKENSDUMP == 1)
+                fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value);
+            return tk_NUM;
+            //return (Token){tk_NUM, err_line, err_col, text}; 
         } 
-
-    return (Token) {get_keyword_type(text), err_line, err_col, {.text=text}};
+        yylval.semantic_value = text;
+        return get_keyword_type(text);
+    //return (Token) {get_keyword_type(text), err_line, err_col, text=text};
 }
 
 
-static Token lookahead
+static TokenType lookahead
 (
     int except, 
     TokenType foundnext, 
-    TokenType self, 
-    int err_line, 
-    int err_col
+    TokenType self
     )
 {
   
     if (the_ch == except){
          next_ch();
-        return (Token){foundnext, err_line, err_col, {0}};
+         return foundnext;
+        //return (Token){foundnext, err_line, err_col, {0}};
     }
-    if(self == tk_EOF)
-        lexerror(err_line, err_col, "Syntax error (lookahead): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
-      
-    return (Token){self, err_line, err_col, {0}};
+    if(self == EOF)
+        yyerror("Syntax error (lookahead): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
+    return self;
+    //return (Token){self, err_line, err_col, {0}};
 }
 
-static Token lookahead2
+static TokenType lookahead2
 (
     int except1, 
     int except2, 
     TokenType foundl2, 
     TokenType foundl1, 
-    TokenType self, 
-    int err_line, 
-    int err_col
+    TokenType self
 )
 {
-    if (self == tk_EOF)
-            lexerror(err_line, err_col, "Syntax error (lookahead n2): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
+    if (self == EOF)
+            yyerror( "Syntax error (lookahead n2): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
 
     if (the_ch == except1){
         next_ch();
     
         if (the_ch == except2){
             next_ch();
-            return (Token){foundl2, err_line, err_col, {0}};
+            return foundl2;
+            //return (Token){foundl2, err_line, err_col, {0}};
         }else{
             if (foundl1 != 0)
-                return (Token){foundl1, err_line, err_col, {0}};
+                return foundl1;
+               // return (Token){foundl1, err_line, err_col, {0}};
         }
     }
-          
-        return (Token){self, err_line, err_col, {0}};
+          return self;
+        //return (Token){self, err_line, err_col, {0}};
 }
 
 
-Token get_token()
+int yylex()
 {
     
     /* skip whitespace */
     while(isspace(the_ch))
         next_ch();
-    int err_line = line;
-    int err_col = col;
     switch(the_ch){
         case '+':
         {
             next_ch();
-            Token token = lookahead('+', tk_INC, tk_ADD, err_line, err_col);
-            if (token.tokenType == tk_INC)
+            TokenType token = lookahead('+', tk_INC, tk_ADD);
+            if (token == tk_INC)
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_INC", "++");
                 return token;
-            token = lookahead('=', tk_EQADD, tk_ADD, err_line, err_col);
-            if (token.tokenType == tk_EQADD)
+            }
+               
+            token = lookahead('=', tk_EQADD, tk_ADD);
+            if (token == tk_EQADD)
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_EQADD", "+=");
                 return token;
-            if (token.tokenType == tk_ADD)
+            }
+                
+            if (token == tk_ADD) 
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_ADD", "+");
                 return token;
+            }
+                 
         }
         case '-':
         {
             next_ch();
-            Token token = lookahead('>', tk_PTRSELECT, tk_SUB, err_line, err_col);
-            if (token.tokenType == tk_PTRSELECT)
+            TokenType token = lookahead('>', tk_PTRSELECT, tk_SUB);
+            if (token == tk_PTRSELECT) 
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_PTRSELECT", "->");
                 return token;
-            token = lookahead('-', tk_DEC, tk_SUB, err_line, err_col);
-            if (token.tokenType == tk_DEC)
+            }
+                
+            token = lookahead('-', tk_DEC, tk_SUB);
+            if (token == tk_DEC) 
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_DEC", "--");
                 return token;
-            token = lookahead('=', tk_EQSUB, tk_SUB, err_line, err_col);
-            if (token.tokenType == tk_EQSUB)
+            }
+                
+            token = lookahead('=', tk_EQSUB, tk_SUB);
+            if (token == tk_EQSUB) 
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_EQSUB", "-=");
                 return token;
+            }
+                
+            if (TOKENSDUMP == 1)
+                write_dump("tk_SUB", "-");
             return token; // return self, if whole lookahead false
         }
-        case '*': next_ch(); return lookahead('=', tk_EQMUL, tk_MUL, err_line,err_col);
+        case '*':
+        {
+            next_ch(); 
+            TokenType token = lookahead('=', tk_EQMUL, tk_MUL);
+            if (token == tk_EQMUL) 
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_EQMUL", "*=");
+                return token;
+            }
+            if (TOKENSDUMP == 1)
+                write_dump("tk_MUL", "*");
+            return token;
+                
+        }
         case '/':
         {
           next_ch();
@@ -373,54 +455,140 @@ Token get_token()
               do{
                   next_ch();
               }while(the_ch != '\n');
-              next_ch(); return get_token();
+              next_ch(); return yylex();
           }
 
-          Token token = lookahead('=', tk_EQDIV, tk_DIV, err_line, err_col);
-          if (token.tokenType == tk_EQDIV)
-                return token;
+          TokenType token = lookahead('=', tk_EQDIV, tk_DIV);
+          if (token == tk_EQDIV) 
+          {   
+              if (TOKENSDUMP == 1)
+                  write_dump("tk_EQDIV", "/=");
+              return token;
+          }
+                
           /* skip multi comment before */
-          return div_or_cmt(err_line, err_col); 
+          return div_or_cmt(); 
         }
 
-        case '%': next_ch(); return lookahead('=', tk_EQMOD, tk_MOD, err_line, err_col);
+        case '%': next_ch(); return lookahead('=', tk_EQMOD, tk_MOD);
         case '&': 
         {   
             next_ch(); 
-            Token token = lookahead('=', tk_EQAND, tk_AND, err_line, err_col);
-            if (token.tokenType == tk_EQAND)
+            TokenType token = lookahead('=', tk_EQAND, tk_AND);
+            if (token == tk_EQAND)
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_EQAND", "&=");
                 return token;
-            token = lookahead('&', tk_LOGICAND, tk_AND, err_line, err_col);
-            if (token.tokenType == tk_LOGICAND)
+            }
+                
+            token = lookahead('&', tk_LOGICAND, tk_AND);
+            if (token == tk_LOGICAND) 
+            {   
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_LOGICAND", "&&");
                 return token;
-            token = lookahead2('^', '=', tk_EQANDXOR, tk_ANDXOR, tk_AND, err_line, err_col);
-            if (token.tokenType == tk_EQANDXOR || token.tokenType == tk_ANDXOR)
+            }
+                
+            token = lookahead2('^', '=', tk_EQANDXOR, tk_ANDXOR, tk_AND);
+            
+            if (token == tk_EQANDXOR) 
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_EQANDXOR", "&^=");
                 return token;
-            if (token.tokenType == tk_AND)
+            }
+            if (token == tk_ANDXOR)
+            {
+                if(TOKENSDUMP == 1)
+                    write_dump("tk_ANDXOR", "&^");
                 return token;
+            }
+            if (token == tk_AND) 
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_AND", "&");
+                return token;
+            }
             
         }
         case '|':
         {
             next_ch();
-            Token token = lookahead('|', tk_LOGICOR, tk_OR, err_line, err_col);
-            if (token.tokenType == tk_LOGICOR)
+            TokenType token = lookahead('|', tk_LOGICOR, tk_OR);
+            if (token == tk_LOGICOR) 
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_LOGICOR", "||");
                 return token;
-            token = lookahead('=', tk_EQOR, tk_OR, err_line, err_col);
-            if (token.tokenType == tk_EQOR)
+            }
+            token = lookahead('=', tk_EQOR, tk_OR);
+            if (token == tk_EQOR) 
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_EQOR", "&=");
                 return token;
-            if (token.tokenType == tk_OR)
+            }
+                
+            if (token == tk_OR) 
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_OR", "|");
                 return token;
+            }
+               
         }
-        case '^': next_ch(); return lookahead('=', tk_EQXOR, tk_XOR, err_line, err_col);
-        case '=': next_ch(); return lookahead('=', tk_EQ, tk_ASSIGN, err_line, err_col );
-        case '(': next_ch(); return (Token){tk_LPAREN, err_line, err_col, {0}};
-        case ')': next_ch(); return (Token){tk_RPAREN, err_line, err_col, {0}};
-        case '[': next_ch(); return (Token){tk_LSBRACKET, err_line, err_col, {0}};
-        case ']': next_ch(); return (Token){tk_RSBRACKET, err_line, err_col, {0}};
-        case '{': next_ch(); return (Token){tk_LCBRACKET, err_line, err_col, {0}};
-        case '}': next_ch(); return (Token){tk_RCBRACKET, err_line, err_col, {0}};
-        case ',': next_ch(); return (Token){tk_COMMA, err_line, err_col, {0}};
+        case '^': next_ch(); return lookahead('=', tk_EQXOR, tk_XOR);
+        case '=': next_ch(); return lookahead('=', tk_EQ, tk_ASSIGN);
+        case '(':
+        {
+            next_ch();
+            if (TOKENSDUMP == 1)
+                write_dump("tk_LPAREN", "(");
+            return tk_LPAREN;
+        }
+        case ')':
+        {
+            next_ch();
+            if (TOKENSDUMP == 1)
+                write_dump("tk_RPAREN", ")");
+            return tk_RPAREN;
+        }
+        case '[':
+        {
+            next_ch();
+            if (TOKENSDUMP == 1)
+                write_dump("tk_LSBRACKET", "[");
+            return tk_LSBRACKET;
+        }
+        case ']':
+        {
+            next_ch();
+            if (TOKENSDUMP == 1)
+                write_dump("tk_RSBRACKET", "]");
+            return tk_RSBRACKET;
+        }
+        case '{':
+        {
+            next_ch();
+            if (TOKENSDUMP == 1)
+                write_dump("tk_LCBRACKET", "{");
+            return tk_LCBRACKET;
+        }
+        case '}':
+        {
+            next_ch();
+            if (TOKENSDUMP == 1)
+                write_dump("tk_RCBRACKET", "}");
+            return tk_RCBRACKET;
+        }
+        case ',':
+        {
+            next_ch();
+            if (TOKENSDUMP == 1)
+                write_dump("tk_COMMA", ",");
+            return tk_COMMA;
+        }
         case '.':
         {
             next_ch();
@@ -428,68 +596,146 @@ Token get_token()
                 next_ch();
                 if (the_ch == '.'){
                     next_ch();
-                    return (Token){tk_ELLIPSIS, err_line,err_col,{0}};
+                    if (TOKENSDUMP == 1)
+                        write_dump("tk_ELLIPSIS", "...");
+                    return tk_ELLIPSIS;
                 }else 
-                   lexerror(err_line, err_col, "Syntax error (lookahead): unrecognized character, code:  .\n", the_ch, the_ch);
+                   yyerror( "Syntax error (lookahead): unrecognized character, code:  .\n", the_ch, the_ch);
                 
             }
-            return (Token){tk_DOT, err_line, err_col, {0}};
+            if (TOKENSDUMP == 1)
+                write_dump("tk_DOT", ".");
+            return tk_DOT;
 
         } 
-        case ';': next_ch(); return (Token){tk_SEMI, err_line, err_col, {0}};
-        case '_': next_ch(); return (Token){tk_UNDERSCORE, err_line, err_col, {0}};
-        case ':': next_ch(); return lookahead('=', tk_SHORTDECL, tk_SEMI, err_line, err_col);
-        case '!': next_ch(); return lookahead('=', tk_NOTEQ, tk_NEG, err_line, err_col);
+        case ';':
+        {
+            next_ch();
+            if (TOKENSDUMP == 1)
+                write_dump("tk_SEMI", ";");
+            return tk_SEMI;
+        }
+        case '_':
+        {
+            next_ch();
+            if (TOKENSDUMP == 1)
+                write_dump("tk_UNDERSCORE", "_");
+            return tk_UNDERSCORE;
+        }
+        case ':': 
+        {
+            next_ch(); 
+            TokenType token =  lookahead('=', tk_SHORTDECL, tk_COLON);
+            if (token == tk_SHORTDECL) {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_SHORTDECL", ":=");
+                return token;
+            }
+            if (token == tk_COLON) {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_COLON", ":");
+                return token;
+            }
+        }
+        
+        case '!':
+        {
+            next_ch(); 
+            TokenType token = lookahead('=', tk_NOTEQ, tk_NEG);
+            if (token == tk_NOTEQ) 
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_NOTEQ", "!=");
+                return token;
+            }
+            if (token == tk_NEG) 
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_NEG", "!");
+                return token;
+            }
+        }
         case '<':
         {
             next_ch();
-            Token token = lookahead('=', tk_EQLSS, tk_LSS, err_line, err_col);
-            if (token.tokenType == tk_EQLSS)
+            TokenType token = lookahead('=', tk_EQLSS, tk_LSS);
+            if (token == tk_EQLSS)
                 return token;
-            token = lookahead('-', tk_ARROW, tk_LSS, err_line, err_col);
-            if (token.tokenType == tk_ARROW)
+            token = lookahead('-', tk_ARROW, tk_LSS);
+            if (token == tk_ARROW)
                 return token;
-            token = lookahead2('<', '=', tk_EQLSHIFT, tk_LSHIFT, tk_LSS, err_line, err_col);
-            if (token.tokenType == tk_EQLSHIFT || token.tokenType == tk_LSHIFT)
+            token = lookahead2('<', '=', tk_EQLSHIFT, tk_LSHIFT, tk_LSS);
+            if (token == tk_EQLSHIFT || token == tk_LSHIFT)
                 return token;
-            if (token.tokenType == tk_LSS)
+            if (token == tk_LSS)
                 return token;
 
         } 
         case '>':
         {
             next_ch();
-            Token token = lookahead('=', tk_EQGRT, tk_GRT, err_line, err_col);
-            if (token.tokenType == tk_EQGRT)
+            TokenType token = lookahead('=', tk_EQGRT, tk_GRT);
+            if (token == tk_EQGRT)
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_EQGRT", ">=");
                 return token;
-            token = lookahead2('>', '=', tk_RSHIFT, tk_EQRSHIFT, tk_GRT , err_line, err_col );
-            if (token.tokenType == tk_RSHIFT || token.tokenType == tk_EQRSHIFT)
+            }
+                
+            token = lookahead2('>', '=', tk_RSHIFT, tk_EQRSHIFT, tk_GRT);
+            if (token == tk_RSHIFT || token == tk_EQRSHIFT)
                 return token;
-            if (token.tokenType == tk_GRT)
+            if (token == tk_GRT)
                 return token;
+
+            if (token == tk_RSHIFT) 
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_RSHIFT", ">>");
+                return token;
+            }
+            if (token == tk_EQRSHIFT)
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_EQRSHIFT", ">>=");
+                return token;
+            }
+            if (token == tk_GRT)
+            {
+                if (TOKENSDUMP == 1)
+                    write_dump("tk_GRT", ">");
+                return token;
+            }
+
+
         }
-        case '"': return string_lit(the_ch, err_line, err_col);
+        case '"': return string_lit(the_ch);
         case '#':
         {
             next_ch();
-            ident_or_num(err_line, err_col); 
+            ident_or_num(); 
             if (strcmp(text, "goinclude") != 0 && strcmp(text, "include") !=0 )
-                lexerror(err_line, err_col, "Syntax error: invalid include statement, expected 'include' or 'goinclude' after '#'");
+                yyerror( "Syntax error: invalid include statement, expected 'include' or 'goinclude' after '#'");
             if (strcmp(text, "goinclude") == 0)
-                return (Token){tk_GOINCLUDE, err_line, err_col, {0}};
+                return tk_GOINCLUDE;
             if (strcmp(text, "include") == 0)
-                return (Token){tk_INCLUDE, err_line, err_col, {0}};
-            lexerror(err_line, err_col, "Syntax error: unrecognized character (%d) '%c'", the_ch, the_ch);
+                return tk_INCLUDE;
+            yyerror( "Syntax error: unrecognized character (%d) '%c'", the_ch, the_ch);
         }
          
         // case '\'': next_ch(); return char_lit(the_ch, err_line, err_col);
-
-        default: return ident_or_num(err_line, err_col);
-        case EOF: return (Token){tk_EOF, err_line, err_col, {0}}; // WHATTTTTTTTTTT????
+        case EOF:
+        {
+            if (TOKENSDUMP == 1)
+                fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_EOF\n", line, col);
+            return EOF;
+        }
+        default: return ident_or_num();
+        
     }
 }
 
-FILE *tokens_stream_dump;
+
 
 void create_dump()
 {
@@ -498,13 +744,13 @@ void create_dump()
    {
        fprintf(stderr, "\nError: failed to create tokens stream dump file"); exit(1);
    } 
-   fwprintf(tokens_stream_dump, L"*** Begin Tokens Stream Dump ***\nThis file was automatically generated with Milkomeda lexer\n");
+   fwprintf(tokens_stream_dump, L"*** Begin Tokens Stream Dump ***\nThis file was automatically generated with MilkyWay lexer\n");
    fwprintf(tokens_stream_dump, L"--------------------------------------------------------------------------------\n");
 }
 
-void write_dump(char *token_name, char *token_value, int err_line, int err_col)
+void write_dump(char *token_name, char *token_value)
 {
-   fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: %hs\t\tValue: '%hs'\n",err_line, err_col, token_name, token_value);
+   fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: %hs\t\tValue: '%hs'\n",line, col, token_name, token_value);
 }
 
 void close_dump()
@@ -518,139 +764,140 @@ void close_dump()
 }
 
 
-void start_dump(Token token)
+void dump_keywords(TokenType token)
 {
-    switch(token.tokenType)
+    switch(token)
     {
-        case tk_EOF: fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_EOF\n",token.err_ln, token.err_col);break;  
-        case tk_BREAK: write_dump("tk_BREAK","break",token.err_ln, token.err_col); break; 
-        case tk_CASE: write_dump( "tk_CASE", "case", token.err_ln, token.err_col); break; 
-        case tk_CHAN: write_dump( "tk_CHAN","chan", token.err_ln, token.err_col);break; 
-        case tk_CONST: write_dump( "tk_CONST","const", token.err_ln, token.err_col);break;
-        case tk_CONTINUE:write_dump( "tk_CONTINUE","continue", token.err_ln, token.err_col);break;
-        case tk_DEFAULT:write_dump( "tk_DEFAULT","default", token.err_ln, token.err_col);break;
-        case tk_DEFER: write_dump( "tk_DEFER","defer", token.err_ln, token.err_col);break; 
-        case tk_ELSE: write_dump( "tk_ELSE","else", token.err_ln, token.err_col);break;
-        case tk_FALLTHROUGH:write_dump( "tk_FALLTHROUGH","fallthrough", token.err_ln, token.err_col);break; 
-        case tk_FOR:write_dump( "tk_FOR","for", token.err_ln, token.err_col);break;
-        case tk_GO:write_dump( "tk_GO","go", token.err_ln, token.err_col);break;
-        case tk_GOTO: write_dump( "tk_GOTO","goto", token.err_ln, token.err_col);break;
-        case tk_IF: write_dump( "tk_IF","if", token.err_ln, token.err_col);break; 
-        case tk_VOID: write_dump( "tk_VOID","void", token.err_ln, token.err_col);break; 
-        case tk_INCLUDE:write_dump( "tk_INCLUDE","#include", token.err_ln, token.err_col);break; 
-        case tk_GOINCLUDE: write_dump( "tk_GOINCLUDE","#goinclude", token.err_ln, token.err_col);break; 
-        case tk_INTERFACE:write_dump( "tk_INTERFACE","interface", token.err_ln, token.err_col);break; 
-        case tk_MAP:write_dump( "tk_MAP","map", token.err_ln, token.err_col);break; 
-        case tk_PACKAGE:write_dump( "tk_PACKAGE","package", token.err_ln, token.err_col);break; 
-        case tk_RANGE:write_dump( "tk_RANGE","range", token.err_ln, token.err_col);break;
-        case tk_RETURN:write_dump( "tk_RETURN","return", token.err_ln, token.err_col);break; 
-        case tk_SELECT:write_dump( "tk_SELECT","select", token.err_ln, token.err_col);break; 
-        case tk_STRUCT:write_dump( "tk_STRUCT","struct", token.err_ln, token.err_col);break; 
-        case tk_SWITCH:write_dump( "tk_SWITCH","switch", token.err_ln, token.err_col);break; 
-        case tk_TYPE:write_dump( "tk_TYPE","type", token.err_ln, token.err_col);break; 
-        case tk_VAR:write_dump( "tk_VAR","var", token.err_ln, token.err_col);break; 
-        case tk_CLASS:write_dump( "tk_CLASS","class", token.err_ln, token.err_col);break; 
-        case tk_THIS:write_dump( "tk_THIS","this", token.err_ln, token.err_col);break;
-        case tk_EXTENDS:write_dump( "tk_EXTENDS","extends", token.err_ln, token.err_col);break; 
-        case tk_IMPLEMENTS:write_dump( "tk_IMPLEMENTS","implements", token.err_ln, token.err_col);break; 
-        case tk_NEW:write_dump( "tk_NEW","new", token.err_ln, token.err_col);break; 
-        case tk_SUPER:write_dump( "tk_SUPER","super", token.err_ln, token.err_col);break; 
-        case tk_PUBLIC:write_dump( "tk_PUBLIC","public", token.err_ln, token.err_col);break; 
-        case tk_PRIVATE:write_dump( "tk_PRIVATE","private", token.err_ln, token.err_col);break; 
-        case tk_PTRSELECT:write_dump( "tk_PTRSELECT","->", token.err_ln, token.err_col);break; 
-        case tk_OVERRIDE:write_dump( "tk_OVERRIDE","override", token.err_ln, token.err_col);break; 
-        case tk_T_STRING:write_dump( "tk_T_STRING","string", token.err_ln, token.err_col);break; 
-        case tk_T_BOOL:write_dump( "tk_T_BOOL","bool", token.err_ln, token.err_col);break; 
-        case tk_T_INT8:write_dump( "tk_T_INT8","int8", token.err_ln, token.err_col);break; 
-        case tk_T_UINT8:write_dump( "tk_T_UINT8","uint8", token.err_ln, token.err_col);break;
-        case tk_T_BYTE:write_dump( "tk_T_BYTE","byte", token.err_ln, token.err_col);break; 
-        case tk_T_INT16:write_dump( "tk_T_INT16","int16", token.err_ln, token.err_col);break; 
-        case tk_T_UINT16:write_dump( "tk_T_UINT16","uint16", token.err_ln, token.err_col);break; 
-        case tk_T_INT32:write_dump( "tk_T_INT32","int32", token.err_ln, token.err_col);break; 
-        case tk_T_UINT32:write_dump( "tk_T_UINT32","uint32", token.err_ln, token.err_col);break; 
-        case tk_T_RUNE:write_dump( "tk_T_RUNE","rune", token.err_ln, token.err_col);break; 
-        case tk_T_INT64:write_dump( "tk_T_INT64","int64", token.err_ln, token.err_col);break; 
-        case tk_T_UINT64:write_dump( "tk_T_UINT64","uint64", token.err_ln, token.err_col);break; 
-        case tk_T_INT:write_dump( "tk_T_INT","int", token.err_ln, token.err_col);break; 
-        case tk_T_UINTPTR:write_dump( "tk_T_UINTPTR","uintptr", token.err_ln, token.err_col);break; 
-        case tk_T_FLOAT32:write_dump( "tk_T_FLOAT32","float32", token.err_ln, token.err_col);break; 
-        case tk_T_FLOAT64:write_dump( "tk_FLOAT64","float64", token.err_ln, token.err_col);break; 
-        case tk_T_COMPLEX64:write_dump( "tk_T_COMPLEX64","complex64", token.err_ln, token.err_col);break; 
-        case tk_T_COMPLEX128:write_dump( "tk_T_COMPLEX128","complex128", token.err_ln, token.err_col);break;
-        case tk_ADD:write_dump( "tk_ADD","+", token.err_ln, token.err_col);break;
-        case tk_SUB:write_dump( "tk_SUB","-", token.err_ln, token.err_col);break; 
-        case tk_MUL:write_dump( "tk_MUL","*", token.err_ln, token.err_col);break; 
-        case tk_DIV:write_dump( "tk_DIV","/", token.err_ln, token.err_col);break; 
-        case tk_MOD:write_dump( "tk_MOD","%", token.err_ln, token.err_col);break; 
-        case tk_AND:write_dump( "tk_AND","&", token.err_ln, token.err_col);break; 
-        case tk_OR:write_dump( "tk_OR","|", token.err_ln, token.err_col);break; 
-        case tk_XOR:write_dump( "tk_XOR","^", token.err_ln, token.err_col);break; 
-        case tk_ASSIGN:write_dump( "tk_ASSIGN","=", token.err_ln, token.err_col);break; 
-        case tk_LPAREN:write_dump( "tk_LPAREN","(", token.err_ln, token.err_col);break; 
-        case tk_RPAREN:write_dump( "tk_RPAREN",")", token.err_ln, token.err_col);break; 
-        case tk_LSBRACKET:write_dump( "tk_LSBRACKET","[", token.err_ln, token.err_col);break; 
-        case tk_RSBRACKET:write_dump( "tk_RSBRACKET","]", token.err_ln, token.err_col);break; 
-        case tk_LCBRACKET:write_dump( "tk_LCBRACKET","{", token.err_ln, token.err_col);break; 
-        case tk_RCBRACKET:write_dump( "tk_RCBRACKET","}", token.err_ln, token.err_col);break; 
-        case tk_COMMA:write_dump( "tk_COMMA",",", token.err_ln, token.err_col);break; 
-        case tk_DOT:write_dump( "tk_DOT",".", token.err_ln, token.err_col);break; 
-        case tk_SEMI:write_dump( "tk_SEMI",";", token.err_ln, token.err_col);break; 
-        case tk_UNDERSCORE:write_dump( "tk_UNDERSCORE","_", token.err_ln, token.err_col);break; 
-        case tk_COLON:write_dump( "tk_COLON",":", token.err_ln, token.err_col);break; 
-        case tk_LSHIFT:write_dump( "tk_LSHIFT","<<", token.err_ln, token.err_col);break; 
-        case tk_RSHIFT:write_dump( "tk_RSHIFT",">>", token.err_ln, token.err_col);break;
-        case tk_EQXOR:write_dump( "tk_EQXOR","^=", token.err_ln, token.err_col);break; 
-        case tk_EQOR: write_dump( "tk_EQOR","|=", token.err_ln, token.err_col);break;
-        case tk_EQAND:write_dump( "tk_EQAND","&=", token.err_ln, token.err_col);break; 
-        case tk_EQANDXOR:write_dump( "tk_EQANDXOR","&^=", token.err_ln, token.err_col);break; 
-        case tk_EQRSHIFT:write_dump( "tk_EQRSHIFT",">>=", token.err_ln, token.err_col);break; 
-        case tk_LOGICAND:write_dump( "tk_LOGICAND","&&", token.err_ln, token.err_col);break; 
-        case tk_EQLSHIFT:write_dump( "tk_EQLSHIFT","<<=", token.err_ln, token.err_col);break; 
-        case tk_LOGICOR:write_dump( "tk_LOGICOR","||", token.err_ln, token.err_col);break;
-        case tk_EQADD:write_dump( "tk_EQADD","+=", token.err_ln, token.err_col);break;
-        case tk_EQSUB:write_dump( "tk_EQSUB","-=", token.err_ln, token.err_col);break; 
-        case tk_EQMUL:write_dump( "tk_EQMUL","*=", token.err_ln, token.err_col);break; 
-        case tk_EQDIV:write_dump( "tk_EQDIV","/=", token.err_ln, token.err_col);break;
-        case tk_EQMOD:write_dump( "tk_EQMOD","%=", token.err_ln, token.err_col);break; 
-        case tk_ANDXOR:write_dump( "tk_ANDXOR","&^", token.err_ln, token.err_col);break; 
-        case tk_NEG:write_dump( "tk_NEG","!", token.err_ln, token.err_col);break; 
-        case tk_LSS:write_dump( "tk_LSS","<", token.err_ln, token.err_col);break;
-        case tk_GRT:write_dump( "tk_GRT",">", token.err_ln, token.err_col);break; 
-        case tk_NOTEQ:write_dump( "tk_NOTEQ","!=", token.err_ln, token.err_col);break; 
-        case tk_EQ:write_dump( "tk_EQ","==", token.err_ln, token.err_col);break; 
-        case tk_EQLSS:write_dump( "tk_EQLSS","<=", token.err_ln, token.err_col);break; 
-        case tk_EQGRT:write_dump( "tk_EQGRT",">=", token.err_ln, token.err_col);break; 
-        case tk_SHORTDECL:write_dump( "tk_SHORTDECL",":=", token.err_ln, token.err_col);break; 
-        case tk_ARROW:write_dump( "tk_ARROW","<-", token.err_ln, token.err_col);break; 
-        case tk_INC:write_dump( "tk_INC","++", token.err_ln, token.err_col);break; 
-        case tk_DEC:write_dump( "tk_DEC","--", token.err_ln, token.err_col);break; 
-        case tk_ELLIPSIS:write_dump( "tk_ELLIPSIS","...", token.err_ln, token.err_col);break;
-        case tk_NUM: fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%d'\n", token.err_ln, token.err_col, token.n); break;     
-        case tk_STRINGLIT: fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_STRINGLIT\t\tSemanticValue: '%hs'\n", token.err_ln, token.err_col, token.text); break;
-        case tk_IDENT:  fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: '%hs'\n", token.err_ln, token.err_col, token.text); break;
-        case tk_TRUE: write_dump("tk_TRUE", "true", token.err_ln, token.err_col);break;
-        case tk_FALSE: write_dump("tk_FALSE", "false", token.err_ln, token.err_col); break;
+        //case tk_EOF: fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_EOF\n", line, col);break;  
+        case tk_BREAK: write_dump("tk_BREAK","break"); break; 
+        case tk_CASE: write_dump( "tk_CASE", "case"); break; 
+        case tk_CHAN: write_dump( "tk_CHAN","chan");break; 
+        case tk_CONST: write_dump( "tk_CONST","const");break;
+        case tk_CONTINUE:write_dump( "tk_CONTINUE","continue");break;
+        case tk_DEFAULT:write_dump( "tk_DEFAULT","default");break;
+        case tk_DEFER: write_dump( "tk_DEFER","defer");break; 
+        case tk_ELSE: write_dump( "tk_ELSE","else");break;
+        case tk_FALLTHROUGH:write_dump( "tk_FALLTHROUGH","fallthrough");break; 
+        case tk_FOR:write_dump( "tk_FOR","for");break;
+        case tk_GO:write_dump( "tk_GO","go");break;
+        case tk_GOTO: write_dump( "tk_GOTO","goto");break;
+        case tk_IF: write_dump( "tk_IF","if");break; 
+        case tk_VOID: write_dump( "tk_VOID","void");break; 
+        case tk_INCLUDE:write_dump( "tk_INCLUDE","#include");break; 
+        case tk_GOINCLUDE: write_dump( "tk_GOINCLUDE","#goinclude");break; 
+        case tk_INTERFACE:write_dump( "tk_INTERFACE","interface");break; 
+        case tk_MAP:write_dump( "tk_MAP","map");break; 
+        case tk_PACKAGE:write_dump( "tk_PACKAGE","package");break; 
+        case tk_RANGE:write_dump( "tk_RANGE","range");break;
+        case tk_RETURN:write_dump( "tk_RETURN","return");break; 
+        case tk_SELECT:write_dump( "tk_SELECT","select");break; 
+        case tk_STRUCT:write_dump( "tk_STRUCT","struct");break; 
+        case tk_SWITCH:write_dump( "tk_SWITCH","switch");break; 
+        case tk_TYPE:write_dump( "tk_TYPE","type");break; 
+        case tk_VAR:write_dump( "tk_VAR","var");break; 
+        case tk_CLASS:write_dump( "tk_CLASS","class");break; 
+        case tk_THIS:write_dump( "tk_THIS","this");break;
+        case tk_EXTENDS:write_dump( "tk_EXTENDS","extends");break; 
+        case tk_IMPLEMENTS:write_dump( "tk_IMPLEMENTS","implements");break; 
+        case tk_NEW:write_dump( "tk_NEW","new");break; 
+        case tk_SUPER:write_dump( "tk_SUPER","super");break; 
+        case tk_PUBLIC:write_dump( "tk_PUBLIC","public");break; 
+        case tk_PRIVATE:write_dump( "tk_PRIVATE","private");break; 
+        case tk_PTRSELECT:write_dump( "tk_PTRSELECT","->");break; 
+        case tk_OVERRIDE:write_dump( "tk_OVERRIDE","override");break; 
+        case tk_T_STRING:write_dump( "tk_T_STRING","string");break; 
+        case tk_T_BOOL:write_dump( "tk_T_BOOL","bool");break; 
+        case tk_T_INT8:write_dump( "tk_T_INT8","int8");break; 
+        case tk_T_UINT8:write_dump( "tk_T_UINT8","uint8");break;
+        case tk_T_BYTE:write_dump( "tk_T_BYTE","byte");break; 
+        case tk_T_INT16:write_dump( "tk_T_INT16","int16");break; 
+        case tk_T_UINT16:write_dump( "tk_T_UINT16","uint16");break; 
+        case tk_T_INT32:write_dump( "tk_T_INT32","int32");break; 
+        case tk_T_UINT32:write_dump( "tk_T_UINT32","uint32");break; 
+        case tk_T_RUNE:write_dump( "tk_T_RUNE","rune");break; 
+        case tk_T_INT64:write_dump( "tk_T_INT64","int64");break; 
+        case tk_T_UINT64:write_dump( "tk_T_UINT64","uint64");break; 
+        case tk_T_INT:write_dump( "tk_T_INT","int");break; 
+        case tk_T_UINTPTR:write_dump( "tk_T_UINTPTR","uintptr");break; 
+        case tk_T_FLOAT32:write_dump( "tk_T_FLOAT32","float32");break; 
+        case tk_T_FLOAT64:write_dump( "tk_FLOAT64","float64");break; 
+        case tk_T_COMPLEX64:write_dump( "tk_T_COMPLEX64","complex64");break; 
+        case tk_T_COMPLEX128:write_dump( "tk_T_COMPLEX128","complex128");break;
+
+        //case tk_ADD:write_dump( "tk_ADD","+");break;
+        //case tk_SUB:write_dump( "tk_SUB","-");break; 
+        //case tk_MUL:write_dump( "tk_MUL","*");break; 
+        ////case tk_DIV:write_dump( "tk_DIV","/");break; 
+        //case tk_MOD:write_dump( "tk_MOD","%");break; 
+        //case tk_AND:write_dump( "tk_AND","&");break; 
+        //case tk_OR:write_dump( "tk_OR","|");break; 
+        //case tk_XOR:write_dump( "tk_XOR","^");break; 
+        //case tk_ASSIGN:write_dump( "tk_ASSIGN","=");break; 
+        //case tk_LPAREN:write_dump( "tk_LPAREN","(");break; 
+        //case tk_RPAREN:write_dump( "tk_RPAREN",")");break; 
+        //case tk_LSBRACKET:write_dump( "tk_LSBRACKET","[");break; 
+        //case tk_RSBRACKET:write_dump( "tk_RSBRACKET","]");break; 
+        //case tk_LCBRACKET:write_dump( "tk_LCBRACKET","{");break; 
+        //case tk_RCBRACKET:write_dump( "tk_RCBRACKET","}");break; 
+        //case tk_COMMA:write_dump( "tk_COMMA",",");break; 
+        //case tk_DOT:write_dump( "tk_DOT",".");break; 
+        //case tk_SEMI:write_dump( "tk_SEMI",";");break; 
+        //case tk_UNDERSCORE:write_dump( "tk_UNDERSCORE","_");break; 
+        //case tk_COLON:write_dump( "tk_COLON",":");break; 
+        //case tk_LSHIFT:write_dump( "tk_LSHIFT","<<");break; 
+        //case tk_RSHIFT:write_dump( "tk_RSHIFT",">>");break;
+        //case tk_EQXOR:write_dump( "tk_EQXOR","^=");break; 
+        //case tk_EQOR: write_dump( "tk_EQOR","|=");break;
+        //case tk_EQAND:write_dump( "tk_EQAND","&=");break; 
+        //case tk_EQANDXOR:write_dump( "tk_EQANDXOR","&^=");break; 
+        //case tk_EQRSHIFT:write_dump( "tk_EQRSHIFT",">>=");break; 
+        //case tk_LOGICAND:write_dump( "tk_LOGICAND","&&");break; 
+        //case tk_EQLSHIFT:write_dump( "tk_EQLSHIFT","<<=");break; 
+        //case tk_LOGICOR:write_dump( "tk_LOGICOR","||");break;
+        //case tk_EQADD:write_dump( "tk_EQADD","+=");break;
+        //case tk_EQSUB:write_dump( "tk_EQSUB","-=");break; 
+        //case tk_EQMUL:write_dump( "tk_EQMUL","*=");break; 
+        //case tk_EQDIV:write_dump( "tk_EQDIV","/=");break;
+        //case tk_EQMOD:write_dump( "tk_EQMOD","%=");break; 
+        //case tk_ANDXOR:write_dump( "tk_ANDXOR","&^");break; 
+        //case tk_NEG:write_dump( "tk_NEG","!");break; 
+        //case tk_LSS:write_dump( "tk_LSS","<");break;
+        //case tk_GRT:write_dump( "tk_GRT",">");break; 
+        //case tk_NOTEQ:write_dump( "tk_NOTEQ","!=");break; 
+        //case tk_EQ:write_dump( "tk_EQ","==");break; 
+        //case tk_EQLSS:write_dump( "tk_EQLSS","<=");break; 
+        //case tk_EQGRT:write_dump( "tk_EQGRT",">=");break; 
+        //case tk_SHORTDECL:write_dump( "tk_SHORTDECL",":=");break; 
+        //case tk_ARROW:write_dump( "tk_ARROW","<-");break; 
+        //case tk_INC:write_dump( "tk_INC","++");break; 
+        //case tk_DEC:write_dump( "tk_DEC","--");break; 
+        //case tk_ELLIPSIS:write_dump( "tk_ELLIPSIS","...");break;
+        //case tk_NUM: fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n", yylval.semantic_value); break;     
+        //case tk_STRINGLIT: fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_STRINGLIT\t\tSemanticValue: '%hs'\n", yylval.semantic_value); break;
+        //case tk_IDENT:  fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: '%hs'\n", yylval.semantic_value); break;
+        case tk_TRUE: write_dump("tk_TRUE", "true");break;
+        case tk_FALSE: write_dump("tk_FALSE", "false"); break;
         }
 }
+//static Token token;
+// void lex()
+// {   if (TOKENSDUMP == 1)
+//         create_dump();
+//     Token token;
+//     struct timeb start, end;
+//     ftime(&start);
+//     do{
+//         token = yylex();
 
-void lex()
-{   if (TOKENSDUMP == 1)
-        create_dump();
-    Token token;
-    struct timeb start, end;
-    ftime(&start);
-    do{
-        token = get_token();
+//     if (TOKENSDUMP == 1)
+//         start_dump(token);
 
-    if (TOKENSDUMP == 1)
-        start_dump(token);
+//     }while(token.tokenType != tk_EOF);
 
-    }while(token.tokenType != tk_EOF);
-
-    ftime(&end);
-    double diff = (double) (1000.0 * (end.time - start.time) + (end.millitm - start.millitm));
-    if (TOKENSDUMP == 1)
-        close_dump();
-    printf("\nLexing time: %f seconds = %f milliseconds = %f microseconds",diff/1000, diff, diff*(double)1000);
-    fclose(source_fp);
-}
+//     ftime(&end);
+//     double diff = (double) (1000.0 * (end.time - start.time) + (end.millitm - start.millitm));
+//     if (TOKENSDUMP == 1)
+//         close_dump();
+//     printf("\nLexing time: %f seconds = %f milliseconds = %f microseconds",diff/1000, diff, diff*(double)1000);
+//     //fclose(source_fp);
+// }

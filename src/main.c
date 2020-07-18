@@ -2,20 +2,37 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
-#include "lexer/lexer.h"
+#include <sys\timeb.h> 
+//#include "lexer/lexer.h"
+#include "bisonparser/parser.h"
 
+extern void create_dump();
+long TOKENSDUMP;
 
 FILE *source_fp;
+FILE* tokens_stream_dump;
 
 int main(int argc, char *argv[])
 {
   
     if (argc >= 2){
         TOKENSDUMP  = strtol(argv[2], NULL, 10);
+        if (TOKENSDUMP == 1)
+            create_dump();
         errno_t err = fopen_s(&source_fp, argv[1], "r");
         if (err == 0){
-            printf("\nBegin lexing %s\n\n", argv[1]);
-            lex();
+            printf("\nBegin parsing %s\n\n", argv[1]);
+           // lex();
+            struct timeb start, end;
+            ftime(&start);
+
+            yyparse(); // call bison that call internally our yylex() by extern
+
+            fclose(source_fp);
+            fclose(tokens_stream_dump);
+            ftime(&end);
+            double diff = (double)(1000.0 * (end.time - start.time) + (end.millitm - start.millitm));
+            printf("\nLexing time: %f seconds = %f milliseconds = %f microseconds", diff / 1000, diff, diff * (double)1000);
         }else{
           fprintf(stderr, "Error: can't open source file %s ", argv[1]); exit(1);
         }
@@ -25,3 +42,7 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+
+
+// ----^ save line; upper all is valid !!!!!!!!!!!!!!!!
+

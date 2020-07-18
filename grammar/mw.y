@@ -1,7 +1,15 @@
 %defines "src/bisonparser/parser.h"
+%{
+    #include <stdio.h> /* for printf and e.g */
+    extern int yylex(); /*interface to the handwritten lexer*/
+    extern void yyerror(const char *fmt, ...); /*iterface to the handwritten lexer */
+%}
+
+%union{
+    char *semantic_value; // for storing semantic values from stringlit, num or ident
+}
 
 /*Original keywords*/
-%token tk_EOF
 %token tk_BREAK
 %token tk_CASE
 %token tk_CHAN
@@ -86,6 +94,7 @@
 %token tk_LSHIFT
 %token tk_RSHIFT
 %token tk_EQXOR
+%token tk_EQOR
 %token tk_EQAND 
 %token tk_EQANDXOR 
 %token tk_EQRSHIFT
@@ -112,13 +121,25 @@
 %token tk_INC 
 %token tk_DEC 
 %token tk_ELLIPSIS
-%token tk_STRINGLIT
-%token tk_NUM 
-%token tk_IDENT 
+%token <semantic_value> tk_STRINGLIT
+%token <semantic_value> tk_NUM 
+%token <semantic_value> tk_IDENT 
 %token tk_TRUE 
 %token tk_FALSE
 
 %%
-file: package 
+
+file:
+    package_decl
+;
+
+package_decl:
+   package
+   | package_decl package
+;
+
 package:
-    tk_PACKAGE
+    tk_PACKAGE tk_IDENT tk_SEMI
+;
+
+
