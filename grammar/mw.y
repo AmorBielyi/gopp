@@ -1,6 +1,7 @@
 %defines "src/bisonparser/parser.h"
 %{
     #include <stdio.h> /* for printf and e.g */
+    #include <string.h>
     extern int yylex(); /*interface to the handwritten lexer*/
     extern void yyerror(const char *fmt, ...); /*iterface to the handwritten lexer */
 %}
@@ -133,26 +134,33 @@
 %%
 
 source: {yyerror("Source can't be empty; expected package statement");}
-    | package_stmt {yyerror("expected ';' after package name");}
-    | package_stmt tk_SEMI  {yyerror("source can't contain only package, expected at least one statement or/and declaration");}
-    | package_stmt tk_SEMI stmts 
+    | package_stmt {yyerror("expected ';'");}
+    | package_stmt tk_SEMI  {yyerror("unrecongnized symbol or expected declaration");}
+    | package_stmt tk_SEMI 
+      top_level_decl 
 ;
 
 package_stmt: 
-    tk_PACKAGE tk_IDENT {printf("package defined: '%s'\n", $2);}
+    tk_PACKAGE tk_IDENT {
+        if (strcmp($2, "_") == 0)
+            yyerror("package name can't be only '_'");
+        printf("package defined: '%s'\n", $2);
+    }
+    | tk_PACKAGE tk_NUM {yyerror("pakcage name can't be integer");}
+    | tk_PACKAGE tk_STRINGLIT {yyerror("package name can't be string");}
 ;
 
-stmts:
-    stmt 
-    | stmts stmt  /* its our main recusrion rule for every infinite global statements and/or declaration */
+top_level_decl:
+    decl 
+    | top_level_decl decl  /* its our main recusrion rule for every infinite global statements and/or declaration */
 ;
 
-stmt: /* add here any global statement or declaration what you need   */
-     include_stmts  
-    | class_stmts
+decl: /* add here any global declaration what you need   */
+     include_decl  
+    | class_decl
 ;
 
-include_stmts:
+include_decl:
   include
   ;
 
@@ -161,7 +169,7 @@ include:
     | tk_GOINCLUDE tk_STRINGLIT {printf("#goinclude defined : '%s'\n", $2);}
 ;
 
-class_stmts:
+class_decl:
     class 
  ;
 

@@ -1,5 +1,5 @@
-package _☢cor☢e;
-#goinclude "fmt"
+package _☢main☢;
+#goinclude "fmt/hello"
 #goinclude "http"
 #goinclude "crypt"
 #include "src/main/core"
