@@ -4,6 +4,8 @@
     #include <string.h>
     extern int yylex(); /*interface to the handwritten lexer*/
     extern void yyerror(const char *fmt, ...); /*iterface to the handwritten lexer */
+    extern char* text;
+    
 %}
 
 %union{
@@ -131,14 +133,17 @@
 %type <semantic_value> package_stmt
 %type <semantic_value> include
 
+
 %%
 
 source: {yyerror("Source can't be empty; expected package statement");}
+    | tk_NUM tk_ADD tk_NUM {printf("%s %s\n", text, text);}
     | package_stmt {yyerror("expected ';'");}
     | package_stmt tk_SEMI  {yyerror("unrecongnized symbol or expected declaration");}
     | package_stmt tk_SEMI 
       top_level_decl 
 ;
+
 
 package_stmt: 
     tk_PACKAGE tk_IDENT {
@@ -161,17 +166,24 @@ decl: /* add here any global declaration what you need   */
 ;
 
 include_decl:
-  include
+     include
   ;
 
 include:
-    tk_INCLUDE tk_STRINGLIT  {printf("#include defined: '%s'\n", $2);}
-    | tk_GOINCLUDE tk_STRINGLIT {printf("#goinclude defined : '%s'\n", $2);}
+    tk_INCLUDE tk_STRINGLIT  {printf("include source defined: '%s'\n", $2);}
+    | tk_GOINCLUDE tk_STRINGLIT {printf("go include source defined : '%s'\n", $2);}
     | tk_GOINCLUDE tk_NUM {yyerror("go include source can't be integer");}
     | tk_GOINCLUDE tk_IDENT {yyerror("go include source can't be symbol");}
     | tk_INCLUDE tk_IDENT {yyerror("include source can't be symbol");}
     | tk_INCLUDE tk_NUM {yyerror("include source can't be integer");}
+    | tk_INCLUDE tk_IDENT tk_STRINGLIT {printf("%s \n", $2);}
+    | tk_GOINCLUDE tk_IDENT tk_STRINGLIT  {printf("go include source defined: '%s' with alias '%s'\n", $3,$2);}
 ;
+
+
+
+
+
 
 class_decl:
     class 
