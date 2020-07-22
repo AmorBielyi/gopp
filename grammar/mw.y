@@ -167,6 +167,10 @@ include_decl:
 include:
     tk_INCLUDE tk_STRINGLIT  {printf("#include defined: '%s'\n", $2);}
     | tk_GOINCLUDE tk_STRINGLIT {printf("#goinclude defined : '%s'\n", $2);}
+    | tk_GOINCLUDE tk_NUM {yyerror("go include source can't be integer");}
+    | tk_GOINCLUDE tk_IDENT {yyerror("go include source can't be symbol");}
+    | tk_INCLUDE tk_IDENT {yyerror("include source can't be symbol");}
+    | tk_INCLUDE tk_NUM {yyerror("include source can't be integer");}
 ;
 
 class_decl:
