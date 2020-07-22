@@ -139,7 +139,9 @@
 %%
 
 source: {yyerror("Source can't be empty; expected package statement");}
-    /* this is test rule for testing lookuped semantic values*/
+
+    /* !!!!!! MUST_BE_DELETED this is test rule for testing lookuped semantic values !!!!!! MUST_BE_DELETED*/
+    
     | tk_CLASS tk_IDENT {printf("class name: %s ", get_lookuped_semantic_value_ident());}
       tk_EXTENDS tk_IDENT {printf("class extends: %s ", get_lookuped_semantic_value_ident());}
       tk_IMPLEMENTS tk_STRINGLIT {printf("class implements: %s ", get_lookuped_semantic_value_string());}

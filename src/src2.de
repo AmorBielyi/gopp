@@ -6,6 +6,6 @@
 #goinclude "crypt"
 #include "src/main/core" 
 #include teta "src/main/core" 
-#goinclude omicron "src/main/subcore"
+ #goinclude omicron "src/main/subcore"
 class
 class

@@ -634,9 +634,9 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,   141,   141,   143,   144,   145,   143,   149,   150,   151,
-     157,   163,   164,   168,   169,   173,   174,   178,   182,   182,
-     185,   185,   188,   189,   190,   191,   201,   205
+       0,   141,   141,   145,   146,   147,   145,   151,   152,   153,
+     159,   165,   166,   170,   171,   175,   176,   180,   184,   184,
+     187,   187,   190,   191,   192,   193,   203,   207
 };
 #endif
 
@@ -1479,43 +1479,43 @@ yyreduce:
     break;
 
   case 3:
-#line 143 "grammar\\mw.y"
+#line 145 "grammar\\mw.y"
                         {printf("class name: %s ", get_lookuped_semantic_value_ident());}
 #line 1485 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 4:
-#line 144 "grammar\\mw.y"
+#line 146 "grammar\\mw.y"
                           {printf("class extends: %s ", get_lookuped_semantic_value_ident());}
 #line 1491 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 5:
-#line 145 "grammar\\mw.y"
+#line 147 "grammar\\mw.y"
                                  {printf("class implements: %s ", get_lookuped_semantic_value_string());}
 #line 1497 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 6:
-#line 146 "grammar\\mw.y"
+#line 148 "grammar\\mw.y"
                    {printf("ext: %s ", get_lookuped_semantic_value_string());}
 #line 1503 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 7:
-#line 149 "grammar\\mw.y"
+#line 151 "grammar\\mw.y"
                    {yyerror("expected ';'");}
 #line 1509 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 8:
-#line 150 "grammar\\mw.y"
+#line 152 "grammar\\mw.y"
                             {yyerror("unrecongnized symbol or expected declaration");}
 #line 1515 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 10:
-#line 157 "grammar\\mw.y"
+#line 159 "grammar\\mw.y"
                         {
         //printf("lookuped: %s", get_lookuped_semantic_value());
         if (strcmp(get_lookuped_semantic_value_ident(), "_") == 0)
@@ -1526,61 +1526,61 @@ yyreduce:
     break;
 
   case 11:
-#line 163 "grammar\\mw.y"
+#line 165 "grammar\\mw.y"
                         {yyerror("pakcage name can't be integer");}
 #line 1532 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 12:
-#line 164 "grammar\\mw.y"
+#line 166 "grammar\\mw.y"
                               {yyerror("package name can't be string");}
 #line 1538 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 18:
-#line 182 "grammar\\mw.y"
+#line 184 "grammar\\mw.y"
                        {printf("include source: alias %s ", get_lookuped_semantic_value_ident());}
 #line 1544 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 19:
-#line 183 "grammar\\mw.y"
+#line 185 "grammar\\mw.y"
                  {printf(" source %s\n",get_lookuped_semantic_value_string());}
 #line 1550 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 20:
-#line 185 "grammar\\mw.y"
+#line 187 "grammar\\mw.y"
                            {printf("go include source: alias %s ", get_lookuped_semantic_value_ident());}
 #line 1556 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 21:
-#line 186 "grammar\\mw.y"
+#line 188 "grammar\\mw.y"
                  {printf(" source %s\n",get_lookuped_semantic_value_string());}
 #line 1562 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 22:
-#line 188 "grammar\\mw.y"
+#line 190 "grammar\\mw.y"
                                {printf("include source defined: '%s'\n", get_lookuped_semantic_value_string());}
 #line 1568 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 23:
-#line 189 "grammar\\mw.y"
+#line 191 "grammar\\mw.y"
                                 {printf("go include source defined : '%s'\n", get_lookuped_semantic_value_string());}
 #line 1574 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 24:
-#line 190 "grammar\\mw.y"
+#line 192 "grammar\\mw.y"
                           {yyerror("go include source can't be integer");}
 #line 1580 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 25:
-#line 191 "grammar\\mw.y"
+#line 193 "grammar\\mw.y"
                         {yyerror("include source can't be integer");}
 #line 1586 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
