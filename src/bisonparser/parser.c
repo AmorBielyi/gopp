@@ -72,10 +72,13 @@
     #include <string.h>
     extern int yylex(); /*interface to the handwritten lexer*/
     extern void yyerror(const char *fmt, ...); /*iterface to the handwritten lexer */
-    extern char* text;
+    extern char* get_lookuped_semantic_value_ident();
+    extern char* get_lookuped_semantic_value_string();
+    extern char* get_lookuped_semantic_value_num();
+
     
 
-#line 79 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 82 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -239,11 +242,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 11 "grammar\\mw.y"
+#line 14 "grammar\\mw.y"
 
-    char *semantic_value; // for storing semantic values from stringlit, num or ident
+    char *semantic_value_ident; // for storing semantic values from stringlit, num or ident
+    char *semantic_value_string;
+    char *semantic_value_num;
 
-#line 247 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 252 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -562,16 +567,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  9
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   89
+#define YYLAST   26
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  112
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  9
+#define YYNNTS  14
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  24
+#define YYNRULES  29
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  30
+#define YYNSTATES  39
 
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   366
@@ -629,9 +634,9 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,   139,   139,   140,   141,   142,   143,   149,   154,   155,
-     159,   160,   164,   165,   169,   173,   174,   175,   176,   177,
-     178,   179,   180,   189,   193
+       0,   141,   141,   142,   143,   144,   142,   146,   147,   148,
+     154,   160,   161,   165,   166,   170,   171,   175,   179,   180,
+     181,   182,   183,   184,   185,   185,   186,   186,   195,   199
 };
 #endif
 
@@ -661,8 +666,9 @@ static const char *const yytname[] =
   "tk_NEG", "tk_LSS", "tk_GRT", "tk_NOTEQ", "tk_EQ", "tk_EQLSS",
   "tk_EQGRT", "tk_SHORTDECL", "tk_ARROW", "tk_INC", "tk_DEC",
   "tk_ELLIPSIS", "tk_STRINGLIT", "tk_NUM", "tk_IDENT", "tk_TRUE",
-  "tk_FALSE", "$accept", "source", "package_stmt", "top_level_decl",
-  "decl", "include_decl", "include", "class_decl", "class", YY_NULLPTR
+  "tk_FALSE", "$accept", "source", "$@1", "$@2", "$@3", "package_stmt",
+  "top_level_decl", "decl", "include_decl", "include", "$@4", "$@5",
+  "class_decl", "class", YY_NULLPTR
 };
 #endif
 
@@ -691,7 +697,7 @@ static const yytype_int16 yytoknum[] =
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-1)
+#define YYTABLE_NINF (-27)
 
 #define yytable_value_is_error(Yyn) \
   0
@@ -700,9 +706,10 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -19,  -105,   -48,    14,   -61,  -106,  -106,  -106,   -92,  -106,
-     -26,  -106,  -106,  -102,   -99,   -26,  -106,  -106,  -106,  -106,
-    -106,  -106,  -106,   -90,  -106,  -106,   -89,  -106,  -106,  -106
+     -18,  -105,  -101,    10,   -60,  -106,  -106,  -106,  -106,  -106,
+     -27,   -11,  -106,  -102,   -94,   -27,  -106,  -106,  -106,  -106,
+    -106,   -91,  -106,  -106,   -88,  -106,  -106,   -87,  -106,  -106,
+     -86,   -85,    -6,  -106,  -106,   -83,  -106,   -82,  -106
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -710,21 +717,24 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       2,     0,     0,     0,     4,     9,     8,     7,     0,     1,
-       5,     3,    24,     0,     0,     6,    10,    12,    14,    13,
-      23,    15,    20,    19,    16,    17,    18,    11,    21,    22
+       2,     0,     0,     0,     7,    12,    11,    10,     3,     1,
+       8,     0,    29,     0,     0,     9,    13,    15,    17,    16,
+      28,     0,    18,    23,    22,    19,    20,    21,    14,     4,
+       0,     0,     0,    25,    27,     0,     5,     0,     6
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-    -106,  -106,  -106,  -106,     4,  -106,  -106,  -106,  -106
+    -106,  -106,  -106,  -106,  -106,  -106,  -106,    11,  -106,  -106,
+    -106,  -106,  -106,  -106
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     3,     4,    15,    16,    17,    18,    19,    20
+      -1,     3,    11,    32,    37,     4,    15,    16,    17,    18,
+      30,    31,    19,    20
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -732,53 +742,42 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-       1,    12,     5,     6,     7,    21,    22,    23,    24,    25,
-      26,     8,    13,    14,     9,    10,    11,    28,    29,    27,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,     2
+      12,     1,     5,     6,     7,    22,    23,    24,     8,     2,
+       9,    13,    14,    25,    26,    27,    10,    21,    29,   -24,
+     -26,    33,    34,    35,    36,    38,    28
 };
 
 static const yytype_int8 yycheck[] =
 {
-      19,    27,   107,   108,   109,   107,   108,   109,   107,   108,
-     109,    59,    38,    39,     0,    76,   108,   107,   107,    15,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
-      -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   108
+      27,    19,   107,   108,   109,   107,   108,   109,   109,    27,
+       0,    38,    39,   107,   108,   109,    76,    28,   109,   107,
+     107,   107,   107,    29,   107,   107,    15
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    19,   108,   113,   114,   107,   108,   109,    59,     0,
-      76,   108,    27,    38,    39,   115,   116,   117,   118,   119,
-     120,   107,   108,   109,   107,   108,   109,   116,   107,   107
+       0,    19,    27,   113,   117,   107,   108,   109,   109,     0,
+      76,   114,    27,    38,    39,   118,   119,   120,   121,   124,
+     125,    28,   107,   108,   109,   107,   108,   109,   119,   109,
+     122,   123,   115,   107,   107,    29,   107,   116,   107
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,   112,   113,   113,   113,   113,   113,   114,   114,   114,
-     115,   115,   116,   116,   117,   118,   118,   118,   118,   118,
-     118,   118,   118,   119,   120
+       0,   112,   113,   114,   115,   116,   113,   113,   113,   113,
+     117,   117,   117,   118,   118,   119,   119,   120,   121,   121,
+     121,   121,   121,   121,   122,   121,   123,   121,   124,   125
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     0,     3,     1,     2,     3,     2,     2,     2,
-       1,     2,     1,     1,     1,     2,     2,     2,     2,     2,
-       2,     3,     3,     1,     1
+       0,     2,     0,     0,     0,     0,    10,     1,     2,     3,
+       2,     2,     2,     1,     2,     1,     1,     1,     2,     2,
+       2,     2,     2,     2,     0,     4,     0,     4,     1,     1
 };
 
 
@@ -1474,101 +1473,132 @@ yyreduce:
   switch (yyn)
     {
   case 2:
-#line 139 "grammar\\mw.y"
+#line 141 "grammar\\mw.y"
         {yyerror("Source can't be empty; expected package statement");}
-#line 1480 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 1479 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 3:
-#line 140 "grammar\\mw.y"
-                           {printf("%s %s\n", text, text-1);}
-#line 1486 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 142 "grammar\\mw.y"
+                        {printf("class name: %s ", get_lookuped_semantic_value_ident());}
+#line 1485 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 4:
-#line 141 "grammar\\mw.y"
-                   {yyerror("expected ';'");}
-#line 1492 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 143 "grammar\\mw.y"
+                         {printf("class extends: %s ", get_lookuped_semantic_value_ident());}
+#line 1491 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 5:
-#line 142 "grammar\\mw.y"
-                            {yyerror("unrecongnized symbol or expected declaration");}
-#line 1498 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 144 "grammar\\mw.y"
+                                 {printf("class implements: %s ", get_lookuped_semantic_value_ident());}
+#line 1497 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+    break;
+
+  case 6:
+#line 145 "grammar\\mw.y"
+                   {printf("ext: %s ", get_lookuped_semantic_value_string());}
+#line 1503 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 7:
-#line 149 "grammar\\mw.y"
-                        {
-        if (strcmp((yyvsp[0].semantic_value), "_") == 0)
-            yyerror("package name can't be only '_'");
-        printf("package defined: '%s'\n", (yyvsp[0].semantic_value));
-    }
-#line 1508 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 146 "grammar\\mw.y"
+                   {yyerror("expected ';'");}
+#line 1509 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 8:
+#line 147 "grammar\\mw.y"
+                            {yyerror("unrecongnized symbol or expected declaration");}
+#line 1515 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+    break;
+
+  case 10:
 #line 154 "grammar\\mw.y"
-                        {yyerror("pakcage name can't be integer");}
-#line 1514 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
-    break;
-
-  case 9:
-#line 155 "grammar\\mw.y"
-                              {yyerror("package name can't be string");}
-#line 1520 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
-    break;
-
-  case 15:
-#line 173 "grammar\\mw.y"
-                             {printf("include source defined: '%s'\n", (yyvsp[0].semantic_value));}
+                        {
+        //printf("lookuped: %s", get_lookuped_semantic_value());
+        if (strcmp(get_lookuped_semantic_value_ident(), "_") == 0)
+            yyerror("package name can't be only '_'");
+        printf("package defined: '%s'\n", get_lookuped_semantic_value_ident());
+    }
 #line 1526 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 16:
-#line 174 "grammar\\mw.y"
-                                {printf("go include source defined : '%s'\n", (yyvsp[0].semantic_value));}
+  case 11:
+#line 160 "grammar\\mw.y"
+                        {yyerror("pakcage name can't be integer");}
 #line 1532 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 17:
-#line 175 "grammar\\mw.y"
-                          {yyerror("go include source can't be integer");}
+  case 12:
+#line 161 "grammar\\mw.y"
+                              {yyerror("package name can't be string");}
 #line 1538 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 18:
-#line 176 "grammar\\mw.y"
-                            {yyerror("go include source can't be symbol");}
+#line 179 "grammar\\mw.y"
+                             {printf("include source defined: '%s'\n", get_lookuped_semantic_value_string());}
 #line 1544 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 19:
-#line 177 "grammar\\mw.y"
-                          {yyerror("include source can't be symbol");}
+#line 180 "grammar\\mw.y"
+                                {printf("go include source defined : '%s'\n", get_lookuped_semantic_value_string());}
 #line 1550 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 20:
-#line 178 "grammar\\mw.y"
-                        {yyerror("include source can't be integer");}
+#line 181 "grammar\\mw.y"
+                          {yyerror("go include source can't be integer");}
 #line 1556 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 21:
-#line 179 "grammar\\mw.y"
-                                       {printf("%s \n", (yyvsp[-1].semantic_value));}
+#line 182 "grammar\\mw.y"
+                            {yyerror("go include source can't be symbol");}
 #line 1562 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 22:
-#line 180 "grammar\\mw.y"
-                                          {printf("go include source defined: '%s' with alias '%s'\n", (yyvsp[0].semantic_value),(yyvsp[-1].semantic_value));}
+#line 183 "grammar\\mw.y"
+                          {yyerror("include source can't be symbol");}
 #line 1568 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
+  case 23:
+#line 184 "grammar\\mw.y"
+                        {yyerror("include source can't be integer");}
+#line 1574 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+    break;
 
-#line 1572 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+  case 24:
+#line 185 "grammar\\mw.y"
+                         {printf("include source: alias %s ", get_lookuped_semantic_value_ident());}
+#line 1580 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+    break;
+
+  case 25:
+#line 185 "grammar\\mw.y"
+                                                                                                                  {printf(" source %s\n",get_lookuped_semantic_value_string());}
+#line 1586 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+    break;
+
+  case 26:
+#line 186 "grammar\\mw.y"
+                            {printf("go include source: alias  %s", get_lookuped_semantic_value_ident());}
+#line 1592 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+    break;
+
+  case 27:
+#line 186 "grammar\\mw.y"
+                                                                                                                         {printf("source '%s'\n",get_lookuped_semantic_value_string());}
+#line 1598 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+    break;
+
+
+#line 1602 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
 
       default: break;
     }

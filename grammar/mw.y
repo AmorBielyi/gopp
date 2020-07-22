@@ -4,12 +4,17 @@
     #include <string.h>
     extern int yylex(); /*interface to the handwritten lexer*/
     extern void yyerror(const char *fmt, ...); /*iterface to the handwritten lexer */
-    extern char* text;
+    extern char* get_lookuped_semantic_value_ident();
+    extern char* get_lookuped_semantic_value_string();
+    extern char* get_lookuped_semantic_value_num();
+
     
 %}
 
 %union{
-    char *semantic_value; // for storing semantic values from stringlit, num or ident
+    char *semantic_value_ident; // for storing semantic values from stringlit, num or ident
+    char *semantic_value_string;
+    char *semantic_value_num;
 }
 
 /*Original keywords*/
@@ -124,20 +129,20 @@
 %token tk_INC 
 %token tk_DEC 
 %token tk_ELLIPSIS
-%token <semantic_value> tk_STRINGLIT
-%token <semantic_value> tk_NUM 
-%token <semantic_value> tk_IDENT 
+%token <semantic_value_string> tk_STRINGLIT
+%token <semantic_value_num> tk_NUM 
+%token <semantic_value_ident> tk_IDENT 
 %token tk_TRUE 
 %token tk_FALSE
-
-%type <semantic_value> package_stmt
-%type <semantic_value> include
 
 
 %%
 
 source: {yyerror("Source can't be empty; expected package statement");}
-    | tk_NUM tk_ADD tk_NUM {printf("%s %s\n", text, text);}
+    | tk_CLASS tk_IDENT {printf("class name: %s ", get_lookuped_semantic_value_ident());}
+     tk_EXTENDS tk_IDENT {printf("class extends: %s ", get_lookuped_semantic_value_ident());}
+      tk_IMPLEMENTS tk_STRINGLIT {printf("class implements: %s ", get_lookuped_semantic_value_ident());}
+      tk_STRINGLIT {printf("ext: %s ", get_lookuped_semantic_value_string());}
     | package_stmt {yyerror("expected ';'");}
     | package_stmt tk_SEMI  {yyerror("unrecongnized symbol or expected declaration");}
     | package_stmt tk_SEMI 
@@ -147,9 +152,10 @@ source: {yyerror("Source can't be empty; expected package statement");}
 
 package_stmt: 
     tk_PACKAGE tk_IDENT {
-        if (strcmp($2, "_") == 0)
+        //printf("lookuped: %s", get_lookuped_semantic_value());
+        if (strcmp(get_lookuped_semantic_value_ident(), "_") == 0)
             yyerror("package name can't be only '_'");
-        printf("package defined: '%s'\n", $2);
+        printf("package defined: '%s'\n", get_lookuped_semantic_value_ident());
     }
     | tk_PACKAGE tk_NUM {yyerror("pakcage name can't be integer");}
     | tk_PACKAGE tk_STRINGLIT {yyerror("package name can't be string");}
@@ -170,14 +176,14 @@ include_decl:
   ;
 
 include:
-    tk_INCLUDE tk_STRINGLIT  {printf("include source defined: '%s'\n", $2);}
-    | tk_GOINCLUDE tk_STRINGLIT {printf("go include source defined : '%s'\n", $2);}
+    tk_INCLUDE tk_STRINGLIT  {printf("include source defined: '%s'\n", get_lookuped_semantic_value_string());}
+    | tk_GOINCLUDE tk_STRINGLIT {printf("go include source defined : '%s'\n", get_lookuped_semantic_value_string());}
     | tk_GOINCLUDE tk_NUM {yyerror("go include source can't be integer");}
     | tk_GOINCLUDE tk_IDENT {yyerror("go include source can't be symbol");}
     | tk_INCLUDE tk_IDENT {yyerror("include source can't be symbol");}
     | tk_INCLUDE tk_NUM {yyerror("include source can't be integer");}
-    | tk_INCLUDE tk_IDENT tk_STRINGLIT {printf("%s \n", $2);}
-    | tk_GOINCLUDE tk_IDENT tk_STRINGLIT  {printf("go include source defined: '%s' with alias '%s'\n", $3,$2);}
+    | tk_INCLUDE tk_IDENT{printf("include source: alias %s ", get_lookuped_semantic_value_ident());} tk_STRINGLIT {printf(" source %s\n",get_lookuped_semantic_value_string());}
+    | tk_GOINCLUDE tk_IDENT {printf("go include source: alias  %s", get_lookuped_semantic_value_ident());} tk_STRINGLIT  {printf("source '%s'\n",get_lookuped_semantic_value_string());}
 ;
 
 

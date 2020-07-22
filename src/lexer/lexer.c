@@ -26,6 +26,19 @@ typedef int TokenType;
 int yylex();
 void write_dump(char* token_name, char* token_value);
 void dump_keywords(TokenType token);
+
+char *backup_num = NULL;
+char *backup_ident = NULL;
+char *backup_string = NULL;
+
+int ident_lex_iter = -1;
+int string_lex_iter = -1;
+int num_lex_inter = -1;
+
+char* get_lookuped_semantic_value_ident();
+char* get_lookuped_semantic_value_string();
+char* get_lookuped_semantic_value_num();
+
 // typedef enum 
 // {
 //   tk_EOF,
@@ -97,6 +110,29 @@ void yyerror(const char *fmt, ...)
     exit(1);
 }
 
+char* get_lookuped_semantic_value_ident() {
+    if ( backup_ident != NULL)
+        return backup_ident;
+   
+    return yylval.semantic_value_ident;
+         
+}
+
+char* get_lookuped_semantic_value_string() {
+    if (backup_string != NULL)
+        return backup_string;
+    
+    return yylval.semantic_value_string;
+
+}
+
+char* get_lookuped_semantic_value_num() {
+    if (backup_num != NULL)
+        return backup_num;
+    return yylval.semantic_value_num;
+
+}
+
 static int next_ch()
 {  /* get next char from our input */
     the_ch = getc(source_fp);
@@ -129,10 +165,10 @@ if (the_ch == '\\'){
 if(next_ch() != '\'')
     yyerror("Syntax error: multi-character constant");
 next_ch();
-yylval.semantic_value = (char *)n; // maybe error here 
+yylval.semantic_value_num = (char *)n; // maybe error here 
 
 if(TOKENSDUMP == 1)
-    fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n",line, col, yylval.semantic_value);
+    fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n",line, col, yylval.semantic_value_string);
 
 return tk_NUM;
 //return (Token){tk_NUM, err_line, err_col, {n}};
@@ -178,10 +214,22 @@ static TokenType string_lit(int start)
     da_append(text, '\0');
 
     next_ch();
-    yylval.semantic_value = text;
-    if (TOKENSDUMP == 1)
-        fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_STRINGLIT\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value);
-            
+    //yylval.semantic_value = text;
+    if (string_lex_iter == -1) {
+        backup_string = text;
+        string_lex_iter++;
+        
+        return tk_STRINGLIT;
+    }
+    if (string_lex_iter > -1) {
+        string_lex_iter--;
+        yylval.semantic_value_string = text;
+        if (TOKENSDUMP == 1)
+            fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_STRINGLIT\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value_string);
+        return tk_STRINGLIT;
+    }
+    
+    yylval.semantic_value_string = text;
     return tk_STRINGLIT;
     //return (Token){tk_STRINGLIT, err_line, err_col, text=text};
 }
@@ -262,10 +310,22 @@ static TokenType get_keyword_type(const char *ident)
     qsort(kwds, NELEMS(kwds), sizeof(kwds[0]), kwd_cmp);
     kwp = bsearch(&ident, kwds, NELEMS(kwds), sizeof(kwds[0]), kwd_cmp);
     if (kwp == NULL) {
-        yylval.semantic_value = text;
         if (TOKENSDUMP == 1)
-            fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value);
-        return tk_IDENT;
+            fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value_ident);
+        if (ident_lex_iter == -1) {
+            backup_ident = text;
+            ident_lex_iter++;
+            return tk_IDENT;
+        }
+        if (ident_lex_iter > -1) {
+            ident_lex_iter--;
+            yylval.semantic_value_ident = text;
+            return tk_IDENT;
+        }
+
+       // yylval.semantic_value = text;
+        
+       // return tk_IDENT;
     }
     
     if (TOKENSDUMP == 1) {
@@ -309,9 +369,9 @@ static TokenType ident_or_num()
              n = strtol(text, NULL, 0);
             if (n == LONG_MAX && errno == ERANGE)
                 yyerror("Syntax error: Number exceeds maximum value");
-            yylval.semantic_value = text;
+            yylval.semantic_value_num = text;
             if (TOKENSDUMP == 1)
-                fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value);
+                fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value_num);
             return tk_NUM;
             //return (Token){tk_NUM, err_line, err_col, text}; 
         } 

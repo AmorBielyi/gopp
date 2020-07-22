@@ -730,3 +730,512 @@ Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
 Source: Ln 1, Col 16		Token: tk_IDENT		SemanticValue: '☢core'
 Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
 Source: Ln 87, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 0		Token: tk_STRINGLIT		SemanticValue: 'fmt/hello'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 0		Token: tk_STRINGLIT		SemanticValue: 'crypt'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 0		Token: tk_STRINGLIT		SemanticValue: 'fmt/hello'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 0		Token: tk_STRINGLIT		SemanticValue: 'crypt'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 0		Token: tk_STRINGLIT		SemanticValue: 'fmt/hello'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 0		Token: tk_STRINGLIT		SemanticValue: 'crypt'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 0		Token: tk_STRINGLIT		SemanticValue: 'fmt/hello'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 0		Token: tk_STRINGLIT		SemanticValue: 'crypt'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 0		Token: tk_STRINGLIT		SemanticValue: 'fmt/hello'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 0		Token: tk_STRINGLIT		SemanticValue: 'crypt'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 0		Token: tk_STRINGLIT		SemanticValue: 'fmt/hello'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 0		Token: tk_STRINGLIT		SemanticValue: 'crypt'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 0		Token: tk_STRINGLIT		SemanticValue: 'fmt/hello'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 0		Token: tk_STRINGLIT		SemanticValue: 'crypt'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 0		Token: tk_STRINGLIT		SemanticValue: 'fmt/hello'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 0		Token: tk_STRINGLIT		SemanticValue: 'crypt'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 0		Token: tk_STRINGLIT		SemanticValue: 'fmt/hello'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 0		Token: tk_STRINGLIT		SemanticValue: 'crypt'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 0		Token: tk_STRINGLIT		SemanticValue: 'fmt/hello'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 0		Token: tk_STRINGLIT		SemanticValue: 'crypt'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 0		Token: tk_STRINGLIT		SemanticValue: 'fmt/hello'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 0		Token: tk_STRINGLIT		SemanticValue: 'crypt'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 0		Token: tk_STRINGLIT		SemanticValue: 'fmt/hello'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 0		Token: tk_STRINGLIT		SemanticValue: 'crypt'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 25		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 0		Token: tk_STRINGLIT		SemanticValue: 'fmt/hello'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 0		Token: tk_STRINGLIT		SemanticValue: 'crypt'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 25		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 28		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 1, Col 20		Token: tk_IDENT		SemanticValue: '(null)'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 25		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 12		Token: tk_IDENT		SemanticValue: 'gj'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 1, Col 20		Token: tk_IDENT		SemanticValue: '(null)'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 25		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 12		Token: tk_IDENT		SemanticValue: 'gj'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 1, Col 20		Token: tk_IDENT		SemanticValue: '(null)'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 25		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 12		Token: tk_IDENT		SemanticValue: 'gj'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 1, Col 20		Token: tk_IDENT		SemanticValue: '(null)'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 25		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 12		Token: tk_IDENT		SemanticValue: 'gj'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 1, Col 20		Token: tk_IDENT		SemanticValue: '(null)'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 12		Token: tk_IDENT		SemanticValue: 'gj'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 1, Col 20		Token: tk_IDENT		SemanticValue: '(null)'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 12		Token: tk_IDENT		SemanticValue: 'gj'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 1, Col 20		Token: tk_IDENT		SemanticValue: '(null)'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 25		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 12		Token: tk_IDENT		SemanticValue: 'gj'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 1, Col 20		Token: tk_IDENT		SemanticValue: '(null)'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 2, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 3, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 4, Col 0		Token: tk_STRINGLIT		SemanticValue: 'http'
+Source: Ln 4, Col 11		Token: tk_GOINCLUDE		Value: '#goinclude'
+Source: Ln 5, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 5, Col 25		Token: tk_STRINGLIT		SemanticValue: 'src/main/core'
+Source: Ln 6, Col 9		Token: tk_INCLUDE		Value: '#include'
+Source: Ln 6, Col 12		Token: tk_IDENT		SemanticValue: 'gj'
+Source: Ln 8, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 0		Token: tk_CLASS		Value: 'class'
+Source: Ln 9, Col 1		Token: tk_EOF

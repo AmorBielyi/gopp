@@ -165,11 +165,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 11 "grammar\\mw.y"
+#line 14 "grammar\\mw.y"
 
-    char *semantic_value; // for storing semantic values from stringlit, num or ident
+    char *semantic_value_ident; // for storing semantic values from stringlit, num or ident
+    char *semantic_value_string;
+    char *semantic_value_num;
 
-#line 173 "src/bisonparser/parser.h"
+#line 175 "src/bisonparser/parser.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
