@@ -139,10 +139,13 @@
 %%
 
 source: {yyerror("Source can't be empty; expected package statement");}
+    /* this is test rule for testing lookuped semantic values*/
     | tk_CLASS tk_IDENT {printf("class name: %s ", get_lookuped_semantic_value_ident());}
-     tk_EXTENDS tk_IDENT {printf("class extends: %s ", get_lookuped_semantic_value_ident());}
-      tk_IMPLEMENTS tk_STRINGLIT {printf("class implements: %s ", get_lookuped_semantic_value_ident());}
+      tk_EXTENDS tk_IDENT {printf("class extends: %s ", get_lookuped_semantic_value_ident());}
+      tk_IMPLEMENTS tk_STRINGLIT {printf("class implements: %s ", get_lookuped_semantic_value_string());}
       tk_STRINGLIT {printf("ext: %s ", get_lookuped_semantic_value_string());}
+
+
     | package_stmt {yyerror("expected ';'");}
     | package_stmt tk_SEMI  {yyerror("unrecongnized symbol or expected declaration");}
     | package_stmt tk_SEMI 
@@ -176,14 +179,17 @@ include_decl:
   ;
 
 include:
-    tk_INCLUDE tk_STRINGLIT  {printf("include source defined: '%s'\n", get_lookuped_semantic_value_string());}
+    tk_INCLUDE tk_IDENT{printf("include source: alias %s ", get_lookuped_semantic_value_ident());}
+    tk_STRINGLIT {printf(" source %s\n",get_lookuped_semantic_value_string());}
+    
+    | tk_GOINCLUDE tk_IDENT{printf("go include source: alias %s ", get_lookuped_semantic_value_ident());}
+    tk_STRINGLIT {printf(" source %s\n",get_lookuped_semantic_value_string());}
+
+    | tk_INCLUDE tk_STRINGLIT  {printf("include source defined: '%s'\n", get_lookuped_semantic_value_string());}
     | tk_GOINCLUDE tk_STRINGLIT {printf("go include source defined : '%s'\n", get_lookuped_semantic_value_string());}
     | tk_GOINCLUDE tk_NUM {yyerror("go include source can't be integer");}
-    | tk_GOINCLUDE tk_IDENT {yyerror("go include source can't be symbol");}
-    | tk_INCLUDE tk_IDENT {yyerror("include source can't be symbol");}
     | tk_INCLUDE tk_NUM {yyerror("include source can't be integer");}
-    | tk_INCLUDE tk_IDENT{printf("include source: alias %s ", get_lookuped_semantic_value_ident());} tk_STRINGLIT {printf(" source %s\n",get_lookuped_semantic_value_string());}
-    | tk_GOINCLUDE tk_IDENT {printf("go include source: alias  %s", get_lookuped_semantic_value_ident());} tk_STRINGLIT  {printf("source '%s'\n",get_lookuped_semantic_value_string());}
+    
 ;
 
 

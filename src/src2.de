@@ -1,9 +1,11 @@
-class myClass extends baseClass implements "lambda" "gf"
-// package _☢main☢;
-// #goinclude "fmt/hello"
-// #goinclude "http"
-// #goinclude "crypt"
-// #include "src/main/core" 
-// #include gj "src/main/core" 
-// class
-// class
+// class myClass extends baseClass implements "lambda" "gf"
+
+ package _☢main☢;
+#goinclude "fmt/hello"
+#goinclude "http"
+#goinclude "crypt"
+#include "src/main/core" 
+#include teta "src/main/core" 
+#goinclude omicron "src/main/subcore"
+class
+class
