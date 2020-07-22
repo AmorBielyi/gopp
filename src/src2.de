@@ -1,0 +1,7 @@
+package _☢cor☢e;
+#goinclude "fmt"
+#goinclude "http"
+#goinclude "crypt"
+#include "src/main/core"
+class
+class

@@ -557,18 +557,18 @@ union yyalloc
 #endif /* !YYCOPY_NEEDED */
 
 /* YYFINAL -- State number of the termination state.  */
-#define YYFINAL  6
+#define YYFINAL  5
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   4
+#define YYLAST   12
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  112
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  4
+#define YYNNTS  9
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  5
+#define YYNRULES  15
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  9
+#define YYNSTATES  19
 
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   366
@@ -626,7 +626,8 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,   133,   133,   137,   138,   142
+       0,   135,   135,   136,   137,   138,   142,   146,   147,   151,
+     152,   156,   160,   161,   165,   169
 };
 #endif
 
@@ -656,7 +657,8 @@ static const char *const yytname[] =
   "tk_NEG", "tk_LSS", "tk_GRT", "tk_NOTEQ", "tk_EQ", "tk_EQLSS",
   "tk_EQGRT", "tk_SHORTDECL", "tk_ARROW", "tk_INC", "tk_DEC",
   "tk_ELLIPSIS", "tk_STRINGLIT", "tk_NUM", "tk_IDENT", "tk_TRUE",
-  "tk_FALSE", "$accept", "file", "package_decl", "package", YY_NULLPTR
+  "tk_FALSE", "$accept", "source", "package_stmt", "stmts", "stmt",
+  "include_stmts", "include", "class_stmts", "class", YY_NULLPTR
 };
 #endif
 
@@ -680,7 +682,7 @@ static const yytype_int16 yytoknum[] =
 };
 # endif
 
-#define YYPACT_NINF (-109)
+#define YYPACT_NINF (-108)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -694,7 +696,8 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-     -19,  -108,     2,   -19,  -109,   -73,  -109,  -109,  -109
+     -18,  -107,     3,   -72,  -108,  -108,   -27,  -108,  -102,  -101,
+     -27,  -108,  -108,  -108,  -108,  -108,  -108,  -108,  -108
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -702,19 +705,20 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     0,     0,     2,     3,     0,     1,     4,     5
+       2,     0,     0,     3,     6,     1,     4,    15,     0,     0,
+       5,     7,     9,    11,    10,    14,    12,    13,     8
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-    -109,  -109,  -109,     1
+    -108,  -108,  -108,  -108,    -3,  -108,  -108,  -108,  -108
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     2,     3,     4
+      -1,     2,     3,    10,    11,    12,    13,    14,    15
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -722,31 +726,36 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-       1,     5,     6,     8,     7
+       7,     1,     4,     5,     6,    16,    17,    18,     0,     0,
+       0,     8,     9
 };
 
 static const yytype_int8 yycheck[] =
 {
-      19,   109,     0,    76,     3
+      27,    19,   109,     0,    76,   107,   107,    10,    -1,    -1,
+      -1,    38,    39
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
      symbol of state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,    19,   113,   114,   115,   109,     0,   115,    76
+       0,    19,   113,   114,   109,     0,    76,    27,    38,    39,
+     115,   116,   117,   118,   119,   120,   107,   107,   116
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_int8 yyr1[] =
 {
-       0,   112,   113,   114,   114,   115
+       0,   112,   113,   113,   113,   113,   114,   115,   115,   116,
+     116,   117,   118,   118,   119,   120
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     1,     1,     2,     3
+       0,     2,     0,     1,     2,     3,     2,     1,     2,     1,
+       1,     1,     2,     2,     1,     1
 };
 
 
@@ -1441,8 +1450,44 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
+  case 2:
+#line 135 "grammar\\mw.y"
+        {yyerror("Source can't be empty; expected package statement");}
+#line 1457 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+    break;
 
-#line 1446 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+  case 3:
+#line 136 "grammar\\mw.y"
+                   {yyerror("expected ';' after package name");}
+#line 1463 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+    break;
+
+  case 4:
+#line 137 "grammar\\mw.y"
+                            {yyerror("source can't contain only package, expected at least one statement or/and declaration");}
+#line 1469 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+    break;
+
+  case 6:
+#line 142 "grammar\\mw.y"
+                        {printf("package defined: '%s'\n", (yyvsp[0].semantic_value));}
+#line 1475 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+    break;
+
+  case 12:
+#line 160 "grammar\\mw.y"
+                             {printf("#include defined: '%s'\n", (yyvsp[0].semantic_value));}
+#line 1481 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+    break;
+
+  case 13:
+#line 161 "grammar\\mw.y"
+                                {printf("#goinclude defined : '%s'\n", (yyvsp[0].semantic_value));}
+#line 1487 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+    break;
+
+
+#line 1491 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
 
       default: break;
     }

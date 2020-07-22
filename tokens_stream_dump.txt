@@ -720,3 +720,13 @@ Source: Ln 1, Col 10		Token: tk_IDENT		SemanticValue: 'a'
 Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
 Source: Ln 2, Col 1		Token: tk_EOF
 Source: Ln 2, Col 1		Token: tk_EOF
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+*** Begin Tokens Stream Dump ***
+This file was automatically generated with MilkyWay lexer
+--------------------------------------------------------------------------------
+Source: Ln 1, Col 8		Token: tk_PACKAGE		Value: 'package'
+Source: Ln 1, Col 16		Token: tk_IDENT		SemanticValue: '☢core'
+Source: Ln 2, Col 0		Token: tk_SEMI		Value: ';'
+Source: Ln 87, Col 1		Token: tk_EOF

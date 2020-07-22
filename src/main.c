@@ -29,7 +29,8 @@ int main(int argc, char *argv[])
             yyparse(); // call bison that call internally our yylex() by extern
 
             fclose(source_fp);
-            fclose(tokens_stream_dump);
+            if (TOKENSDUMP == 1)
+                fclose(tokens_stream_dump);
             ftime(&end);
             double diff = (double)(1000.0 * (end.time - start.time) + (end.millitm - start.millitm));
             printf("\nLexing time: %f seconds = %f milliseconds = %f microseconds", diff / 1000, diff, diff * (double)1000);

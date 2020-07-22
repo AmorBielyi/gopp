@@ -127,12 +127,60 @@
 %token tk_TRUE 
 %token tk_FALSE
 
+%type <semantic_value> package_stmt
+%type <semantic_value> include
+
 %%
 
-file:
-    package_decl
+source: {yyerror("Source can't be empty; expected package statement");}
+    | package_stmt {yyerror("expected ';' after package name");}
+    | package_stmt tk_SEMI  {yyerror("source can't contain only package, expected at least one statement or/and declaration");}
+    | package_stmt tk_SEMI stmts 
 ;
 
+package_stmt: 
+    tk_PACKAGE tk_IDENT {printf("package defined: '%s'\n", $2);}
+;
+
+stmts:
+    stmt 
+    | stmts stmt  /* its our main recusrion rule for every infinite global statements and/or declaration */
+;
+
+stmt: /* add here any global statement or declaration what you need   */
+     include_stmts  
+    | class_stmts
+;
+
+include_stmts:
+  include
+  ;
+
+include:
+    tk_INCLUDE tk_STRINGLIT  {printf("#include defined: '%s'\n", $2);}
+    | tk_GOINCLUDE tk_STRINGLIT {printf("#goinclude defined : '%s'\n", $2);}
+;
+
+class_stmts:
+    class 
+ ;
+
+ class:
+    tk_CLASS
+;
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 package_decl:
    package
    | package_decl package
@@ -142,4 +190,4 @@ package:
     tk_PACKAGE tk_IDENT tk_SEMI
 ;
 
-
+*/

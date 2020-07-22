@@ -93,7 +93,7 @@ void yyerror(const char *fmt, ...)
     va_start(ap, fmt);
     vsprintf_s(buf, sizeof(buf), fmt, ap);
     va_end(ap);
-    printf("(Ln %d, Col %d)  %s\n", line, col, buf);
+    printf("Error at Ln %d, Col %d,  %s\n", line, col, buf);
     exit(1);
 }
 
@@ -232,6 +232,8 @@ static TokenType get_keyword_type(const char *ident)
         {"private", tk_PRIVATE},
         {"void", tk_VOID},
         {"override", tk_OVERRIDE},
+        {"include", tk_INCLUDE},
+        {"goinclude", tk_GOINCLUDE},
         /* Original built-in types */ 
         {"string", tk_T_STRING},
         {"bool", tk_T_BOOL},
@@ -260,6 +262,7 @@ static TokenType get_keyword_type(const char *ident)
     qsort(kwds, NELEMS(kwds), sizeof(kwds[0]), kwd_cmp);
     kwp = bsearch(&ident, kwds, NELEMS(kwds), sizeof(kwds[0]), kwd_cmp);
     if (kwp == NULL) {
+        yylval.semantic_value = text;
         if (TOKENSDUMP == 1)
             fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value);
         return tk_IDENT;
@@ -312,7 +315,7 @@ static TokenType ident_or_num()
             return tk_NUM;
             //return (Token){tk_NUM, err_line, err_col, text}; 
         } 
-        yylval.semantic_value = text;
+        //yylval.semantic_value = text;
         return get_keyword_type(text);
     //return (Token) {get_keyword_type(text), err_line, err_col, text=text};
 }
@@ -615,13 +618,13 @@ int yylex()
                 write_dump("tk_SEMI", ";");
             return tk_SEMI;
         }
-        case '_':
+        /*case '_':
         {
             next_ch();
             if (TOKENSDUMP == 1)
                 write_dump("tk_UNDERSCORE", "_");
             return tk_UNDERSCORE;
-        }
+        }*/
         case ':': 
         {
             next_ch(); 
@@ -712,15 +715,16 @@ int yylex()
         case '"': return string_lit(the_ch);
         case '#':
         {
-            next_ch();
-            ident_or_num(); 
-            if (strcmp(text, "goinclude") != 0 && strcmp(text, "include") !=0 )
-                yyerror( "Syntax error: invalid include statement, expected 'include' or 'goinclude' after '#'");
-            if (strcmp(text, "goinclude") == 0)
-                return tk_GOINCLUDE;
-            if (strcmp(text, "include") == 0)
-                return tk_INCLUDE;
-            yyerror( "Syntax error: unrecognized character (%d) '%c'", the_ch, the_ch);
+           next_ch();
+           TokenType token =  ident_or_num(); 
+           if (token != tk_INCLUDE && token != tk_GOINCLUDE)
+               yyerror("invalid include statement, expected 'include' or 'goinclude' after '#'");
+           if (the_ch == '\n')
+               yyerror("Syntax error: unrecognized character (%d) '%c'", the_ch, the_ch);
+           return token;
+
+
+           
         }
          
         // case '\'': next_ch(); return char_lit(the_ch, err_line, err_col);
