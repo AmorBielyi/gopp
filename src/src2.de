@@ -1,11 +1,83 @@
-// class myClass extends baseClass implements "lambda" "gf"
+package ☢chat
+goimport "fmt"
+goimport "io"
+goimport "log"
+goimport "golang.org/x/net/websocket"
+import "handler.gopp"
 
- package _☢main☢;
-#goinclude "fmt/hello"
-#goinclude "http"
-#goinclude "crypt"
-#include "src/main/core" 
-#include teta "src/main/core" 
- #goinclude omicron "src/main/subcore"
-class
-class
+// const int channelBufSize = 100;
+// int maxId = 0;
+
+
+// void main(){
+//     log.SetFlags(log.Lshortfile);
+//     server := char.NewServer("/entry");
+//     go server.Listen();
+//     http.Handle("/", http.FileServer(http.Dir("webroot")));
+//     log.Fatal(http.ListenAndServe(":8080", nil));
+// }
+
+// class Client {
+//     private:
+//         int id☢;
+//         websocket.Conn *ws;
+//         Server *server;
+//         Message chan *ch;
+//         bool chan doneCh;
+    
+//     public:
+//         Client(websocket.Conn *ws, Server *server){
+//           if (!ws) 
+//               panic("ws cannot be null");
+//           if (!server)
+//               panic("server cannot be null");
+//           maxId++;
+//           ch := make(*Message chan, channelBufSize);
+//           doneCh := make(bool chan);
+//           id = maxId;
+//           this.ws = ws;
+//           this.server = server;
+//           this.ch = ch;
+//           this.doneCh = doneCh;
+//         }
+//         websocket.Conn* Conn() {
+//             return ws;
+//         }
+
+//         void Write(Message *msg){
+//             select{
+//                 case ch <- msg:
+//                 default:
+//                     server.Del(c);
+//                     err := fmt.Errorf("client");
+//                     server.Err(err);
+//             }
+//         }
+
+//         void Done(){
+//             doneCh <- true;
+//         }
+
+//         *Server Listen(){
+//             go listenWrite();
+//             listenRead();
+//             return &server
+//         }
+
+//         void listenWrite(){
+//             log.Println("Listening write to client");
+//             for(){
+//                 select{
+//                     case msg := <-ch:
+//                         log.PrintLn("Send: ", msg);
+//                         websocket.JOSN.Send(ws, msg);
+//                     case <- doneCh:
+//                         server.Del(c);
+//                         doneCh <- true;
+//                         return;
+
+//                 }
+//             }
+//         }
+
+// }

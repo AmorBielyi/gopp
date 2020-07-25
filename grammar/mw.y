@@ -4,11 +4,10 @@
     #include <string.h>
     extern int yylex(); /*interface to the handwritten lexer*/
     extern void yyerror(const char *fmt, ...); /*iterface to the handwritten lexer */
-    extern char* get_lookuped_semantic_value_ident();
-    extern char* get_lookuped_semantic_value_string();
-    extern char* get_lookuped_semantic_value_num();
+    extern char* get_queued_semantic_value_ident();
+    extern char* get_queued_semantic_value_string();
+    extern char* get_queued_semantic_value_num();
 
-    
 %}
 
 %union{
@@ -142,10 +141,10 @@ source: {yyerror("Source can't be empty; expected package statement");}
 
     /* !!!!!! MUST_BE_DELETED this is test rule for testing lookuped semantic values !!!!!! MUST_BE_DELETED*/
     
-    | tk_CLASS tk_IDENT {printf("class name: %s ", get_lookuped_semantic_value_ident());}
-      tk_EXTENDS tk_IDENT {printf("class extends: %s ", get_lookuped_semantic_value_ident());}
-      tk_IMPLEMENTS tk_STRINGLIT {printf("class implements: %s ", get_lookuped_semantic_value_string());}
-      tk_STRINGLIT {printf("ext: %s ", get_lookuped_semantic_value_string());}
+    | tk_CLASS tk_IDENT {printf("class name: %s ", get_queued_semantic_value_ident());}
+      tk_EXTENDS tk_IDENT {printf("class extends: %s ", get_queued_semantic_value_ident());}
+      tk_IMPLEMENTS tk_STRINGLIT {printf("class implements: %s ", get_queued_semantic_value_string());}
+      tk_STRINGLIT {printf("ext: %s ", get_queued_semantic_value_string());}
 
 
     | package_stmt {yyerror("expected ';'");}
@@ -157,10 +156,10 @@ source: {yyerror("Source can't be empty; expected package statement");}
 
 package_stmt: 
     tk_PACKAGE tk_IDENT {
-        //printf("lookuped: %s", get_lookuped_semantic_value());
-        if (strcmp(get_lookuped_semantic_value_ident(), "_") == 0)
+        //printf("lookuped: %s", get_queued_semantic_value());
+        if (strcmp(get_queued_semantic_value_ident(), "_") == 0)
             yyerror("package name can't be only '_'");
-        printf("package defined: '%s'\n", get_lookuped_semantic_value_ident());
+        printf("package defined: '%s'\n", get_queued_semantic_value_ident());
     }
     | tk_PACKAGE tk_NUM {yyerror("pakcage name can't be integer");}
     | tk_PACKAGE tk_STRINGLIT {yyerror("package name can't be string");}
@@ -181,14 +180,14 @@ include_decl:
   ;
 
 include:
-    tk_INCLUDE tk_IDENT{printf("include source: alias %s ", get_lookuped_semantic_value_ident());}
-    tk_STRINGLIT {printf(" source %s\n",get_lookuped_semantic_value_string());}
+    tk_INCLUDE tk_IDENT{printf("include source: alias %s ", get_queued_semantic_value_ident());}
+    tk_STRINGLIT {printf(" source %s\n",get_queued_semantic_value_string());}
     
-    | tk_GOINCLUDE tk_IDENT{printf("go include source: alias %s ", get_lookuped_semantic_value_ident());}
-    tk_STRINGLIT {printf(" source %s\n",get_lookuped_semantic_value_string());}
+    | tk_GOINCLUDE tk_IDENT{printf("go include source: alias %s ", get_queued_semantic_value_ident());}
+    tk_STRINGLIT {printf(" source %s\n",get_queued_semantic_value_string());}
 
-    | tk_INCLUDE tk_STRINGLIT  {printf("include source defined: '%s'\n", get_lookuped_semantic_value_string());}
-    | tk_GOINCLUDE tk_STRINGLIT {printf("go include source defined : '%s'\n", get_lookuped_semantic_value_string());}
+    | tk_INCLUDE tk_STRINGLIT  {printf("include source defined: '%s'\n", get_queued_semantic_value_string());}
+    | tk_GOINCLUDE tk_STRINGLIT {printf("go include source defined : '%s'\n", get_queued_semantic_value_string());}
     | tk_GOINCLUDE tk_NUM {yyerror("go include source can't be integer");}
     | tk_INCLUDE tk_NUM {yyerror("include source can't be integer");}
     

@@ -72,9 +72,9 @@
     #include <string.h>
     extern int yylex(); /*interface to the handwritten lexer*/
     extern void yyerror(const char *fmt, ...); /*iterface to the handwritten lexer */
-    extern char* get_lookuped_semantic_value_ident();
-    extern char* get_lookuped_semantic_value_string();
-    extern char* get_lookuped_semantic_value_num();
+    extern char* get_queued_semantic_value_ident();
+    extern char* get_queued_semantic_value_string();
+    extern char* get_queued_semantic_value_num();
 
     
 
@@ -1480,25 +1480,25 @@ yyreduce:
 
   case 3:
 #line 145 "grammar\\mw.y"
-                        {printf("class name: %s ", get_lookuped_semantic_value_ident());}
+                        {printf("class name: %s ", get_queued_semantic_value_ident());}
 #line 1485 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 4:
 #line 146 "grammar\\mw.y"
-                          {printf("class extends: %s ", get_lookuped_semantic_value_ident());}
+                          {printf("class extends: %s ", get_queued_semantic_value_ident());}
 #line 1491 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 5:
 #line 147 "grammar\\mw.y"
-                                 {printf("class implements: %s ", get_lookuped_semantic_value_string());}
+                                 {printf("class implements: %s ", get_queued_semantic_value_string());}
 #line 1497 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 6:
 #line 148 "grammar\\mw.y"
-                   {printf("ext: %s ", get_lookuped_semantic_value_string());}
+                   {printf("ext: %s ", get_queued_semantic_value_string());}
 #line 1503 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
@@ -1517,10 +1517,10 @@ yyreduce:
   case 10:
 #line 159 "grammar\\mw.y"
                         {
-        //printf("lookuped: %s", get_lookuped_semantic_value());
-        if (strcmp(get_lookuped_semantic_value_ident(), "_") == 0)
+        //printf("lookuped: %s", get_queued_semantic_value());
+        if (strcmp(get_queued_semantic_value_ident(), "_") == 0)
             yyerror("package name can't be only '_'");
-        printf("package defined: '%s'\n", get_lookuped_semantic_value_ident());
+        printf("package defined: '%s'\n", get_queued_semantic_value_ident());
     }
 #line 1526 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
@@ -1539,37 +1539,37 @@ yyreduce:
 
   case 18:
 #line 184 "grammar\\mw.y"
-                       {printf("include source: alias %s ", get_lookuped_semantic_value_ident());}
+                       {printf("include source: alias %s ", get_queued_semantic_value_ident());}
 #line 1544 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 19:
 #line 185 "grammar\\mw.y"
-                 {printf(" source %s\n",get_lookuped_semantic_value_string());}
+                 {printf(" source %s\n",get_queued_semantic_value_string());}
 #line 1550 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 20:
 #line 187 "grammar\\mw.y"
-                           {printf("go include source: alias %s ", get_lookuped_semantic_value_ident());}
+                           {printf("go include source: alias %s ", get_queued_semantic_value_ident());}
 #line 1556 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 21:
 #line 188 "grammar\\mw.y"
-                 {printf(" source %s\n",get_lookuped_semantic_value_string());}
+                 {printf(" source %s\n",get_queued_semantic_value_string());}
 #line 1562 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 22:
 #line 190 "grammar\\mw.y"
-                               {printf("include source defined: '%s'\n", get_lookuped_semantic_value_string());}
+                               {printf("include source defined: '%s'\n", get_queued_semantic_value_string());}
 #line 1568 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 23:
 #line 191 "grammar\\mw.y"
-                                {printf("go include source defined : '%s'\n", get_lookuped_semantic_value_string());}
+                                {printf("go include source defined : '%s'\n", get_queued_semantic_value_string());}
 #line 1574 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
