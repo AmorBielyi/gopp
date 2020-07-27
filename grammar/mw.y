@@ -260,7 +260,20 @@ var_assigns:
     {
         printf("var value: %s\n", get_queued_semantic_value());
     }
+    |tk_STRINGLIT
+    {
+        printf("var value: %s\n", get_queued_semantic_value());
+    }
+
     |tk_NUM
+    {
+        printf("var value: %s, ", get_queued_semantic_value());
+        fflush(stdout);
+    } 
+    tk_COMMA
+    var_assigns  /* TODO add all real types for assigns*/
+
+    |tk_STRINGLIT
     {
         printf("var value: %s, ", get_queued_semantic_value());
         fflush(stdout);
