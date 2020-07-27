@@ -27,18 +27,11 @@ int yylex();
 void write_dump(char* token_name, char* token_value);
 void dump_keywords(TokenType token);
 
-char *reserved_semantic_value_num = NULL;
-char *reserved_semantic_value_ident = NULL;
-char *reserved_semantic_value_string = NULL;
+char *reserved_semantic_value = NULL;
 
-int lex_semantic_value_queue_state_ident = -1 ;
-int lex_semantic_value_queue_state_string = -1 ;
-int lex_semantic_value_queue_state_num = -1 ;
+int lex_semantic_value_queue_state = -1 ;
 
-char* get_queued_semantic_value_ident();
-char* get_queued_semantic_value_string();
-char* get_queued_semantic_value_num();
-
+char* get_queued_semantic_value();
 
 
 extern FILE *source_fp;
@@ -57,28 +50,14 @@ void yyerror(const char *fmt, ...)
     exit(1);
 }
 
-char* get_queued_semantic_value_ident() {
-    if ( reserved_semantic_value_ident != NULL)
-        return reserved_semantic_value_ident;
+char* get_queued_semantic_value() {
+    if ( reserved_semantic_value != NULL)
+        return reserved_semantic_value;
    
-    return yylval.semantic_value_ident;
+    return yylval.semantic_value;
          
 }
 
-char* get_queued_semantic_value_string() {
-    if (reserved_semantic_value_string != NULL)
-        return reserved_semantic_value_string;
-    
-    return yylval.semantic_value_string;
-
-}
-
-char* get_queued_semantic_value_num() {
-    if (reserved_semantic_value_num != NULL)
-        return reserved_semantic_value_num;
-    return yylval.semantic_value_num;
-
-}
 
 static int next_ch()
 {  /* get next char from our input */
@@ -112,10 +91,10 @@ if (the_ch == '\\'){
 if(next_ch() != '\'')
     yyerror("Syntax error: multi-character constant");
 next_ch();
-yylval.semantic_value_num = (char *)n; // maybe error here 
+yylval.semantic_value = (char *)n; // maybe error here 
 
 if(TOKENSDUMP == 1)
-    fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n",line, col, yylval.semantic_value_string);
+    fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n",line, col, yylval.semantic_value);
 
 return tk_NUM;
 //return (Token){tk_NUM, err_line, err_col, {n}};
@@ -162,21 +141,21 @@ static TokenType string_lit(int start)
 
     next_ch();
     //yylval.semantic_value = text;
-    if (lex_semantic_value_queue_state_string == -1) {
-        reserved_semantic_value_string = text;
-        lex_semantic_value_queue_state_string++;
+    if (lex_semantic_value_queue_state == -1) {
+        reserved_semantic_value = text;
+        lex_semantic_value_queue_state++;
         
         return tk_STRINGLIT;
     }
-    if (lex_semantic_value_queue_state_string > -1) {
-        lex_semantic_value_queue_state_string--;
-        yylval.semantic_value_string = text;
+    if (lex_semantic_value_queue_state > -1) {
+        lex_semantic_value_queue_state--;
+        yylval.semantic_value = text;
         if (TOKENSDUMP == 1)
-            fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_STRINGLIT\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value_string);
+            fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_STRINGLIT\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value);
         return tk_STRINGLIT;
     }
     
-    yylval.semantic_value_string = text;
+    yylval.semantic_value = text;
     return tk_STRINGLIT;
     //return (Token){tk_STRINGLIT, err_line, err_col, text=text};
 }
@@ -227,8 +206,8 @@ static TokenType get_keyword_type(const char *ident)
         {"private", tk_PRIVATE},
         {"void", tk_VOID},
         {"override", tk_OVERRIDE},
-        {"include", tk_INCLUDE},
-        {"goinclude", tk_GOINCLUDE},
+        {"import", tk_IMPORT},
+        {"goimport", tk_GOIMPORT},
         /* Original built-in types */ 
         {"string", tk_T_STRING},
         {"bool", tk_T_BOOL},
@@ -251,28 +230,25 @@ static TokenType get_keyword_type(const char *ident)
         {"complex128", tk_T_COMPLEX128},
         /*Original misc*/
         {"true", tk_TRUE},
-        {"false", tk_FALSE}
+        {"false", tk_FALSE},
+        {"iota", tk_IOTA},
 
     },*kwp; 
     qsort(kwds, NELEMS(kwds), sizeof(kwds[0]), kwd_cmp);
     kwp = bsearch(&ident, kwds, NELEMS(kwds), sizeof(kwds[0]), kwd_cmp);
     if (kwp == NULL) {
         if (TOKENSDUMP == 1)
-            fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value_ident);
-        if (lex_semantic_value_queue_state_ident == -1) {
-            reserved_semantic_value_ident = text;
-            lex_semantic_value_queue_state_ident++;
+            fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value);
+        if (lex_semantic_value_queue_state == -1) {
+            reserved_semantic_value = text;
+            lex_semantic_value_queue_state++;
             return tk_IDENT;
         }
-        if (lex_semantic_value_queue_state_ident > -1) {
-            lex_semantic_value_queue_state_ident--;
-            yylval.semantic_value_ident = text;
+        if (lex_semantic_value_queue_state > -1) {
+            lex_semantic_value_queue_state--;
+            yylval.semantic_value = text;
             return tk_IDENT;
         }
-
-       // yylval.semantic_value = text;
-        
-       // return tk_IDENT;
     }
     
     if (TOKENSDUMP == 1) {
@@ -316,9 +292,9 @@ static TokenType ident_or_num()
              n = strtol(text, NULL, 0);
             if (n == LONG_MAX && errno == ERANGE)
                 yyerror("Syntax error: Number exceeds maximum value");
-            yylval.semantic_value_num = text;
+            yylval.semantic_value = text;
             if (TOKENSDUMP == 1)
-                fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value_num);
+                fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value);
             return tk_NUM;
             //return (Token){tk_NUM, err_line, err_col, text}; 
         } 
@@ -720,19 +696,6 @@ int yylex()
 
         }
         case '"': return string_lit(the_ch);
-        case '#':
-        {
-           next_ch();
-           TokenType token =  ident_or_num(); 
-           if (token != tk_INCLUDE && token != tk_GOINCLUDE)
-               yyerror("invalid include statement, expected 'include' or 'goinclude' after '#'");
-           if (the_ch == '\n')
-               yyerror("Syntax error: unrecognized character (%d) '%c'", the_ch, the_ch);
-           return token;
-
-
-           
-        }
          
         // case '\'': next_ch(); return char_lit(the_ch, err_line, err_col);
         case EOF:
@@ -794,8 +757,8 @@ void dump_keywords(TokenType token)
         case tk_GOTO: write_dump( "tk_GOTO","goto");break;
         case tk_IF: write_dump( "tk_IF","if");break; 
         case tk_VOID: write_dump( "tk_VOID","void");break; 
-        case tk_INCLUDE:write_dump( "tk_INCLUDE","#include");break; 
-        case tk_GOINCLUDE: write_dump( "tk_GOINCLUDE","#goinclude");break; 
+        case tk_IMPORT:write_dump( "tk_IMPORT","#include");break; 
+        case tk_GOIMPORT: write_dump( "tk_GOIMPORT","goimport");break; 
         case tk_INTERFACE:write_dump( "tk_INTERFACE","interface");break; 
         case tk_MAP:write_dump( "tk_MAP","map");break; 
         case tk_PACKAGE:write_dump( "tk_PACKAGE","package");break; 

@@ -1,9 +1,23 @@
-package ☢chat
+package ☢chat;
 goimport "fmt"
 goimport "io"
 goimport "log"
 goimport "golang.org/x/net/websocket"
-import "handler.gopp"
+import(
+	"gpp/src/import_scope_a"
+	kapa "gpp/src/import_scope_b"
+	omicron "gpp/src/import_scope_c"
+	"gpp/src/import_scope_d"
+);
+import "handler.gpp"
+import omega "gpp/src/package"
+import delta "gpp/src/package2"
+goimport(
+	"goimport_scope_a"
+	"goimport_scope_b"
+	tau "goimport_scope_c"
+	"goimport_scope_d"
+);
 
 // const int channelBufSize = 100;
 // int maxId = 0;

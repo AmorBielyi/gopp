@@ -4,16 +4,12 @@
     #include <string.h>
     extern int yylex(); /*interface to the handwritten lexer*/
     extern void yyerror(const char *fmt, ...); /*iterface to the handwritten lexer */
-    extern char* get_queued_semantic_value_ident();
-    extern char* get_queued_semantic_value_string();
-    extern char* get_queued_semantic_value_num();
+    extern char* get_queued_semantic_value();
 
 %}
 
 %union{
-    char *semantic_value_ident; // for storing semantic values from stringlit, num or ident
-    char *semantic_value_string;
-    char *semantic_value_num;
+    char *semantic_value; // for storing semantic values from stringlit, num or ident
 }
 
 /*Original keywords*/
@@ -30,7 +26,6 @@
 %token tk_GO 
 %token tk_GOTO 
 %token tk_IF 
-%token tk_IMPORT 
 %token tk_INTERFACE 
 %token tk_MAP 
 %token tk_PACKAGE
@@ -53,8 +48,8 @@
 %token tk_PTRSELECT
 %token tk_OVERRIDE
 %token tk_VOID 
-%token tk_INCLUDE 
-%token tk_GOINCLUDE 
+%token tk_IMPORT 
+%token tk_GOIMPORT 
 /* Original built-in types */
 %token tk_T_STRING
 %token tk_T_BOOL 
@@ -128,103 +123,91 @@
 %token tk_INC 
 %token tk_DEC 
 %token tk_ELLIPSIS
-%token <semantic_value_string> tk_STRINGLIT
-%token <semantic_value_num> tk_NUM 
-%token <semantic_value_ident> tk_IDENT 
+%token <semantic_value> tk_STRINGLIT
+%token <semantic_value> tk_NUM 
+%token <semantic_value> tk_IDENT 
 %token tk_TRUE 
 %token tk_FALSE
-
+%token tk_IOTA
 
 %%
-
-source: {yyerror("Source can't be empty; expected package statement");}
-
-    /* !!!!!! MUST_BE_DELETED this is test rule for testing lookuped semantic values !!!!!! MUST_BE_DELETED*/
-    
-    | tk_CLASS tk_IDENT {printf("class name: %s ", get_queued_semantic_value_ident());}
-      tk_EXTENDS tk_IDENT {printf("class extends: %s ", get_queued_semantic_value_ident());}
-      tk_IMPLEMENTS tk_STRINGLIT {printf("class implements: %s ", get_queued_semantic_value_string());}
-      tk_STRINGLIT {printf("ext: %s ", get_queued_semantic_value_string());}
-
-
-    | package_stmt {yyerror("expected ';'");}
-    | package_stmt tk_SEMI  {yyerror("unrecongnized symbol or expected declaration");}
-    | package_stmt tk_SEMI 
-      top_level_decl 
+source: 
+    package_stmt 
+    top_level_decl 
 ;
-
 
 package_stmt: 
-    tk_PACKAGE tk_IDENT {
-        //printf("lookuped: %s", get_queued_semantic_value());
-        if (strcmp(get_queued_semantic_value_ident(), "_") == 0)
-            yyerror("package name can't be only '_'");
-        printf("package defined: '%s'\n", get_queued_semantic_value_ident());
+    tk_PACKAGE 
+    tk_IDENT 
+    tk_SEMI 
+    { 
+        printf("package defined: '%s'\n", get_queued_semantic_value());
     }
-    | tk_PACKAGE tk_NUM {yyerror("pakcage name can't be integer");}
-    | tk_PACKAGE tk_STRINGLIT {yyerror("package name can't be string");}
 ;
 
+/* its our main recusrion rule for every infinite global statements and/or declaration */
 top_level_decl:
     decl 
-    | top_level_decl decl  /* its our main recusrion rule for every infinite global statements and/or declaration */
+    | 
+    top_level_decl decl  
 ;
 
-decl: /* add here any global declaration what you need   */
-     include_decl  
-    | class_decl
+/* add here any global declaration what you need   */
+decl: 
+     import_decl 
 ;
 
-include_decl:
-     include
+import_decl:
+     import
+
+     | tk_IMPORT 
+     tk_LPAREN 
+     import_bodys 
+     tk_RPAREN
+
+     | tk_GOIMPORT 
+     tk_LPAREN 
+     import_bodys 
+     tk_RPAREN 
   ;
 
-include:
-    tk_INCLUDE tk_IDENT{printf("include source: alias %s ", get_queued_semantic_value_ident());}
-    tk_STRINGLIT {printf(" source %s\n",get_queued_semantic_value_string());}
+import:
+    /* 
+    ---EXAMPLE--- import client "src/clientBase" or import "src/clientBase" ---EXAMPLE---
+    */
+
+    tk_IMPORT 
+    import_body
+
+    /* 
+    ---EXAMPLE--- goimport client "src/clientBase" or import "src/clientBase" ---EXAMPLE---
+    */
+
+    |tk_GOIMPORT 
+    import_body
+        
+;
+
+import_bodys:
+    import_body
+
+    | import_bodys 
+    import_body 
+;
+
+import_body:
+    tk_IDENT 
+    {
+        printf("import: alias %s ", get_queued_semantic_value());
+    }
+
+    tk_STRINGLIT 
+    {
+        printf("source %s\n",get_queued_semantic_value());
+    }
     
-    | tk_GOINCLUDE tk_IDENT{printf("go include source: alias %s ", get_queued_semantic_value_ident());}
-    tk_STRINGLIT {printf(" source %s\n",get_queued_semantic_value_string());}
-
-    | tk_INCLUDE tk_STRINGLIT  {printf("include source defined: '%s'\n", get_queued_semantic_value_string());}
-    | tk_GOINCLUDE tk_STRINGLIT {printf("go include source defined : '%s'\n", get_queued_semantic_value_string());}
-    | tk_GOINCLUDE tk_NUM {yyerror("go include source can't be integer");}
-    | tk_INCLUDE tk_NUM {yyerror("include source can't be integer");}
-    
+    | tk_STRINGLIT 
+    {
+        printf("source %s\n",get_queued_semantic_value());
+    }
 ;
-
-
-
-
-
-
-class_decl:
-    class 
- ;
-
- class:
-    tk_CLASS
-;
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-package_decl:
-   package
-   | package_decl package
-;
-
-package:
-    tk_PACKAGE tk_IDENT tk_SEMI
-;
-
-*/
