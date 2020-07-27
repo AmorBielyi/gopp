@@ -562,16 +562,16 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  5
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   51
+#define YYLAST   48
 
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  112
 /* YYNNTS -- Number of nonterminals.  */
 #define YYNNTS  19
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  33
+#define YYNRULES  32
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  57
+#define YYNSTATES  55
 
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   366
@@ -629,10 +629,10 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   135,   135,   140,   150,   151,   157,   158,   162,   164,
-     170,   182,   189,   195,   197,   203,   202,   212,   219,   221,
-     229,   234,   237,   244,   250,   249,   259,   263,   269,   268,
-     277,   276,   286,   288
+       0,   137,   137,   142,   152,   153,   159,   160,   164,   166,
+     172,   184,   191,   197,   199,   205,   204,   214,   221,   223,
+     231,   236,   239,   246,   252,   251,   260,   265,   264,   274,
+     279,   287,   288
 };
 #endif
 
@@ -665,7 +665,7 @@ static const char *const yytname[] =
   "tk_FALSE", "tk_IOTA", "$accept", "source", "package_stmt",
   "top_level_decl", "decl", "import_decl", "import", "import_bodys",
   "import_body", "$@1", "var_decl", "var", "var_body", "var_idents", "$@2",
-  "var_assigns", "$@3", "$@4", "var_bodys", YY_NULLPTR
+  "var_assigns", "$@3", "var_assign", "var_bodys", YY_NULLPTR
 };
 #endif
 
@@ -694,7 +694,7 @@ static const yytype_int16 yytoknum[] =
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-31)
+#define YYTABLE_NINF (-28)
 
 #define yytable_value_is_error(Yyn) \
   0
@@ -703,12 +703,12 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      -6,   -92,    20,   -20,   -51,   -96,   -65,   -67,   -66,   -20,
-     -96,   -96,   -96,   -96,   -96,   -96,   -83,   -47,   -96,   -56,
-     -95,   -96,   -96,   -96,   -95,   -96,   -96,   -96,   -60,   -46,
-     -92,   -96,   -62,   -96,   -77,   -61,   -45,   -96,   -83,   -41,
-     -40,   -39,   -38,   -96,   -96,   -37,   -96,   -96,   -24,   -23,
-     -96,   -96,   -96,   -92,   -92,   -96,   -96
+      -6,   -92,    20,   -20,   -53,   -96,   -65,   -67,   -66,   -20,
+     -96,   -96,   -96,   -96,   -96,   -96,   -85,   -49,   -96,   -56,
+     -95,   -96,   -96,   -96,   -95,   -96,   -96,   -96,   -60,   -48,
+     -92,   -96,   -62,   -96,   -80,   -61,   -46,   -96,   -85,   -96,
+     -96,   -45,   -41,   -42,   -96,   -96,   -40,   -96,   -96,   -96,
+     -39,   -96,   -96,   -92,   -96
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -718,24 +718,24 @@ static const yytype_int8 yydefact[] =
 {
        0,     0,     0,     0,     0,     1,     0,     0,     0,     2,
        4,     6,     8,     7,    18,     3,     0,    23,    20,     0,
-       0,    17,    15,    11,     0,    12,     5,    32,     0,     0,
-       0,    21,     0,    13,     0,     0,     0,    33,     0,    27,
-      26,     0,     0,    14,    16,     0,    19,    25,     0,     0,
-      22,     9,    10,     0,     0,    31,    29
+       0,    17,    15,    11,     0,    12,     5,    31,     0,     0,
+       0,    21,     0,    13,     0,     0,     0,    32,     0,    30,
+      29,     0,    26,     0,    14,    16,     0,    19,    25,    22,
+       0,     9,    10,     0,    28
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -96,   -96,   -96,   -96,    25,   -96,   -96,    11,    -4,   -96,
-     -96,   -96,    -7,    13,   -96,   -31,   -96,   -96,   -96
+     -96,   -96,   -96,   -96,    18,   -96,   -96,    12,    -4,   -96,
+     -96,   -96,    -7,    -1,   -96,   -15,   -96,   -96,   -96
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
       -1,     2,     3,     9,    10,    11,    12,    32,    33,    34,
-      13,    14,    18,    19,    29,    41,    49,    48,    28
+      13,    14,    18,    19,    29,    41,    50,    42,    28
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -743,22 +743,20 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      20,    24,    16,    23,    25,     6,    42,    45,    36,    27,
+      20,    24,    16,    23,    25,     6,    43,    46,    36,    27,
       30,    21,     1,    22,    39,    40,     4,     7,     8,    31,
-       5,    37,    55,    56,    15,    17,   -24,    38,    43,    44,
-      46,    43,   -30,   -28,    26,    35,    50,    51,    52,    21,
-      21,    22,    22,    17,    21,    21,    22,    22,    17,    53,
-      54,    47
+       5,    37,    15,    17,   -24,    38,    45,    26,    44,    47,
+      49,    44,   -27,    51,    53,    52,    35,    48,    54,    21,
+      21,    22,    22,    17,    21,    21,    22,    22,    17
 };
 
 static const yytype_int8 yycheck[] =
 {
       67,    67,    67,     7,     8,    25,    68,    68,    68,    16,
       66,   106,    18,   108,   106,   107,   108,    37,    38,    75,
-       0,    28,    53,    54,    75,   108,    73,    73,    32,   106,
-      75,    35,    73,    73,     9,    24,    75,    75,    75,   106,
-     106,   108,   108,   108,   106,   106,   108,   108,   108,    73,
-      73,    38
+       0,    28,    75,   108,    73,    73,   106,     9,    32,    75,
+      75,    35,    73,    75,    73,    75,    24,    38,    53,   106,
+     106,   108,   108,   108,   106,   106,   108,   108,   108
 };
 
   /* YYSTOS[STATE-NUM] -- The (internal number of the) accessing
@@ -769,8 +767,8 @@ static const yytype_uint8 yystos[] =
      116,   117,   118,   122,   123,    75,    67,   108,   124,   125,
       67,   106,   108,   120,    67,   120,   116,   124,   130,   126,
       66,    75,   119,   120,   121,   119,    68,   124,    73,   106,
-     107,   127,    68,   120,   106,    68,    75,   125,   129,   128,
-      75,    75,    75,    73,    73,   127,   127
+     107,   127,   129,    68,   120,   106,    68,    75,   125,    75,
+     128,    75,    75,    73,   127
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
@@ -778,8 +776,8 @@ static const yytype_uint8 yyr1[] =
 {
        0,   112,   113,   114,   115,   115,   116,   116,   117,   117,
      117,   118,   118,   119,   119,   121,   120,   120,   122,   122,
-     123,   124,   124,   125,   126,   125,   127,   127,   128,   127,
-     129,   127,   130,   130
+     123,   124,   124,   125,   126,   125,   127,   128,   127,   129,
+     129,   130,   130
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
@@ -787,8 +785,8 @@ static const yytype_int8 yyr2[] =
 {
        0,     2,     2,     3,     1,     2,     1,     1,     1,     5,
        5,     2,     2,     1,     2,     0,     3,     1,     1,     5,
-       2,     2,     4,     1,     0,     4,     1,     1,     0,     4,
-       0,     4,     1,     2
+       2,     2,     4,     1,     0,     4,     1,     0,     4,     1,
+       1,     1,     2
 };
 
 
@@ -1484,90 +1482,89 @@ yyreduce:
   switch (yyn)
     {
   case 3:
-#line 143 "grammar\\mw.y"
+#line 145 "grammar\\mw.y"
     { 
         printf("package defined: '%s'\n", get_queued_semantic_value());
     }
-#line 1492 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 1490 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 15:
-#line 203 "grammar\\mw.y"
+#line 205 "grammar\\mw.y"
     {
         printf("import: alias %s ", get_queued_semantic_value());
     }
-#line 1500 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 1498 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 16:
-#line 208 "grammar\\mw.y"
+#line 210 "grammar\\mw.y"
     {
         printf("source %s\n",get_queued_semantic_value());
     }
-#line 1508 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 1506 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 17:
-#line 213 "grammar\\mw.y"
+#line 215 "grammar\\mw.y"
     {
         printf("source %s\n",get_queued_semantic_value());
     }
-#line 1516 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 1514 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 23:
-#line 245 "grammar\\mw.y"
+#line 247 "grammar\\mw.y"
     {
         printf("var ident: %s\n", get_queued_semantic_value());
     }
-#line 1524 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 1522 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 24:
-#line 250 "grammar\\mw.y"
+#line 252 "grammar\\mw.y"
     {
         printf("var ident: %s, ", get_queued_semantic_value());
-        fflush(stdout);
     }
-#line 1533 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 1530 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 26:
-#line 260 "grammar\\mw.y"
+#line 261 "grammar\\mw.y"
     {
-        printf("var value: %s\n", get_queued_semantic_value());
+        printf("var value: %s\n", (yyvsp[0].semantic_value));
     }
-#line 1541 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 1538 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 27:
-#line 264 "grammar\\mw.y"
+#line 265 "grammar\\mw.y"
     {
-        printf("var value: %s\n", get_queued_semantic_value());
+        printf("var value: %s, ", (yyvsp[0].semantic_value));
     }
-#line 1549 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 1546 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 28:
-#line 269 "grammar\\mw.y"
+  case 29:
+#line 275 "grammar\\mw.y"
     {
-        printf("var value: %s, ", get_queued_semantic_value());
-        fflush(stdout);
+        {(yyval.semantic_value) = get_queued_semantic_value();}
+        /* printf("var value: %s\n", get_queued_semantic_value()); */
     }
-#line 1558 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 1555 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
   case 30:
-#line 277 "grammar\\mw.y"
+#line 280 "grammar\\mw.y"
     {
-        printf("var value: %s, ", get_queued_semantic_value());
-        fflush(stdout);
+        {(yyval.semantic_value) = get_queued_semantic_value();}
+       /* printf("var value: %s\n", get_queued_semantic_value()); */
     }
-#line 1567 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 1564 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
 
-#line 1571 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 1568 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
 
       default: break;
     }

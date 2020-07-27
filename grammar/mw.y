@@ -130,6 +130,8 @@
 %token tk_FALSE
 %token tk_IOTA
 
+%type <semantic_value> var_assign var_assigns
+
 %%
 source: 
     package_stmt 
@@ -249,42 +251,40 @@ var_idents:
     |tk_IDENT 
     {
         printf("var ident: %s, ", get_queued_semantic_value());
-        fflush(stdout);
     }
     tk_COMMA 
     var_idents
 ;
 
 var_assigns:
+    var_assign 
+    {
+        printf("var value: %s\n", $1);
+    }
+    | var_assign
+    {
+        printf("var value: %s, ", $1);
+    } 
+    tk_COMMA 
+    var_assigns
+    
+;
+
+var_assign:
     tk_NUM 
     {
-        printf("var value: %s\n", get_queued_semantic_value());
+        {$$ = get_queued_semantic_value();}
+        /* printf("var value: %s\n", get_queued_semantic_value()); */
     }
     |tk_STRINGLIT
     {
-        printf("var value: %s\n", get_queued_semantic_value());
+        {$$ = get_queued_semantic_value();}
+       /* printf("var value: %s\n", get_queued_semantic_value()); */
     }
-
-    |tk_NUM
-    {
-        printf("var value: %s, ", get_queued_semantic_value());
-        fflush(stdout);
-    } 
-    tk_COMMA
-    var_assigns  /* TODO add all real types for assigns*/
-
-    |tk_STRINGLIT
-    {
-        printf("var value: %s, ", get_queued_semantic_value());
-        fflush(stdout);
-    } 
-    tk_COMMA
-    var_assigns  /* TODO add all real types for assigns*/
 ;
 
 var_bodys:
     var_body
-
     | var_bodys
     var_body 
 ;
