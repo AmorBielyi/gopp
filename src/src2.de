@@ -18,6 +18,21 @@ goimport(
 	tau "goimport_scope_c"
 	"goimport_scope_d"
 );
+var a,b,c = 1,2,3;
+var a,b,c;
+var d;
+var d = 1;
+var d,g = 4,3;
+
+var (
+	 a,b,c = 1,2,3;
+	 a,b,c;
+	 d;
+	 d = 1;
+	 d,g = 4,3;
+);
+
+
 
 // const int channelBufSize = 100;
 // int maxId = 0;

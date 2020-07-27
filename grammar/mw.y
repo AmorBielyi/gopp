@@ -148,13 +148,14 @@ package_stmt:
 /* its our main recusrion rule for every infinite global statements and/or declaration */
 top_level_decl:
     decl 
-    | 
-    top_level_decl decl  
+    | top_level_decl 
+    decl  
 ;
 
 /* add here any global declaration what you need   */
 decl: 
      import_decl 
+     | var_decl
 ;
 
 import_decl:
@@ -164,11 +165,13 @@ import_decl:
      tk_LPAREN 
      import_bodys 
      tk_RPAREN
+     tk_SEMI 
 
      | tk_GOIMPORT 
      tk_LPAREN 
      import_bodys 
-     tk_RPAREN 
+     tk_RPAREN
+     tk_SEMI  
   ;
 
 import:
@@ -205,9 +208,56 @@ import_body:
     {
         printf("source %s\n",get_queued_semantic_value());
     }
-    
+
     | tk_STRINGLIT 
     {
         printf("source %s\n",get_queued_semantic_value());
     }
+;
+
+var_decl:
+    var 
+
+    | tk_VAR 
+    tk_LPAREN
+    var_bodys
+    tk_RPAREN  
+    tk_SEMI 
+;
+
+var:
+  tk_VAR 
+  var_body
+;
+
+var_body:
+    var_idents
+    tk_SEMI 
+
+    |var_idents 
+    tk_ASSIGN 
+    var_assigns
+    tk_SEMI 
+;
+
+var_idents:
+    tk_IDENT 
+
+    | tk_IDENT 
+    tk_COMMA 
+    var_idents
+;
+
+var_assigns:
+    tk_NUM 
+    | tk_NUM 
+    tk_COMMA
+    var_assigns  /* TODO add all real types for assigns*/
+;
+
+var_bodys:
+    var_body
+
+    | var_bodys
+    var_body 
 ;
