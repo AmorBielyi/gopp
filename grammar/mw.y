@@ -242,15 +242,29 @@ var_body:
 
 var_idents:
     tk_IDENT 
+    {
+        printf("var ident: %s\n", get_queued_semantic_value());
+    }
 
-    | tk_IDENT 
+    |tk_IDENT 
+    {
+        printf("var ident: %s, ", get_queued_semantic_value());
+        fflush(stdout);
+    }
     tk_COMMA 
     var_idents
 ;
 
 var_assigns:
     tk_NUM 
-    | tk_NUM 
+    {
+        printf("var value: %s\n", get_queued_semantic_value());
+    }
+    |tk_NUM
+    {
+        printf("var value: %s, ", get_queued_semantic_value());
+        fflush(stdout);
+    } 
     tk_COMMA
     var_assigns  /* TODO add all real types for assigns*/
 ;
