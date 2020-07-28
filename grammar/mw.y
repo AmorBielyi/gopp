@@ -130,7 +130,7 @@
 %token tk_FALSE
 %token tk_IOTA
 
-%type <semantic_value> var_assign var_assigns
+%type <semantic_value> var_assign var_assigns var_ident
 
 %%
 source: 
@@ -229,7 +229,103 @@ var_decl:
 
 var:
   tk_VAR 
+  var_types
   var_body
+
+  | tk_VAR
+  var_body 
+;
+
+var_types:
+    tk_T_STRING 
+    {
+        printf("var type: string\n");
+    }
+
+    |tk_T_BOOL 
+    {
+        printf("var type: bool\n");
+    }
+
+    |tk_T_INT8 
+    {
+        printf("var type: int8\n");
+    }
+
+    |tk_T_UINT8
+    {
+        printf("var type: uint8");
+    }
+
+    |tk_T_BYTE 
+    {
+        printf("var type: byte\n");
+    }
+
+    |tk_T_INT16 
+    {
+        printf("var type: int16\n");
+    }
+
+    |tk_T_UINT16 
+    {
+        printf("var type: uint16\n");
+    }
+
+    |tk_T_INT32
+    {
+        printf("var type: int32\n");
+    }
+
+    |tk_T_UINT32 
+    {
+        printf("var type: uint32\n");
+    }
+
+    |tk_T_RUNE 
+    {
+        printf("var type: rune\n");
+    }
+
+    |tk_T_INT64
+    {
+        printf("var type: int64\n");
+    }
+
+    |tk_T_UINT64
+    {
+        printf("var type: uint64\n");
+    }
+
+    |tk_T_INT
+    {
+        printf("var type: int\n");
+    }
+
+    |tk_T_UINTPTR 
+    {
+        printf("var type: uintptr");
+    }
+
+    |tk_T_FLOAT32
+    {
+        printf("var type: float32");
+    }
+
+    |tk_T_FLOAT64
+    {
+        printf("var type: float64\n");
+    }
+
+    |tk_T_COMPLEX64
+    {
+        printf("var type: complex64");
+    }
+
+    |tk_T_COMPLEX128
+    {
+        printf("var type: complex128");
+    }
 ;
 
 var_body:
@@ -243,17 +339,25 @@ var_body:
 ;
 
 var_idents:
-    tk_IDENT 
+    var_ident
     {
-        printf("var ident: %s\n", get_queued_semantic_value());
+        printf("var ident: %s\n", $1);
     }
 
-    |tk_IDENT 
+    |var_ident
     {
-        printf("var ident: %s, ", get_queued_semantic_value());
-    }
-    tk_COMMA 
+         printf("var ident: %s, ", $1);
+    } 
+    tk_COMMA
     var_idents
+;
+
+var_ident:
+    tk_IDENT 
+    {
+        $$ = get_queued_semantic_value();
+        
+    }
 ;
 
 var_assigns:

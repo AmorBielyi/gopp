@@ -18,9 +18,9 @@ goimport(
 	tau "goimport_scope_c"
 	"goimport_scope_d"
 );
-var a,b,c = 1,"string_value","another_str_val";
+var int a,b,c = 1,"string_value","another_str_val";
 var a,b,c;
-var d;
+var  k;
 var d = 1;
 var d,g = 4,3;
 
