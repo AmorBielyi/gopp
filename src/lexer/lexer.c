@@ -239,6 +239,7 @@ static TokenType get_keyword_type(const char *ident)
     if (kwp == NULL) {
         if (TOKENSDUMP == 1)
             fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value);
+            
         if (lex_semantic_value_queue_state == -1) {
             reserved_semantic_value = text;
             lex_semantic_value_queue_state++;

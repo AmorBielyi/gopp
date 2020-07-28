@@ -130,7 +130,7 @@
 %token tk_FALSE
 %token tk_IOTA
 
-%type <semantic_value> var_assign var_assigns var_ident
+%type <semantic_value> var_assign var_assigns 
 
 %%
 source: 
@@ -218,117 +218,121 @@ import_body:
 ;
 
 var_decl:
-    var 
+   tk_VAR
+   var_types
+   var_body
 
-    | tk_VAR 
-    tk_LPAREN
-    var_bodys
-    tk_RPAREN  
-    tk_SEMI 
-;
+   |tk_VAR 
+   var_body 
 
-var:
-  tk_VAR 
-  var_types
-  var_body
-
-  | tk_VAR
-  var_body 
+   |tk_VAR 
+   tk_LPAREN
+   var_bodys
+   tk_RPAREN  
+   tk_SEMI 
 ;
 
 var_types:
-    tk_T_STRING 
+   
+   tk_IDENT 
+   {   
+        printf("var user type: %s", get_queued_semantic_value());
+       //printf("usertype: %s %s %s %s", get_queued_semantic_value(), yylval.semantic_value, reserved_semantic_value, text);
+   }
+
+    |tk_T_STRING 
     {
-        printf("var type: string\n");
+        printf("var type: string, ");
     }
 
     |tk_T_BOOL 
     {
-        printf("var type: bool\n");
+        printf("var type: bool, ");
     }
 
     |tk_T_INT8 
     {
-        printf("var type: int8\n");
+        printf("var type: int8, ");
     }
 
     |tk_T_UINT8
     {
-        printf("var type: uint8");
+        printf("var type: uint8, ");
     }
 
     |tk_T_BYTE 
     {
-        printf("var type: byte\n");
+        printf("var type: byte, ");
     }
 
     |tk_T_INT16 
     {
-        printf("var type: int16\n");
+        printf("var type: int16, ");
     }
 
     |tk_T_UINT16 
     {
-        printf("var type: uint16\n");
+        printf("var type: uint16, ");
     }
 
     |tk_T_INT32
     {
-        printf("var type: int32\n");
+        printf("var type: int32, ");
     }
 
     |tk_T_UINT32 
     {
-        printf("var type: uint32\n");
+        printf("var type: uint32, ");
     }
 
     |tk_T_RUNE 
     {
-        printf("var type: rune\n");
+        printf("var type: rune, ");
     }
 
     |tk_T_INT64
     {
-        printf("var type: int64\n");
+        printf("var type: int64, ");
     }
 
     |tk_T_UINT64
     {
-        printf("var type: uint64\n");
+        printf("var type: uint64, ");
     }
 
     |tk_T_INT
     {
-        printf("var type: int\n");
+        printf("var type: int, ");
     }
 
     |tk_T_UINTPTR 
     {
-        printf("var type: uintptr");
+        printf("var type: uintptr, ");
     }
 
     |tk_T_FLOAT32
     {
-        printf("var type: float32");
+        printf("var type: float32, ");
     }
 
     |tk_T_FLOAT64
     {
-        printf("var type: float64\n");
+        printf("var type: float64, ");
     }
 
     |tk_T_COMPLEX64
     {
-        printf("var type: complex64");
+        printf("var type: complex64, ");
     }
 
     |tk_T_COMPLEX128
     {
-        printf("var type: complex128");
+        printf("var type: complex128, ");
     }
 ;
 
 var_body:
+
     var_idents
     tk_SEMI 
 
@@ -339,26 +343,21 @@ var_body:
 ;
 
 var_idents:
-    var_ident
+  
+    tk_IDENT
     {
-        printf("var ident: %s\n", $1);
+        printf("var ident: %s\n", get_queued_semantic_value());
     }
 
-    |var_ident
+    |tk_IDENT
     {
-         printf("var ident: %s, ", $1);
+         printf("var ident: %s, ", get_queued_semantic_value());
     } 
     tk_COMMA
     var_idents
 ;
 
-var_ident:
-    tk_IDENT 
-    {
-        $$ = get_queued_semantic_value();
-        
-    }
-;
+
 
 var_assigns:
     var_assign 
