@@ -19,7 +19,9 @@ goimport(
 	"goimport_scope_d"
 );
 
-
+class myClass{}
+class P{}
+class TokenStruct{}
 var myClass *a,b,c = 1,"string_value","another_str_val";
 var float64 a,b,c;
 var complex128 k;

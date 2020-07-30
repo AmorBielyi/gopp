@@ -31,11 +31,19 @@ char *reserved_semantic_value = NULL;
 
 int lex_semantic_value_queue_state = -1 ;
 
-char* semantic_value_var_user_type = NULL; /* var X y -> X*/
-char* semantic_value_var_ident_after_usertype /* var X y -> y */;
-
 char* get_queued_semantic_value();
 
+struct symbol_table_entry{
+    char *semantic_value;
+};
+
+#define NHASH 9997
+
+struct symbol_table_entry symbol_table[NHASH];
+
+int insert_symbol_table(char * semantic_value);
+
+unsigned hash_symbol_table(char *semantic_value);
 
 extern FILE *source_fp;
 
@@ -165,6 +173,52 @@ static TokenType string_lit(int start)
 
 static int kwd_cmp(const void *p1, const void *p2){
     return strcmp(*(char **)p1, *(char **)p2);
+}
+
+
+
+ unsigned hash_symbol_table(char *semantic_value)
+{
+    unsigned int hash = 0;
+    unsigned c;
+
+    while(c = *semantic_value++) hash = hash*9 ^c;
+    return hash; 
+}
+
+int insert_symbol_table(char *semantic_value)
+{
+    struct symbol_table_entry *entry = &symbol_table[hash_symbol_table(semantic_value) % NHASH];
+    int scount = NHASH;
+
+    while(--scount >=0){
+        
+        if(!entry->semantic_value){
+            entry->semantic_value = _strdup(semantic_value);
+            printf("new symbol created in symbol value\n");
+            return 1;
+        }
+        if(++entry >= symbol_table +NHASH) entry = symbol_table;
+    }
+    yyerror("symbol table overflow\n");
+    abort();
+}
+
+int lookup_symbol_table(char* semantic_value)
+{
+   struct symbol_table_entry *entry = &symbol_table[hash_symbol_table(semantic_value) % NHASH];
+   int scount = NHASH;
+
+   while(--scount >= 0){
+       if(entry->semantic_value && !strcmp(entry->semantic_value, semantic_value))
+       {
+           printf("symbol found in symbol table\n");
+           return 1;
+       }
+       if(++entry >= symbol_table +NHASH) entry = symbol_table;
+   }
+   printf("symbol not found in symbol table");
+   return 0;
 }
 
 static TokenType get_keyword_type(const char *ident)

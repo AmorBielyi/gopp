@@ -5,8 +5,8 @@
     extern int yylex(); /*interface to the handwritten lexer*/
     extern void yyerror(const char *fmt, ...); /*iterface to the handwritten lexer */
     extern char* get_queued_semantic_value();
-    extern char* semantic_value_var_user_type;
-    extern char* semantic_value_var_ident_after_usertype;
+    extern int lookup_symbol_table(char *semantic_value);
+    extern int insert_symbol_table(char *semantic_value);
     extern char* text;
 
 %}
@@ -233,7 +233,8 @@ common_decl:
     tk_SEMI  
     tk_RPAREN 
     tk_SEMI 
-   
+
+    |class_decl 
 ;
 
 var_decl_list:
@@ -373,12 +374,20 @@ builtin_type:
 ;
 
 pointer_type:
-   
-    tk_IDENT 
-    {
-        printf("var user type: %s ", get_queued_semantic_value());
+    /*add symtable here, becouse usertype for var can be only valid if it is exists in symtable as real id*/
+
+   lookup_in_symtable 
+   tk_MUL 
+;
+
+lookup_in_symtable:
+    tk_IDENT{
+        printf("this is value for lookup: %s", text);
+        if (lookup_symbol_table(text) == 1)
+            printf("var user type: %s ", text);
+        else 
+            yyerror("undefined user type\n"); 
     }
-    tk_MUL 
 ;
 
 var_expr_list:
@@ -394,4 +403,16 @@ var_expr:
 
     |tk_STRINGLIT
     | tk_NUM 
+;
+
+class_decl:
+
+    tk_CLASS 
+    tk_IDENT 
+    {
+        insert_symbol_table(get_queued_semantic_value());
+    }
+    tk_LCBRACKET 
+    tk_RCBRACKET
+
 ;
