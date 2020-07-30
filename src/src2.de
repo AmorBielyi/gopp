@@ -18,21 +18,23 @@ goimport(
 	tau "goimport_scope_c"
 	"goimport_scope_d"
 );
-var myClass a,b,c = 1;
 
-// var myClass a,b,c = 1,"string_value","another_str_val";
-// var float64 a,b,c;
-// var complex128 k;
-// var P d = 1;
-// var d,g = 4,3;
 
-// var (
-// 	 a,b,c = 1,2,3;
-// 	 a,b,c;
-// 	 d;
-// 	 d = "yet_another_string";
-// 	 d,g = 4,3
-// );
+var myClass *a,b,c = 1,"string_value","another_str_val";
+var float64 a,b,c;
+var complex128 k;
+var P *d = 1;
+var d,g = 4,3;
+var TokenStruct *token_s;
+
+var (
+	myClass *a,b,c = 1,"string_value","another_str_val";
+	float64 a,b,c;
+	complex128 k;
+	P *d = 1;
+	d,g = 4,3;
+	TokenStruct *token_s;
+);
 
 
 

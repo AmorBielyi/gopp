@@ -159,7 +159,7 @@ top_level_decl:
 /* add here any global declaration what you need   */
 decl: 
      import_decl 
-     | var_decl
+     | common_decl
 ;
 
 import_decl:
@@ -219,63 +219,56 @@ import_body:
     }
 ;
 
-var_decl:
-
-    tk_var_hack 
-    var_list 
-    tk_SEMI 
-
-    |tk_var_hack 
-    tk_LPAREN
-    var_list 
-    tk_RPAREN
-    tk_SEMI 
-;
 
 
-tk_var_hack:
+common_decl:
+
     tk_VAR 
-    tk_IDENT {
-        printf("var user type: %s\n", get_queued_semantic_value());
-    }
-    
-;
-
-
-var_list:
-    var
-
-    |var_list 
+    var_decl
     tk_SEMI
-    var   
+
+    | tk_VAR 
+    tk_LPAREN 
+    var_decl_list 
+    tk_SEMI  
+    tk_RPAREN 
+    tk_SEMI 
+   
 ;
 
-var:
-    var_type 
-    var_name_list
+var_decl_list:
+    var_decl
 
-    |var_type
-    var_name_list 
-    tk_ASSIGN
+    |var_decl_list
+    tk_SEMI 
+    var_decl 
+;
+
+var_decl:
+    var_type 
+    var_decl_name_list
+
+    | var_type 
+    var_decl_name_list 
+    tk_ASSIGN 
     var_expr_list 
 
-    |var_name_list 
-    tk_ASSIGN 
-    var_expr_list  
-
-    |var_name_list
+    | var_decl_name_list 
+    tk_ASSIGN
+    var_expr_list
 ;
 
 
-var_name_list:
-    var_name 
 
-    |var_name_list 
+var_decl_name_list:
+    var_decl_name 
+
+    | var_decl_name_list 
     tk_COMMA 
-    var_name 
+    var_decl_name 
 ;
 
-var_name:
+var_decl_name:
     tk_IDENT 
     {
         printf("var ident: %s ", get_queued_semantic_value());
@@ -283,24 +276,9 @@ var_name:
 ;
 
 var_type:
-    builtin_type
+    builtin_type 
+    | pointer_type 
 ;
-
-var_expr_list:
-    var_expr
-
-    |var_expr_list
-    tk_COMMA 
-    var_expr
-;
-
-var_expr:
-    tk_STRINGLIT
-
-    |tk_NUM 
-;
-
-
 
 builtin_type:
     tk_T_STRING 
@@ -392,5 +370,28 @@ builtin_type:
     {
         printf("var type: complex128, ");
     }
+;
 
+pointer_type:
+   
+    tk_IDENT 
+    {
+        printf("var user type: %s ", get_queued_semantic_value());
+    }
+    tk_MUL 
+;
+
+var_expr_list:
+    var_expr
+
+    |var_expr_list
+    tk_COMMA 
+    var_expr
+;
+
+var_expr:
+    tk_IDENT
+
+    |tk_STRINGLIT
+    | tk_NUM 
 ;
