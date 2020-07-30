@@ -31,6 +31,9 @@ char *reserved_semantic_value = NULL;
 
 int lex_semantic_value_queue_state = -1 ;
 
+char* semantic_value_var_user_type = NULL; /* var X y -> X*/
+char* semantic_value_var_ident_after_usertype /* var X y -> y */;
+
 char* get_queued_semantic_value();
 
 
@@ -256,6 +259,16 @@ static TokenType get_keyword_type(const char *ident)
         TokenType token = kwp->sym;
         dump_keywords(token);
     }
+
+    //TokenType token = kwp->sym;
+
+    // if (token == tk_VAR)
+    // {
+    //     return var_token_lookahead(tk_VAR, tk_INTERNAL_VARUSERTYPE);
+
+    // }
+    
+    /*save line here*/
   
     return kwp->sym;
 }
@@ -323,6 +336,33 @@ static TokenType lookahead
     return self;
     //return (Token){self, err_line, err_col, {0}};
 }
+
+// static TokenType var_token_lookahead
+// (
+//     TokenType self,
+//     TokenType found
+// ) 
+// {
+//     TokenType token = yylex();
+//     if (token == tk_IDENT) {
+//         semantic_value_var_user_type = text;
+//         printf("tk_IDENT 1 found %s\n", semantic_value_var_user_type);
+//         token = yylex();
+//         if (token == tk_IDENT) 
+//         {
+//             semantic_value_var_ident_after_usertype = text;
+//             printf("tk_IDENT 2 found %s\n", semantic_value_var_ident_after_usertype);
+//             return found;
+//         }
+//         else 
+//         {
+//             //semantic_value_var_ident_after_usertype = text;
+//             return self;
+//         }
+//     }
+//     return self;
+    
+// }
 
 static TokenType lookahead2
 (
@@ -705,7 +745,35 @@ int yylex()
                 fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_EOF\n", line, col);
             return EOF;
         }
-        default: return ident_or_num();
+        default: 
+        {
+
+           
+
+            return ident_or_num();
+
+            /*if (tokenType == tk_VAR)
+            {
+                if (yylex() == tk_IDENT)
+                {
+                    semantic_value_var_user_type = text;
+                    printf("var user type seen %s", text);
+
+                    if (yylex() == tk_IDENT)
+                    {
+                        semantic_value_var_ident_after_usertype = text;
+                        return tk_INTERNAL_VARUSERTYPE;
+                    }
+                    else {
+                        return tk_VAR;
+                    }
+                }
+                
+            }
+            return tokenType;*/
+        }
+            
+        
         
     }
 }

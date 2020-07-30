@@ -5,13 +5,16 @@
     extern int yylex(); /*interface to the handwritten lexer*/
     extern void yyerror(const char *fmt, ...); /*iterface to the handwritten lexer */
     extern char* get_queued_semantic_value();
+    extern char* semantic_value_var_user_type;
+    extern char* semantic_value_var_ident_after_usertype;
+    extern char* text;
 
 %}
 
 %union{
     char *semantic_value; // for storing semantic values from stringlit, num or ident
 }
-
+%token tk_INTERNAL_VARUSERTYPE;
 /*Original keywords*/
 %token tk_BREAK
 %token tk_CASE
@@ -217,17 +220,26 @@ import_body:
 ;
 
 var_decl:
-    tk_VAR 
+
+    tk_var_hack 
     var_list 
     tk_SEMI 
 
-    |tk_VAR 
+    |tk_var_hack 
     tk_LPAREN
     var_list 
     tk_RPAREN
     tk_SEMI 
 ;
 
+
+tk_var_hack:
+    tk_VAR 
+    tk_IDENT {
+        printf("var user type: %s\n", get_queued_semantic_value());
+    }
+    
+;
 
 
 var_list:
@@ -265,12 +277,13 @@ var_name_list:
 
 var_name:
     tk_IDENT 
+    {
+        printf("var ident: %s ", get_queued_semantic_value());
+    }
 ;
 
 var_type:
-   
     builtin_type
-    |user_type
 ;
 
 var_expr_list:
@@ -287,12 +300,7 @@ var_expr:
     |tk_NUM 
 ;
 
-user_type:
-    tk_IDENT
-    {
-        printf("usertype %s\n", get_queued_semantic_value());
-    }
-;
+
 
 builtin_type:
     tk_T_STRING 
