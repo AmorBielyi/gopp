@@ -18,7 +18,7 @@ goimport(
 	tau "goimport_scope_c"
 	"goimport_scope_d"
 );
-var jg a,b,c = 1,"string_value","another_str_val";
+var myClass a,b,c = 1,"string_value","another_str_val";
 var float64 a,b,c;
 var complex128 k;
 var P d = 1;
@@ -29,7 +29,7 @@ var (
 	 a,b,c;
 	 d;
 	 d = "yet_another_string";
-	 d,g = 4,3;
+	 d,g = 4,3
 );
 
 

@@ -130,7 +130,6 @@
 %token tk_FALSE
 %token tk_IOTA
 
-%type <semantic_value> var_assign var_assigns 
 
 %%
 source: 
@@ -218,29 +217,85 @@ import_body:
 ;
 
 var_decl:
-   tk_VAR
-   var_types
-   var_body
+    tk_VAR 
+    var_list 
+    tk_SEMI 
 
-   |tk_VAR 
-   var_body 
-
-   |tk_VAR 
-   tk_LPAREN
-   var_bodys
-   tk_RPAREN  
-   tk_SEMI 
+    |tk_VAR 
+    tk_LPAREN
+    var_list 
+    tk_RPAREN
+    tk_SEMI 
 ;
 
-var_types:
-   
-   tk_IDENT 
-   {   
-        printf("var user type: %s", get_queued_semantic_value());
-       //printf("usertype: %s %s %s %s", get_queued_semantic_value(), yylval.semantic_value, reserved_semantic_value, text);
-   }
 
-    |tk_T_STRING 
+
+var_list:
+    var
+
+    |var_list 
+    tk_SEMI
+    var   
+;
+
+var:
+    var_type 
+    var_name_list
+
+    |var_type
+    var_name_list 
+    tk_ASSIGN
+    var_expr_list 
+
+    |var_name_list 
+    tk_ASSIGN 
+    var_expr_list  
+
+    |var_name_list
+;
+
+
+var_name_list:
+    var_name 
+
+    |var_name_list 
+    tk_COMMA 
+    var_name 
+;
+
+var_name:
+    tk_IDENT 
+;
+
+var_type:
+   
+    builtin_type
+    |user_type
+;
+
+var_expr_list:
+    var_expr
+
+    |var_expr_list
+    tk_COMMA 
+    var_expr
+;
+
+var_expr:
+    tk_STRINGLIT
+
+    |tk_NUM 
+;
+
+user_type:
+    tk_IDENT
+    {
+        printf("usertype %s\n", get_queued_semantic_value());
+    }
+;
+
+builtin_type:
+    tk_T_STRING 
     {
         printf("var type: string, ");
     }
@@ -329,65 +384,5 @@ var_types:
     {
         printf("var type: complex128, ");
     }
-;
 
-var_body:
-
-    var_idents
-    tk_SEMI 
-
-    |var_idents 
-    tk_ASSIGN 
-    var_assigns
-    tk_SEMI 
-;
-
-var_idents:
-  
-    tk_IDENT
-    {
-        printf("var ident: %s\n", get_queued_semantic_value());
-    }
-
-    |tk_IDENT
-    {
-         printf("var ident: %s, ", get_queued_semantic_value());
-    } 
-    tk_COMMA
-    var_idents
-;
-
-
-
-var_assigns:
-    var_assign 
-    {
-        printf("var value: %s\n", $1);
-    }
-    | var_assign
-    {
-        printf("var value: %s, ", $1);
-    } 
-    tk_COMMA 
-    var_assigns
-    
-;
-
-var_assign:
-    tk_NUM 
-    {
-        {$$ = get_queued_semantic_value();}
-        /* printf("var value: %s\n", get_queued_semantic_value()); */
-    }
-    |tk_STRINGLIT
-    {
-        {$$ = get_queued_semantic_value();}
-       /* printf("var value: %s\n", get_queued_semantic_value()); */
-    }
-;
-
-var_bodys:
-    var_body
-    | var_bodys
-    var_body 
 ;
