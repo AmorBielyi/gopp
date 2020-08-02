@@ -48,8 +48,6 @@ var y = z
 var a,b,c float64
 var k complex128
 var d *P 
-var d P 
-var instance myClass
 var instance *myClass
 var d,g = 4,3
 var token_s, tiktok *TokenStruct 

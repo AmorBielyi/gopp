@@ -639,7 +639,7 @@ static const yytype_int16 yyrline[] =
      296,   297,   301,   303,   305,   307,   309,   311,   313,   315,
      317,   319,   321,   323,   325,   327,   329,   331,   333,   335,
      341,   349,   348,   356,   361,   370,   379,   393,   395,   401,
-     406,   410,   420,   418
+     406,   410,   422,   420
 };
 #endif
 
@@ -1656,7 +1656,7 @@ yyreduce:
     break;
 
   case 62:
-#line 420 "grammar\\mw.y"
+#line 422 "grammar\\mw.y"
     {
         if (insert_symbol_table(get_queued_semantic_value()) == 1)
         {
