@@ -57,7 +57,7 @@ void yyerror(const char *fmt, ...)
     va_start(ap, fmt);
     vsprintf_s(buf, sizeof(buf), fmt, ap);
     va_end(ap);
-    printf("Error at Ln %d, Col %d,  %s\n", line, col, buf);
+    printf("Ln %d, Col %d, in/after '%s', %s.", line, col,get_queued_semantic_value(), buf);
     exit(1);
 }
 
