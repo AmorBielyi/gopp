@@ -571,11 +571,11 @@ union yyalloc
 /* YYNTOKENS -- Number of terminals.  */
 #define YYNTOKENS  113
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  23
+#define YYNNTS  24
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  57
+#define YYNRULES  59
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  87
+#define YYNSTATES  89
 
 #define YYUNDEFTOK  2
 #define YYMAXUTOK   367
@@ -633,12 +633,12 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,   139,   139,   144,   154,   155,   161,   162,   166,   168,
-     174,   186,   193,   199,   201,   207,   206,   216,   226,   230,
-     237,   241,   243,   249,   252,   257,   265,   267,   273,   280,
-     281,   285,   290,   295,   300,   305,   310,   315,   320,   325,
-     330,   335,   340,   345,   350,   355,   360,   365,   370,   379,
-     384,   394,   396,   402,   404,   405,   412,   410
+       0,   139,   139,   145,   155,   156,   161,   162,   169,   171,
+     175,   177,   183,   195,   202,   208,   210,   216,   215,   225,
+     235,   239,   250,   252,   258,   261,   266,   274,   276,   282,
+     289,   290,   294,   299,   304,   309,   314,   319,   324,   329,
+     334,   339,   344,   349,   354,   359,   364,   369,   374,   379,
+     388,   391,   396,   408,   410,   416,   418,   419,   426,   424
 };
 #endif
 
@@ -668,8 +668,8 @@ static const char *const yytname[] =
   "tk_NEG", "tk_LSS", "tk_GRT", "tk_NOTEQ", "tk_EQ", "tk_EQLSS",
   "tk_EQGRT", "tk_SHORTDECL", "tk_ARROW", "tk_INC", "tk_DEC",
   "tk_ELLIPSIS", "tk_STRINGLIT", "tk_NUM", "tk_IDENT", "tk_TRUE",
-  "tk_FALSE", "tk_IOTA", "$accept", "source", "package_stmt",
-  "top_level_decl", "decl", "import_decl", "import", "import_bodys",
+  "tk_FALSE", "tk_IOTA", "$accept", "source", "package_stmt", "decls",
+  "imports", "decl", "import_decl", "import", "import_bodys",
   "import_body", "$@1", "common_decl", "var_decl_list", "var_decl",
   "var_decl_name_list", "var_decl_name", "var_type", "builtin_type",
   "pointer_type", "lookup_in_symtable", "var_expr_list", "var_expr",
@@ -697,12 +697,12 @@ static const yytype_int16 yytoknum[] =
 };
 # endif
 
-#define YYPACT_NINF (-87)
+#define YYPACT_NINF (-85)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
 
-#define YYTABLE_NINF (-51)
+#define YYTABLE_NINF (-53)
 
 #define yytable_value_is_error(Yyn) \
   0
@@ -711,15 +711,15 @@ static const yytype_int16 yytoknum[] =
      STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-       0,   -86,    27,    29,   -34,   -87,   -40,   -56,   -55,   -48,
-      29,   -87,   -87,   -87,   -87,   -87,   -87,   -87,   -87,   -87,
-     -87,   -87,   -87,   -87,   -87,   -87,   -87,   -87,   -87,   -87,
-     -87,   -87,   -87,   -87,   -87,    30,     3,   -10,   -17,   -87,
-     -20,   -87,   -87,    33,   -87,   -83,   -87,   -87,   -87,   -83,
-     -87,   -87,    19,   -87,   -87,   -16,   -20,   -87,    16,   -87,
-      24,   -47,   -87,    -8,   -44,   -11,   -87,   -87,   -87,    23,
-     -87,   -87,   -16,    32,    26,   -87,   -87,    31,    34,   -87,
-     -16,    23,   -87,   -87,   -87,   -87,   -87
+       1,   -82,    42,    14,   -22,   -85,   -47,   -44,    29,   -85,
+     -85,   -85,   -84,   -85,   -85,   -85,   -84,   -85,   -40,   -26,
+      68,   -85,   -85,   -85,   -85,   -50,   -85,   -16,   -43,   -85,
+     -85,   -85,   -85,   -85,   -85,   -85,   -85,   -85,   -85,   -85,
+     -85,   -85,   -85,   -85,   -85,   -85,   -85,    30,   -48,    20,
+      25,   -85,   -12,   -85,   -85,    40,   -85,   -85,    27,   -85,
+     -85,    28,    31,   -85,   -85,   -58,   -12,   -85,    26,   -85,
+      33,   -85,   -85,   -11,   -85,   -85,   -85,    32,   -85,   -85,
+     -58,    36,    34,   -85,   -58,    32,   -85,   -85,   -85
 };
 
   /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -727,31 +727,31 @@ static const yytype_int8 yypact[] =
      means the default is an error.  */
 static const yytype_int8 yydefact[] =
 {
-       0,     0,     0,     0,     0,     1,     0,     0,     0,     0,
-       2,     4,     6,     8,     7,    20,     3,    31,    32,    33,
-      34,    35,    36,    37,    38,    39,    40,    41,    42,    43,
-      44,    45,    46,    47,    48,     0,    28,     0,     0,    26,
-       0,    29,    30,     0,    56,     0,    17,    15,    11,     0,
-      12,     5,     0,    21,    18,     0,     0,    28,    23,    49,
-       0,     0,    13,     0,     0,     0,    54,    55,    53,    25,
-      51,    27,     0,     0,     0,    14,    16,     0,     0,    22,
-       0,    24,    57,     9,    10,    19,    52
+       0,     0,     0,     0,     0,     1,     0,     0,     0,     6,
+      10,     3,     0,    19,    17,    13,     0,    14,     0,     0,
+       2,     4,     7,     8,     9,     0,    15,     0,     0,    32,
+      33,    34,    35,    36,    37,    38,    39,    40,    41,    42,
+      43,    44,    45,    46,    47,    48,    49,     0,    29,     0,
+       0,    27,     0,    30,    31,    51,    58,     5,     0,    16,
+      18,     0,     0,    22,    20,     0,     0,    29,    24,    50,
+       0,    11,    12,     0,    56,    57,    55,    26,    53,    28,
+       0,     0,     0,    23,     0,    25,    59,    21,    54
 };
 
   /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -87,   -87,   -87,   -87,    90,   -87,   -87,    54,    40,   -87,
-     -87,   -87,   -14,    66,    52,   -87,   -87,   -87,   -87,    37,
-      35,   -87,   -87
+     -85,   -85,   -85,   -85,   -85,    82,   104,   -85,    97,    83,
+     -85,   -85,   -85,   -25,    62,    49,   -85,   -85,   -85,   -85,
+      37,    35,   -85,   -85
 };
 
   /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-      -1,     2,     3,    10,    11,    12,    13,    61,    62,    63,
-      14,    52,    37,    38,    39,    40,    41,    42,    43,    69,
-      70,    15,    60
+      -1,     2,     3,    20,     8,    21,     9,    10,    25,    26,
+      27,    23,    62,    49,    50,    51,    52,    53,    54,    55,
+      77,    78,    24,    70
 };
 
   /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -759,36 +759,36 @@ static const yytype_int8 yydefgoto[] =
      number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      17,    18,    19,    20,    21,    22,    23,    24,    25,    26,
-      27,    28,    29,    45,    30,    31,    32,    33,    34,     1,
-      49,    53,    74,     4,    46,    77,    47,     5,    35,    17,
-      18,    19,    20,    21,    22,    23,    24,    25,    26,    27,
-      28,    29,    16,    30,    31,    32,    33,    34,    48,    50,
-      55,    79,    46,    44,    47,     6,     7,    56,    78,    46,
-      46,    47,    47,    46,   -50,    47,    54,     8,     9,    36,
-      17,    18,    19,    20,    21,    22,    23,    24,    25,    26,
-      27,    28,    29,    72,    30,    31,    32,    33,    34,    57,
-      56,    66,    67,    68,    59,    65,    73,    80,    36,    76,
-      51,    75,    83,    64,    75,    82,    58,    84,    71,    81,
-      85,     0,     0,     0,     0,    86,     0,     0,     0,     0,
+      29,    30,    31,    32,    33,    34,    35,    36,    37,    38,
+      39,    40,    41,   -52,    42,    43,    44,    45,    46,    58,
+       1,    12,    63,    13,    16,    14,    61,     4,    47,    29,
+      30,    31,    32,    33,    34,    35,    36,    37,    38,    39,
+      40,    41,     5,    42,    43,    44,    45,    46,    83,    74,
+      75,    76,     6,     7,    11,    18,    19,    13,    82,    14,
+      13,   -52,    14,    13,    13,    14,    14,     6,     7,    48,
+      29,    30,    31,    32,    33,    34,    35,    36,    37,    38,
+      39,    40,    41,    56,    42,    43,    44,    45,    46,    15,
+      17,    60,    65,    80,    18,    19,    64,    67,    48,    66,
+      66,    69,    57,    71,    72,    81,    84,    73,    59,    86,
+      87,    59,    22,    28,    68,    79,     0,    85,     0,    88,
        0,     0,     0,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,     0,     0,     0,     0,    36
+       0,     0,     0,     0,     0,     0,     0,     0,     0,    48
 };
 
 static const yytype_int8 yycheck[] =
 {
       40,    41,    42,    43,    44,    45,    46,    47,    48,    49,
-      50,    51,    52,    68,    54,    55,    56,    57,    58,    19,
-      68,    35,    69,   109,   107,    69,   109,     0,    68,    40,
+      50,    51,    52,    61,    54,    55,    56,    57,    58,    69,
+      19,    68,    47,   107,    68,   109,    69,   109,    68,    40,
       41,    42,    43,    44,    45,    46,    47,    48,    49,    50,
-      51,    52,    76,    54,    55,    56,    57,    58,     8,     9,
-      67,    65,   107,   109,   109,    26,    27,    74,    69,   107,
-     107,   109,   109,   107,    61,   109,    76,    38,    39,   109,
+      51,    52,     0,    54,    55,    56,    57,    58,    73,   107,
+     108,   109,    38,    39,    76,    26,    27,   107,    69,   109,
+     107,   109,   109,   107,   107,   109,   109,    38,    39,   109,
       40,    41,    42,    43,    44,    45,    46,    47,    48,    49,
-      50,    51,    52,    67,    54,    55,    56,    57,    58,   109,
-      74,   107,   108,   109,    61,    76,    72,    74,   109,   107,
-      10,    61,    76,    49,    64,    73,    40,    76,    56,    72,
-      76,    -1,    -1,    -1,    -1,    80,    -1,    -1,    -1,    -1,
+      50,    51,    52,   109,    54,    55,    56,    57,    58,     6,
+       7,   107,    67,    67,    26,    27,    76,   109,   109,    74,
+      74,    61,    20,    76,    76,    72,    74,    76,    25,    73,
+      76,    28,     8,    16,    52,    66,    -1,    80,    -1,    84,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,
       -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,    -1,   109
 };
@@ -797,37 +797,37 @@ static const yytype_int8 yycheck[] =
      symbol of state STATE-NUM.  */
 static const yytype_uint8 yystos[] =
 {
-       0,    19,   114,   115,   109,     0,    26,    27,    38,    39,
-     116,   117,   118,   119,   123,   134,    76,    40,    41,    42,
-      43,    44,    45,    46,    47,    48,    49,    50,    51,    52,
-      54,    55,    56,    57,    58,    68,   109,   125,   126,   127,
-     128,   129,   130,   131,   109,    68,   107,   109,   121,    68,
-     121,   117,   124,   125,    76,    67,    74,   109,   126,    61,
-     135,   120,   121,   122,   120,    76,   107,   108,   109,   132,
-     133,   127,    67,    72,    69,   121,   107,    69,    69,   125,
-      74,   132,    73,    76,    76,    76,   133
+       0,    19,   114,   115,   109,     0,    38,    39,   117,   119,
+     120,    76,    68,   107,   109,   122,    68,   122,    26,    27,
+     116,   118,   119,   124,   135,   121,   122,   123,   121,    40,
+      41,    42,    43,    44,    45,    46,    47,    48,    49,    50,
+      51,    52,    54,    55,    56,    57,    58,    68,   109,   126,
+     127,   128,   129,   130,   131,   132,   109,   118,    69,   122,
+     107,    69,   125,   126,    76,    67,    74,   109,   127,    61,
+     136,    76,    76,    76,   107,   108,   109,   133,   134,   128,
+      67,    72,    69,   126,    74,   133,    73,    76,   134
 };
 
   /* YYR1[YYN] -- Symbol number of symbol that rule YYN derives.  */
 static const yytype_uint8 yyr1[] =
 {
        0,   113,   114,   115,   116,   116,   117,   117,   118,   118,
-     118,   119,   119,   120,   120,   122,   121,   121,   123,   123,
-     123,   124,   124,   125,   125,   125,   126,   126,   127,   128,
-     128,   129,   129,   129,   129,   129,   129,   129,   129,   129,
-     129,   129,   129,   129,   129,   129,   129,   129,   129,   130,
-     131,   132,   132,   133,   133,   133,   135,   134
+     119,   119,   119,   120,   120,   121,   121,   123,   122,   122,
+     124,   124,   125,   125,   126,   126,   126,   127,   127,   128,
+     129,   129,   130,   130,   130,   130,   130,   130,   130,   130,
+     130,   130,   130,   130,   130,   130,   130,   130,   130,   130,
+     131,   131,   132,   133,   133,   134,   134,   134,   136,   135
 };
 
   /* YYR2[YYN] -- Number of symbols on the right hand side of rule YYN.  */
 static const yytype_int8 yyr2[] =
 {
-       0,     2,     2,     3,     1,     2,     1,     1,     1,     5,
-       5,     2,     2,     1,     2,     0,     3,     1,     3,     6,
-       1,     1,     3,     2,     4,     3,     1,     3,     1,     1,
+       0,     2,     3,     3,     1,     2,     1,     2,     1,     1,
+       1,     5,     5,     2,     2,     1,     2,     0,     3,     1,
+       3,     6,     1,     3,     2,     4,     3,     1,     3,     1,
        1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
-       1,     1,     1,     1,     1,     1,     1,     1,     1,     2,
-       1,     1,     3,     1,     1,     1,     0,     5
+       1,     1,     1,     1,     1,     1,     1,     1,     1,     1,
+       2,     1,     1,     1,     3,     1,     1,     1,     0,     5
 };
 
 
@@ -1523,211 +1523,213 @@ yyreduce:
   switch (yyn)
     {
   case 3:
-#line 147 "grammar\\mw.y"
+#line 148 "grammar\\mw.y"
     { 
         printf("package defined: '%s'\n", get_queued_semantic_value());
     }
 #line 1531 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 15:
-#line 207 "grammar\\mw.y"
+  case 17:
+#line 216 "grammar\\mw.y"
     {
         printf("import: alias %s ", get_queued_semantic_value());
     }
 #line 1539 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 16:
-#line 212 "grammar\\mw.y"
+  case 18:
+#line 221 "grammar\\mw.y"
     {
         printf("source %s\n",get_queued_semantic_value());
     }
 #line 1547 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 17:
-#line 217 "grammar\\mw.y"
+  case 19:
+#line 226 "grammar\\mw.y"
     {
         printf("source %s\n",get_queued_semantic_value());
     }
 #line 1555 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 28:
-#line 274 "grammar\\mw.y"
+  case 29:
+#line 283 "grammar\\mw.y"
     {
         printf("var ident: %s ", get_queued_semantic_value());
     }
 #line 1563 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 31:
-#line 286 "grammar\\mw.y"
+  case 32:
+#line 295 "grammar\\mw.y"
     {
         printf("var type: string, ");
     }
 #line 1571 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 32:
-#line 291 "grammar\\mw.y"
+  case 33:
+#line 300 "grammar\\mw.y"
     {
         printf("var type: bool, ");
     }
 #line 1579 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 33:
-#line 296 "grammar\\mw.y"
+  case 34:
+#line 305 "grammar\\mw.y"
     {
         printf("var type: int8, ");
     }
 #line 1587 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 34:
-#line 301 "grammar\\mw.y"
+  case 35:
+#line 310 "grammar\\mw.y"
     {
         printf("var type: uint8, ");
     }
 #line 1595 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 35:
-#line 306 "grammar\\mw.y"
+  case 36:
+#line 315 "grammar\\mw.y"
     {
         printf("var type: byte, ");
     }
 #line 1603 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 36:
-#line 311 "grammar\\mw.y"
+  case 37:
+#line 320 "grammar\\mw.y"
     {
         printf("var type: int16, ");
     }
 #line 1611 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 37:
-#line 316 "grammar\\mw.y"
+  case 38:
+#line 325 "grammar\\mw.y"
     {
         printf("var type: uint16, ");
     }
 #line 1619 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 38:
-#line 321 "grammar\\mw.y"
+  case 39:
+#line 330 "grammar\\mw.y"
     {
         printf("var type: int32, ");
     }
 #line 1627 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 39:
-#line 326 "grammar\\mw.y"
+  case 40:
+#line 335 "grammar\\mw.y"
     {
         printf("var type: uint32, ");
     }
 #line 1635 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 40:
-#line 331 "grammar\\mw.y"
+  case 41:
+#line 340 "grammar\\mw.y"
     {
         printf("var type: rune, ");
     }
 #line 1643 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 41:
-#line 336 "grammar\\mw.y"
+  case 42:
+#line 345 "grammar\\mw.y"
     {
         printf("var type: int64, ");
     }
 #line 1651 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 42:
-#line 341 "grammar\\mw.y"
+  case 43:
+#line 350 "grammar\\mw.y"
     {
         printf("var type: uint64, ");
     }
 #line 1659 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 43:
-#line 346 "grammar\\mw.y"
+  case 44:
+#line 355 "grammar\\mw.y"
     {
         printf("var type: int, ");
     }
 #line 1667 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 44:
-#line 351 "grammar\\mw.y"
+  case 45:
+#line 360 "grammar\\mw.y"
     {
         printf("var type: uintptr, ");
     }
 #line 1675 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 45:
-#line 356 "grammar\\mw.y"
+  case 46:
+#line 365 "grammar\\mw.y"
     {
         printf("var type: float32, ");
     }
 #line 1683 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 46:
-#line 361 "grammar\\mw.y"
+  case 47:
+#line 370 "grammar\\mw.y"
     {
         printf("var type: float64, ");
     }
 #line 1691 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 47:
-#line 366 "grammar\\mw.y"
+  case 48:
+#line 375 "grammar\\mw.y"
     {
         printf("var type: complex64, ");
     }
 #line 1699 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 48:
-#line 371 "grammar\\mw.y"
+  case 49:
+#line 380 "grammar\\mw.y"
     {
         printf("var type: complex128, ");
     }
 #line 1707 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 50:
-#line 384 "grammar\\mw.y"
+  case 52:
+#line 396 "grammar\\mw.y"
             {
         printf("this is value for lookup: %s", text);
-        if (lookup_symbol_table(text) == 1)
+        if (lookup_symbol_table(text) == 1){
             printf("var user type: %s ", text);
+        }
+            
         else 
             yyerror("undefined user type\n"); 
     }
-#line 1719 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 1721 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
-  case 56:
-#line 412 "grammar\\mw.y"
+  case 58:
+#line 426 "grammar\\mw.y"
     {
         insert_symbol_table(get_queued_semantic_value());
     }
-#line 1727 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 1729 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
     break;
 
 
-#line 1731 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
+#line 1733 "C:\\MyData\\Software\\projects\\gotoclass_project\\gotoclass\\src\\bisonparser\\parser.c"
 
       default: break;
     }

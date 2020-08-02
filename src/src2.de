@@ -29,6 +29,7 @@ var P *d = 1;
 var d,g = 4,3;
 var TokenStruct *token_s;
 
+
 var (
 	myClass *a,b,c = 1,"string_value","another_str_val";
 	float64 a,b,c;
@@ -37,6 +38,7 @@ var (
 	d,g = 4,3;
 	TokenStruct *token_s;
 );
+
 
 
 

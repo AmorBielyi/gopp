@@ -38,7 +38,7 @@
 %token tk_STRUCT 
 %token tk_SWITCH
 %token tk_TYPE 
-%token tk_VAR 
+%nonassoc tk_VAR 
 /*MW's original keywords*/
 %token tk_CLASS
 %token tk_EXTENDS
@@ -137,7 +137,8 @@
 %%
 source: 
     package_stmt 
-    top_level_decl 
+    imports 
+    decls 
 ;
 
 package_stmt: 
@@ -150,16 +151,24 @@ package_stmt:
 ;
 
 /* its our main recusrion rule for every infinite global statements and/or declaration */
-top_level_decl:
+decls:
     decl 
-    | top_level_decl 
+    | decls
     decl  
 ;
 
+imports:
+    import_decl 
+    |imports 
+    import_decl 
+;
+
+
 /* add here any global declaration what you need   */
 decl: 
-     import_decl 
-     | common_decl
+      common_decl
+      
+      |class_decl 
 ;
 
 import_decl:
@@ -234,7 +243,7 @@ common_decl:
     tk_RPAREN 
     tk_SEMI 
 
-    |class_decl 
+  
 ;
 
 var_decl_list:
@@ -378,13 +387,18 @@ pointer_type:
 
    lookup_in_symtable 
    tk_MUL 
+   
+   | lookup_in_symtable
+   
 ;
 
 lookup_in_symtable:
     tk_IDENT{
         printf("this is value for lookup: %s", text);
-        if (lookup_symbol_table(text) == 1)
+        if (lookup_symbol_table(text) == 1){
             printf("var user type: %s ", text);
+        }
+            
         else 
             yyerror("undefined user type\n"); 
     }
