@@ -41,17 +41,18 @@ class myStringType{
 
 var osama int 
 var benladen = 1
-
 var a,b,c myClass = 1,"string_value","another_str_val"
 var a,b,c smthpackage.myStringType
 
 var y = z
 var a,b,c float64
 var k complex128
-var d *P  = 1
-var d *P
+var d *P 
+var d P 
+var instance myClass
+var instance *myClass
 var d,g = 4,3
-var token_s, tiktok, hello *TokenStruct 
+var token_s, tiktok *TokenStruct 
 
 
 var (
