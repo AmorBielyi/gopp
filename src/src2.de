@@ -51,7 +51,7 @@ var k complex128
 var d *P  = 1
 var d *P
 var d,g = 4,3
-var token_s, tiktok *TokenStruct 
+var token_s, tiktok, hello *TokenStruct 
 
 
 var (
