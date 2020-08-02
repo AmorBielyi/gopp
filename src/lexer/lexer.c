@@ -195,7 +195,7 @@ int insert_symbol_table(char *semantic_value)
         
         if(!entry->semantic_value){
             entry->semantic_value = _strdup(semantic_value);
-            printf("new symbol created in symbol value\n");
+           // printf("new symbol created in symbol table: '%s' \n", semantic_value);
             return 1;
         }
         if(++entry >= symbol_table +NHASH) entry = symbol_table;
@@ -212,12 +212,12 @@ int lookup_symbol_table(char* semantic_value)
    while(--scount >= 0){
        if(entry->semantic_value && !strcmp(entry->semantic_value, semantic_value))
        {
-           printf("symbol found in symbol table\n");
+           //printf("symbol found in symbol table\n");
            return 1;
        }
        if(++entry >= symbol_table +NHASH) entry = symbol_table;
    }
-   printf("symbol not found in symbol table");
+   printf("symbol not found in symbol table\n");
    return 0;
 }
 

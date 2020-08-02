@@ -1,4 +1,4 @@
-package ☢chat;
+package ☢chat
 goimport "fmt"
 goimport "io"
 goimport "log"
@@ -8,7 +8,7 @@ import(
 	kapa "gpp/src/import_scope_b"
 	omicron "gpp/src/import_scope_c"
 	"gpp/src/import_scope_d"
-);
+)
 import "handler.gpp"
 import omega "gpp/src/package"
 import delta "gpp/src/package2"
@@ -17,27 +17,48 @@ goimport(
 	"goimport_scope_b"
 	tau "goimport_scope_c"
 	"goimport_scope_d"
-);
+)
 
-class myClass{}
-class P{}
-class TokenStruct{}
-var myClass *a,b,c = 1,"string_value","another_str_val";
-var float64 a,b,c;
-var complex128 k;
-var P *d = 1;
-var d,g = 4,3;
-var TokenStruct *token_s;
+class myClass{
+	h,j,o float64
+	a,b = 1
+}
+
+class P {
+	a,b,c float64
+	a,b = 1
+}
+
+class TokenStruct{
+	a,b,c float64
+	a,b = 1
+}
+
+class myStringType{
+	a,b,c float64
+	a,b = 1
+}
+
+
+var a,b,c myClass = 1,"string_value","another_str_val"
+var a,b,c smthpackage.myStringType
+
+var y = z
+var a,b,c float64
+var k complex128
+var d *P  = 1
+var d,g = 4,3
+var token_s, tiktok *TokenStruct 
 
 
 var (
-	myClass *a,b,c = 1,"string_value","another_str_val";
-	float64 a,b,c;
-	complex128 k;
-	P *d = 1;
-	d,g = 4,3;
-	TokenStruct *token_s;
-);
+	a,b,c *myClass  = 1,"string_value","another_str_val"
+	a,b,c float64
+	k complex128
+	d *P = 1
+	d,g = 4,3
+	token_s *TokenStruct
+)
 
 
 
@@ -95,13 +116,13 @@ var (
 //             doneCh <- true;
 //         }
 
-//         *Server Listen(){
+//          func Listen() *Server{
 //             go listenWrite();
 //             listenRead();
 //             return &server
 //         }
 
-//         void listenWrite(){
+//         func listenWrite(){
 //             log.Println("Listening write to client");
 //             for(){
 //                 select{

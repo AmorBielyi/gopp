@@ -33,7 +33,7 @@ int main(int argc, char *argv[])
                 fclose(tokens_stream_dump);
             ftime(&end);
             double diff = (double)(1000.0 * (end.time - start.time) + (end.millitm - start.millitm));
-            printf("\nLexing time: %f seconds = %f milliseconds = %f microseconds", diff / 1000, diff, diff * (double)1000);
+            printf("\nParsing time: %f seconds = %f milliseconds = %f microseconds", diff / 1000, diff, diff * (double)1000);
         }else{
           fprintf(stderr, "Error: can't open source file %s ", argv[1]); exit(1);
         }

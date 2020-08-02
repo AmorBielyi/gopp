@@ -1,4 +1,5 @@
 %defines "src/bisonparser/parser.h"
+
 %{
     #include <stdio.h> /* for printf and e.g */
     #include <string.h>
@@ -133,6 +134,8 @@
 %token tk_FALSE
 %token tk_IOTA
 
+%type <semantic_value> lookup_in_symtable qualified_user_type
+
 
 %%
 source: 
@@ -144,9 +147,8 @@ source:
 package_stmt: 
     tk_PACKAGE 
     tk_IDENT 
-    tk_SEMI 
     { 
-        printf("package defined: '%s'\n", get_queued_semantic_value());
+        printf("package name: '%s'\n", get_queued_semantic_value());
     }
 ;
 
@@ -178,13 +180,12 @@ import_decl:
      tk_LPAREN 
      import_bodys 
      tk_RPAREN
-     tk_SEMI 
 
      | tk_GOIMPORT 
      tk_LPAREN 
      import_bodys 
      tk_RPAREN
-     tk_SEMI  
+ 
   ;
 
 import:
@@ -214,17 +215,17 @@ import_bodys:
 import_body:
     tk_IDENT 
     {
-        printf("import: alias %s ", get_queued_semantic_value());
+        printf("import: alias '%s', ", get_queued_semantic_value());
     }
 
     tk_STRINGLIT 
     {
-        printf("source %s\n",get_queued_semantic_value());
+        printf("source '%s'\n",get_queued_semantic_value());
     }
 
     | tk_STRINGLIT 
     {
-        printf("source %s\n",get_queued_semantic_value());
+        printf("import source '%s'\n",get_queued_semantic_value());
     }
 ;
 
@@ -234,14 +235,13 @@ common_decl:
 
     tk_VAR 
     var_decl
-    tk_SEMI
+   
 
     | tk_VAR 
     tk_LPAREN 
     var_decl_list 
-    tk_SEMI  
+  
     tk_RPAREN 
-    tk_SEMI 
 
   
 ;
@@ -250,16 +250,17 @@ var_decl_list:
     var_decl
 
     |var_decl_list
-    tk_SEMI 
     var_decl 
 ;
 
 var_decl:
-    var_type 
+     
     var_decl_name_list
+    var_type
+   
+    |var_decl_name_list 
+    var_type
 
-    | var_type 
-    var_decl_name_list 
     tk_ASSIGN 
     var_expr_list 
 
@@ -271,132 +272,116 @@ var_decl:
 
 
 var_decl_name_list:
-    var_decl_name 
-
-    | var_decl_name_list 
-    tk_COMMA 
-    var_decl_name 
-;
-
-var_decl_name:
-    tk_IDENT 
+    tk_IDENT  
     {
-        printf("var ident: %s ", get_queued_semantic_value());
+        printf("var name: %s ", get_queued_semantic_value());
     }
+
+    | var_decl_name_list
+    tk_COMMA 
+    tk_IDENT 
+     {
+        printf("var name %s, ", get_queued_semantic_value());
+    }
+    
 ;
+
+
 
 var_type:
     builtin_type 
-    | pointer_type 
+    {
+         printf("var type: %s\n", get_queued_semantic_value());
+    }
+    | pointer_user_type 
+    | user_type
 ;
 
 builtin_type:
     tk_T_STRING 
-    {
-        printf("var type: string, ");
-    }
-
+   
     |tk_T_BOOL 
-    {
-        printf("var type: bool, ");
-    }
-
+    
     |tk_T_INT8 
-    {
-        printf("var type: int8, ");
-    }
 
     |tk_T_UINT8
-    {
-        printf("var type: uint8, ");
-    }
-
+   
     |tk_T_BYTE 
-    {
-        printf("var type: byte, ");
-    }
 
     |tk_T_INT16 
-    {
-        printf("var type: int16, ");
-    }
-
+   
     |tk_T_UINT16 
-    {
-        printf("var type: uint16, ");
-    }
-
+    
     |tk_T_INT32
-    {
-        printf("var type: int32, ");
-    }
-
+    
     |tk_T_UINT32 
-    {
-        printf("var type: uint32, ");
-    }
-
+    
     |tk_T_RUNE 
-    {
-        printf("var type: rune, ");
-    }
 
     |tk_T_INT64
-    {
-        printf("var type: int64, ");
-    }
-
+  
     |tk_T_UINT64
-    {
-        printf("var type: uint64, ");
-    }
-
+   
     |tk_T_INT
-    {
-        printf("var type: int, ");
-    }
-
+  
     |tk_T_UINTPTR 
-    {
-        printf("var type: uintptr, ");
-    }
-
+  
     |tk_T_FLOAT32
-    {
-        printf("var type: float32, ");
-    }
-
+   
     |tk_T_FLOAT64
-    {
-        printf("var type: float64, ");
-    }
-
+    
     |tk_T_COMPLEX64
-    {
-        printf("var type: complex64, ");
-    }
-
+  
     |tk_T_COMPLEX128
-    {
-        printf("var type: complex128, ");
-    }
+    
 ;
 
-pointer_type:
+pointer_user_type:
     /*add symtable here, becouse usertype for var can be only valid if it is exists in symtable as real id*/
-
-   lookup_in_symtable 
    tk_MUL 
+   lookup_in_symtable 
+   {
+       printf("var usertype (ptr): '%s'\n", $2);
+   }
+
    
-   | lookup_in_symtable
+   |qualified_user_type
+   {
+       printf("var usertype (qualified ptr): '%s'\n", $1);
+   }
+   tk_MUL 
+;
+
+user_type:
+    lookup_in_symtable
+   {
+       printf("var usertype: '%s'\n", $1);
+   }
    
+   |tk_IDENT 
+   qualified_user_type
+   {
+       printf("var usertype (qualified): '%s'\n", get_queued_semantic_value());
+   }
+   
+;
+
+qualified_user_type:
+    tk_DOT 
+    lookup_in_symtable
+    {
+        $$ = $2;
+        
+    }
 ;
 
 lookup_in_symtable:
     tk_IDENT{
-        printf("this is value for lookup: %s", text);
-        if (lookup_symbol_table(text) == 1){
-            printf("var user type: %s ", text);
+       // printf("this is value for lookup: %s\n", text);
+        char *semantic = get_queued_semantic_value();
+        if (lookup_symbol_table(semantic) == 1){
+            printf("\nsymbol found in symbol table: '%s'\n", semantic);
+            $$ = $1;
         }
             
         else 
@@ -414,9 +399,18 @@ var_expr_list:
 
 var_expr:
     tk_IDENT
+    {
+        printf("var value: '%s' ", get_queued_semantic_value());
+    }
 
     |tk_STRINGLIT
+    {
+        printf("var value: '%s' ", get_queued_semantic_value());
+    }
     | tk_NUM 
+    {
+        printf("var value: '%s' ", get_queued_semantic_value());
+    }
 ;
 
 class_decl:
@@ -424,9 +418,13 @@ class_decl:
     tk_CLASS 
     tk_IDENT 
     {
-        insert_symbol_table(get_queued_semantic_value());
+        if (insert_symbol_table(get_queued_semantic_value()) == 1)
+        {
+            printf("\nnew symbol created in symbol table: '%s'\n", get_queued_semantic_value());
+        }
     }
     tk_LCBRACKET 
+    var_decl_list 
     tk_RCBRACKET
 
 ;
