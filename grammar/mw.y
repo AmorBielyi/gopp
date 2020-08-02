@@ -411,6 +411,7 @@ var_expr:
     {
         printf("var value: '%s' ", get_queued_semantic_value());
     }
+    
 ;
 
 class_decl:
