@@ -4,7 +4,7 @@
 #include <errno.h>
 #include <sys\timeb.h> 
 //#include "lexer/lexer.h"
-#include "bisonparser/parser.h"
+#include "parser/parser.h"
 
 extern void create_dump();
 long TOKENSDUMP;
@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
             struct timeb start, end;
             ftime(&start);
 
-            yyparse(); // call bison that call internally our yylex() by extern
+            gppparse(); // call bison that call internally our yylex() by extern
 
             fclose(source_fp);
             if (TOKENSDUMP == 1)

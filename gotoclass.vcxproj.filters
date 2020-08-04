@@ -22,11 +22,11 @@
     <Filter Include="Файлы заголовков\Lexer">
       <UniqueIdentifier>{05af25f4-ac87-48c9-8087-623be2bb897c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Исходные файлы\BisonParser">
-      <UniqueIdentifier>{bc8b5d44-291e-40bc-ac62-06980a78099c}</UniqueIdentifier>
+    <Filter Include="Исходные файлы\Parser">
+      <UniqueIdentifier>{d5c76a17-f3b5-4aea-9c53-d4cc204d6830}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Файлы заголовков\BisonParser">
-      <UniqueIdentifier>{f11d6841-8f39-4c61-bab7-bf6926257013}</UniqueIdentifier>
+    <Filter Include="Файлы заголовков\Parser">
+      <UniqueIdentifier>{28cfd92b-ac7d-440d-a156-04ecf1bb2e0c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,8 +36,8 @@
     <ClCompile Include="src\lexer\lexer.c">
       <Filter>Исходные файлы\Lexer</Filter>
     </ClCompile>
-    <ClCompile Include="src\bisonparser\parser.c">
-      <Filter>Исходные файлы\BisonParser</Filter>
+    <ClCompile Include="src\parser\parser.c">
+      <Filter>Исходные файлы\Parser</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -46,8 +46,11 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\bisonparser\parser.h">
-      <Filter>Файлы заголовков\BisonParser</Filter>
+    <ClInclude Include="src\parser\parser.h">
+      <Filter>Файлы заголовков\Parser</Filter>
+    </ClInclude>
+    <ClInclude Include="src\lexer\lexer.h">
+      <Filter>Файлы заголовков\Lexer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

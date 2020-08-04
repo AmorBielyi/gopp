@@ -7,9 +7,8 @@
 #include <stdbool.h>
 #include <limits.h>
 #include <sys\timeb.h> 
-#include "..\bisonparser\parser.h"
+//#include "..\bisonparser\parser.h"
 #define NELEMS(arr) (sizeof(arr) / sizeof(arr[0]))
-
 
 #define da_dim(name, type)  type *name = NULL;          \
                             int _qy_ ## name ## _p = 0;  \
@@ -20,14 +19,130 @@
 #define da_append(name, x)  do {da_redim(name); name[_qy_ ## name ## _p++] = x;} while (0)
 #define da_len(name)        _qy_ ## name ## _p
 
+  typedef enum 
+  {
+    tk_EOF, 
+    tk_BREAK,
+    tk_CASE ,
+    tk_CHAN ,
+    tk_CONST,
+    tk_CONTINUE,
+    tk_DEFAULT,
+    tk_DEFER,
+    tk_ELSE ,
+    tk_FALLTHROUGH,
+    tk_FOR,
+    tk_GO,
+    tk_GOTO,
+    tk_IF,
+    tk_INTERFACE,
+    tk_FUNC,
+    tk_MAP,
+    tk_PACKAGE,
+    tk_RANGE,
+    tk_RETURN,
+    tk_SELECT,
+    tk_STRUCT,
+    tk_SWITCH,
+    tk_TYPE,
+    tk_VAR,
+    tk_CLASS,
+    tk_EXTENDS,
+    tk_IMPLEMENTS,
+    tk_THIS,
+    tk_NEW,
+    tk_SUPER,
+    tk_PUBLIC,
+    tk_PRIVATE,
+    tk_PTRSELECT,
+    tk_OVERRIDE,
+    tk_IMPORT,
+    tk_GOIMPORT,
+    tk_T_STRING,
+    tk_T_BOOL,
+    tk_T_INT8,
+    tk_T_UINT8,
+    tk_T_BYTE,
+    tk_T_INT16,
+    tk_T_UINT16,
+    tk_T_INT32,
+    tk_T_UINT32,
+    tk_T_RUNE,
+    tk_T_INT64,
+    tk_T_UINT64,
+    tk_T_INT,
+    tk_T_UINT,
+    tk_T_UINTPTR,
+    tk_T_FLOAT32,
+    tk_T_FLOAT64,
+    tk_T_COMPLEX64,
+    tk_T_COMPLEX128,
+    tk_ADD,
+    tk_SUB,
+    tk_MUL,
+    tk_DIV,
+    tk_MOD,
+    tk_AND,
+    tk_OR,
+    tk_XOR ,
+    tk_ASSIGN,
+    tk_LPAREN,
+    tk_RPAREN,
+    tk_LSBRACKET,
+    tk_RSBRACKET,
+    tk_LCBRACKET,
+    tk_RCBRACKET,
+    tk_COMMA,
+    tk_DOT,
+    tk_SEMI,
+    tk_UNDERSCORE,
+    tk_COLON,
+    tk_LSHIFT,
+    tk_RSHIFT,
+    tk_EQXOR,
+    tk_EQOR,
+    tk_EQAND,
+    tk_EQANDXOR,
+    tk_EQRSHIFT,
+    tk_EQLSHIFT,
+    tk_LOGICAND,
+    tk_LOGICOR,
+    tk_EQADD,
+    tk_EQSUB,
+    tk_EQMUL,
+    tk_EQDIV,
+    tk_EQMOD,
+    tk_ANDXOR,
+    tk_NEG,
+    tk_LSS,
+    tk_GRT,
+    tk_NOTEQ,
+    tk_EQ,
+    tk_EQLSS,
+    tk_EQGRT,
+    tk_SHORTDECL,
+    tk_ARROW,
+    tk_INC,
+    tk_DEC,
+    tk_ELLIPSIS,
+    tk_STRINGLIT,
+    tk_NUM,
+    tk_IDENT,
+    tk_TRUE,
+    tk_FALSE,
+    tk_IOTA
+  } token_type;
+
+
 extern long TOKENSDUMP;
 extern FILE* tokens_stream_dump;
-typedef int TokenType;
-int yylex();
+//typedef int token_type;
+int gpplex();
 void write_dump(char* token_name, char* token_value);
-void dump_keywords(TokenType token);
+void dump_keywords(token_type token);
 
 char *reserved_semantic_value = NULL;
+char *semantic_value = NULL;
 
 int lex_semantic_value_queue_state = -1 ;
 
@@ -51,7 +166,7 @@ extern FILE *source_fp;
 static int line =1, col = 0, the_ch = ' ';
 da_dim(text, char);
 
-void yyerror(const char *fmt, ...)
+void gpperror(const char *fmt, ...)
 {
     char buf[1000];
     va_list ap;
@@ -66,7 +181,7 @@ char* get_queued_semantic_value() {
     if ( reserved_semantic_value != NULL)
         return reserved_semantic_value;
    
-    return yylval.semantic_value;
+    return semantic_value;
          
 }
 
@@ -88,31 +203,31 @@ static int back_ch(int ch)
     ungetc(ch , source_fp);
 }
 
-static TokenType char_lit(int n)
+static token_type char_lit(int n)
 { /* 'x' */
  if (the_ch == '\'')
-    yyerror("Syntax error: empty character constant");
+    gpperror("Syntax error: empty character constant");
 if (the_ch == '\\'){
     next_ch();
     if(the_ch == 'n')
         n = 10;
     else if (the_ch == '\\')
         n = '\\';
-    else yyerror( "Syntax error: unknown escape sequence \\%c", the_ch);
+    else gpperror( "Syntax error: unknown escape sequence \\%c", the_ch);
 } 
 if(next_ch() != '\'')
-    yyerror("Syntax error: multi-character constant");
+    gpperror("Syntax error: multi-character constant");
 next_ch();
-yylval.semantic_value = (char *)n; // maybe error here 
+semantic_value = (char *)n; // maybe error here 
 
 if(TOKENSDUMP == 1)
-    fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n",line, col, yylval.semantic_value);
+    fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n",line, col, semantic_value);
 
 return tk_NUM;
 
 }
 
-static TokenType div_or_cmt() {  /* (divide)'/' or comment */
+static token_type div_or_cmt() {  /* (divide)'/' or comment */
     if (the_ch != '*')
 
         if (TOKENSDUMP == 1)
@@ -129,24 +244,24 @@ static TokenType div_or_cmt() {  /* (divide)'/' or comment */
         if (the_ch == '*') {
             if (next_ch() == '/') {
                 next_ch();
-                return yylex();
+                return gpplex();
             }
         } else if (the_ch == EOF)
-            yyerror("EOF in comment");
+            gpperror("EOF in comment");
         else
             next_ch();
     }
 }
 
 
-static TokenType string_lit(int start)
+static token_type string_lit(int start)
 { 
     /* "string literal" */
     da_rewind(text);
 
     while(next_ch() != start){
-        if(the_ch == '\n') yyerror( "Syntax error: EOL in string");
-        if (the_ch == EOF) yyerror( "Syntax error: EOF in string");
+        if(the_ch == '\n') gpperror( "Syntax error: EOL in string");
+        if (the_ch == EOF) gpperror( "Syntax error: EOF in string");
         da_append(text, (char)the_ch);
     }
     da_append(text, '\0');
@@ -160,13 +275,13 @@ static TokenType string_lit(int start)
     }
     if (lex_semantic_value_queue_state > -1) {
         lex_semantic_value_queue_state--;
-        yylval.semantic_value = text;
+        semantic_value = text;
         if (TOKENSDUMP == 1)
-            fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_STRINGLIT\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value);
+            fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_STRINGLIT\t\tSemanticValue: '%hs'\n", line, col, semantic_value);
         return tk_STRINGLIT;
     }
     
-    yylval.semantic_value = text;
+    semantic_value = text;
     return tk_STRINGLIT;
 }
 
@@ -198,7 +313,7 @@ int insert_symbol_table(char *semantic_value)
         }
         if(++entry >= symbol_table +NHASH) entry = symbol_table;
     }
-    yyerror("symbol table overflow\n");
+    gpperror("symbol table overflow\n");
     abort();
 }
 
@@ -218,11 +333,11 @@ int lookup_symbol_table(char* semantic_value)
    return 0;
 }
 
-static TokenType get_keyword_type(const char *ident)
+static token_type get_keyword_type(const char *ident)
 {
     static struct{
         char *s;
-        TokenType sym;
+        token_type sym;
     } kwds[] = {
        
         /* Original keywords */
@@ -258,7 +373,6 @@ static TokenType get_keyword_type(const char *ident)
         {"super", tk_SUPER},
         {"public", tk_PUBLIC},
         {"private", tk_PRIVATE},
-        {"void", tk_VOID},
         {"override", tk_OVERRIDE},
         {"import", tk_IMPORT},
         {"goimport", tk_GOIMPORT},
@@ -292,7 +406,7 @@ static TokenType get_keyword_type(const char *ident)
     kwp = bsearch(&ident, kwds, NELEMS(kwds), sizeof(kwds[0]), kwd_cmp);
     if (kwp == NULL) {
         if (TOKENSDUMP == 1)
-            fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value);
+            fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: '%hs'\n", line, col, semantic_value);
             
         if (lex_semantic_value_queue_state == -1) {
             reserved_semantic_value = text;
@@ -301,13 +415,13 @@ static TokenType get_keyword_type(const char *ident)
         }
         if (lex_semantic_value_queue_state > -1) {
             lex_semantic_value_queue_state--;
-            yylval.semantic_value = text;
+            semantic_value = text;
             return tk_IDENT;
         }
     }
     
     if (TOKENSDUMP == 1) {
-        TokenType token = kwp->sym;
+        token_type token = kwp->sym;
         dump_keywords(token);
     }
 
@@ -319,7 +433,7 @@ int isutf8unicode(int c)
     return !isascii(c); 
 }
 
-static TokenType ident_or_num()
+static token_type ident_or_num()
 {   int n = 0;
     int is_ident = false;
     da_rewind(text);
@@ -333,7 +447,7 @@ static TokenType ident_or_num()
     }
     
     if (da_len(text) == 0)
-        yyerror("Syntax error: Syntax error: unrecognized character, code:  (%d) '%c'\n", the_ch, the_ch);
+        gpperror("Syntax error: Syntax error: unrecognized character, code:  (%d) '%c'\n", the_ch, the_ch);
 
   
     
@@ -343,13 +457,13 @@ static TokenType ident_or_num()
     and if first char of ident is digit return syntax error according to Go rule  */
         if(text[0] >=1 && isdigit(text[0])){
             if(is_ident)
-                yyerror("Syntax error: invalid identifier, can't begin with digit '%c'", text[0], text[0]);
+                gpperror("Syntax error: invalid identifier, can't begin with digit '%c'", text[0], text[0]);
              n = strtol(text, NULL, 0);
             if (n == LONG_MAX && errno == ERANGE)
-                yyerror("Syntax error: Number exceeds maximum value");
-            yylval.semantic_value = text;
+                gpperror("Syntax error: Number exceeds maximum value");
+            semantic_value = text;
             if (TOKENSDUMP == 1)
-                fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value);
+                fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n", line, col, semantic_value);
             return tk_NUM;
             
         } 
@@ -359,11 +473,11 @@ static TokenType ident_or_num()
 }
 
 
-static TokenType LA
+static token_type LA
 (
     int except, 
-    TokenType foundnext, 
-    TokenType self
+    token_type foundnext, 
+    token_type self
     )
 {
   
@@ -373,22 +487,22 @@ static TokenType LA
        
     }
     if(self == EOF)
-        yyerror("Syntax error (LA): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
+        gpperror("Syntax error (LA): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
     return self;
 
 }
 
-static TokenType LA2
+static token_type LA2
 (
     int except1, 
     int except2, 
-    TokenType foundl2, 
-    TokenType foundl1, 
-    TokenType self
+    token_type foundl2, 
+    token_type foundl1, 
+    token_type self
 )
 {
     if (self == EOF)
-            yyerror( "Syntax error (LA n2): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
+            gpperror( "Syntax error (LA n2): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
 
     if (the_ch == except1){
         next_ch();
@@ -407,7 +521,7 @@ static TokenType LA2
 }
 
 
-int yylex()
+int gpplex()
 {
     
     /* skip whitespace */
@@ -417,7 +531,7 @@ int yylex()
         case '+':
         {
             next_ch();
-            TokenType token = LA('+', tk_INC, tk_ADD);
+            token_type token = LA('+', tk_INC, tk_ADD);
             if (token == tk_INC)
             {
                 if (TOKENSDUMP == 1)
@@ -444,7 +558,7 @@ int yylex()
         case '-':
         {
             next_ch();
-            TokenType token = LA('>', tk_PTRSELECT, tk_SUB);
+            token_type token = LA('>', tk_PTRSELECT, tk_SUB);
             if (token == tk_PTRSELECT) 
             {
                 if (TOKENSDUMP == 1)
@@ -475,7 +589,7 @@ int yylex()
         case '*':
         {
             next_ch(); 
-            TokenType token = LA('=', tk_EQMUL, tk_MUL);
+            token_type token = LA('=', tk_EQMUL, tk_MUL);
             if (token == tk_EQMUL) 
             {
                 if (TOKENSDUMP == 1)
@@ -495,10 +609,10 @@ int yylex()
               do{
                   next_ch();
               }while(the_ch != '\n');
-              next_ch(); return yylex();
+              next_ch(); return gpplex();
           }
 
-          TokenType token = LA('=', tk_EQDIV, tk_DIV);
+          token_type token = LA('=', tk_EQDIV, tk_DIV);
           if (token == tk_EQDIV) 
           {   
               if (TOKENSDUMP == 1)
@@ -514,7 +628,7 @@ int yylex()
         case '&': 
         {   
             next_ch(); 
-            TokenType token = LA('=', tk_EQAND, tk_AND);
+            token_type token = LA('=', tk_EQAND, tk_AND);
             if (token == tk_EQAND)
             {
                 if (TOKENSDUMP == 1)
@@ -555,7 +669,7 @@ int yylex()
         case '|':
         {
             next_ch();
-            TokenType token = LA('|', tk_LOGICOR, tk_OR);
+            token_type token = LA('|', tk_LOGICOR, tk_OR);
             if (token == tk_LOGICOR) 
             {
                 if (TOKENSDUMP == 1)
@@ -640,7 +754,7 @@ int yylex()
                         write_dump("tk_ELLIPSIS", "...");
                     return tk_ELLIPSIS;
                 }else 
-                   yyerror( "Syntax error (LA): unrecognized character, code:  .\n", the_ch, the_ch);
+                   gpperror( "Syntax error (LA): unrecognized character, code:  .\n", the_ch, the_ch);
                 
             }
             if (TOKENSDUMP == 1)
@@ -658,7 +772,7 @@ int yylex()
         case ':': 
         {
             next_ch(); 
-            TokenType token =  LA('=', tk_SHORTDECL, tk_COLON);
+            token_type token =  LA('=', tk_SHORTDECL, tk_COLON);
             if (token == tk_SHORTDECL) {
                 if (TOKENSDUMP == 1)
                     write_dump("tk_SHORTDECL", ":=");
@@ -674,7 +788,7 @@ int yylex()
         case '!':
         {
             next_ch(); 
-            TokenType token = LA('=', tk_NOTEQ, tk_NEG);
+            token_type token = LA('=', tk_NOTEQ, tk_NEG);
             if (token == tk_NOTEQ) 
             {
                 if (TOKENSDUMP == 1)
@@ -691,7 +805,7 @@ int yylex()
         case '<':
         {
             next_ch();
-            TokenType token = LA('=', tk_EQLSS, tk_LSS);
+            token_type token = LA('=', tk_EQLSS, tk_LSS);
             if (token == tk_EQLSS)
                 return token;
             token = LA('-', tk_ARROW, tk_LSS);
@@ -707,7 +821,7 @@ int yylex()
         case '>':
         {
             next_ch();
-            TokenType token = LA('=', tk_EQGRT, tk_GRT);
+            token_type token = LA('=', tk_EQGRT, tk_GRT);
             if (token == tk_EQGRT)
             {
                 if (TOKENSDUMP == 1)
@@ -743,16 +857,21 @@ int yylex()
         case '"': return string_lit(the_ch);
          
         // case '\'': next_ch(); return char_lit(the_ch, err_line, err_col);
+        
         case EOF:
         {
+            printf("EOF");
             if (TOKENSDUMP == 1)
                 fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_EOF\n", line, col);
-            return EOF;
+            return tk_EOF;
         }
+
         default: 
         {
             return ident_or_num();
         }
+        
+        
     }
 }
 
@@ -785,7 +904,7 @@ void close_dump()
 }
 
 
-void dump_keywords(TokenType token)
+void dump_keywords(token_type token)
 {
     switch(token)
     {
@@ -803,7 +922,6 @@ void dump_keywords(TokenType token)
         case tk_GO:write_dump( "tk_GO","go");break;
         case tk_GOTO: write_dump( "tk_GOTO","goto");break;
         case tk_IF: write_dump( "tk_IF","if");break; 
-        case tk_VOID: write_dump( "tk_VOID","void");break; 
         case tk_IMPORT:write_dump( "tk_IMPORT","#include");break; 
         case tk_GOIMPORT: write_dump( "tk_GOIMPORT","goimport");break; 
         case tk_INTERFACE:write_dump( "tk_INTERFACE","interface");break; 

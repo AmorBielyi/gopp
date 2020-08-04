@@ -138,9 +138,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\bisonparser\parser.c" />
     <ClCompile Include="src\lexer\lexer.c" />
     <ClCompile Include="src\main.c" />
+    <ClCompile Include="src\parser\parser.c" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="grammar\mw.y">
@@ -156,7 +156,8 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\bisonparser\parser.h" />
+    <ClInclude Include="src\lexer\lexer.h" />
+    <ClInclude Include="src\parser\parser.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
