@@ -45,6 +45,7 @@ int insert_symbol_table(char * semantic_value);
 
 unsigned hash_symbol_table(char *semantic_value);
 
+
 extern FILE *source_fp;
 
 static int line =1, col = 0, the_ch = ' ';
@@ -57,7 +58,7 @@ void yyerror(const char *fmt, ...)
     va_start(ap, fmt);
     vsprintf_s(buf, sizeof(buf), fmt, ap);
     va_end(ap);
-    printf("Ln %d, Col %d, in/after '%s', %s.", line, col,get_queued_semantic_value(), buf);
+    printf("Ln %d, Col %d, current_value '%s', %s.", line, col,get_queued_semantic_value(), buf);
     exit(1);
 }
 
@@ -108,7 +109,7 @@ if(TOKENSDUMP == 1)
     fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n",line, col, yylval.semantic_value);
 
 return tk_NUM;
-//return (Token){tk_NUM, err_line, err_col, {n}};
+
 }
 
 static TokenType div_or_cmt() {  /* (divide)'/' or comment */
@@ -118,7 +119,7 @@ static TokenType div_or_cmt() {  /* (divide)'/' or comment */
              write_dump("tk_DIV", "/");
 
         return tk_DIV;
-        //return (Token){tk_DIV, err_line, err_col, {0}};
+       
     if (the_ch == '/')
         printf("\nsingle comment\n");
    /* when comment found */
@@ -151,7 +152,6 @@ static TokenType string_lit(int start)
     da_append(text, '\0');
 
     next_ch();
-    //yylval.semantic_value = text;
     if (lex_semantic_value_queue_state == -1) {
         reserved_semantic_value = text;
         lex_semantic_value_queue_state++;
@@ -168,7 +168,6 @@ static TokenType string_lit(int start)
     
     yylval.semantic_value = text;
     return tk_STRINGLIT;
-    //return (Token){tk_STRINGLIT, err_line, err_col, text=text};
 }
 
 static int kwd_cmp(const void *p1, const void *p2){
@@ -195,7 +194,6 @@ int insert_symbol_table(char *semantic_value)
         
         if(!entry->semantic_value){
             entry->semantic_value = _strdup(semantic_value);
-           // printf("new symbol created in symbol table: '%s' \n", semantic_value);
             return 1;
         }
         if(++entry >= symbol_table +NHASH) entry = symbol_table;
@@ -212,12 +210,11 @@ int lookup_symbol_table(char* semantic_value)
    while(--scount >= 0){
        if(entry->semantic_value && !strcmp(entry->semantic_value, semantic_value))
        {
-           //printf("symbol found in symbol table\n");
            return 1;
        }
        if(++entry >= symbol_table +NHASH) entry = symbol_table;
    }
-   printf("symbol not found in symbol table\n");
+   //printf("symbol not found in symbol table: '%s' \n", get_queued_semantic_value());
    return 0;
 }
 
@@ -314,16 +311,6 @@ static TokenType get_keyword_type(const char *ident)
         dump_keywords(token);
     }
 
-    //TokenType token = kwp->sym;
-
-    // if (token == tk_VAR)
-    // {
-    //     return var_token_lookahead(tk_VAR, tk_INTERNAL_VARUSERTYPE);
-
-    // }
-    
-    /*save line here*/
-  
     return kwp->sym;
 }
 
@@ -364,15 +351,15 @@ static TokenType ident_or_num()
             if (TOKENSDUMP == 1)
                 fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n", line, col, yylval.semantic_value);
             return tk_NUM;
-            //return (Token){tk_NUM, err_line, err_col, text}; 
+            
         } 
-        //yylval.semantic_value = text;
+
         return get_keyword_type(text);
-    //return (Token) {get_keyword_type(text), err_line, err_col, text=text};
+    
 }
 
 
-static TokenType lookahead
+static TokenType LA
 (
     int except, 
     TokenType foundnext, 
@@ -383,42 +370,15 @@ static TokenType lookahead
     if (the_ch == except){
          next_ch();
          return foundnext;
-        //return (Token){foundnext, err_line, err_col, {0}};
+       
     }
     if(self == EOF)
-        yyerror("Syntax error (lookahead): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
+        yyerror("Syntax error (LA): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
     return self;
-    //return (Token){self, err_line, err_col, {0}};
+
 }
 
-// static TokenType var_token_lookahead
-// (
-//     TokenType self,
-//     TokenType found
-// ) 
-// {
-//     TokenType token = yylex();
-//     if (token == tk_IDENT) {
-//         semantic_value_var_user_type = text;
-//         printf("tk_IDENT 1 found %s\n", semantic_value_var_user_type);
-//         token = yylex();
-//         if (token == tk_IDENT) 
-//         {
-//             semantic_value_var_ident_after_usertype = text;
-//             printf("tk_IDENT 2 found %s\n", semantic_value_var_ident_after_usertype);
-//             return found;
-//         }
-//         else 
-//         {
-//             //semantic_value_var_ident_after_usertype = text;
-//             return self;
-//         }
-//     }
-//     return self;
-    
-// }
-
-static TokenType lookahead2
+static TokenType LA2
 (
     int except1, 
     int except2, 
@@ -428,7 +388,7 @@ static TokenType lookahead2
 )
 {
     if (self == EOF)
-            yyerror( "Syntax error (lookahead n2): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
+            yyerror( "Syntax error (LA n2): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
 
     if (the_ch == except1){
         next_ch();
@@ -436,15 +396,14 @@ static TokenType lookahead2
         if (the_ch == except2){
             next_ch();
             return foundl2;
-            //return (Token){foundl2, err_line, err_col, {0}};
         }else{
             if (foundl1 != 0)
                 return foundl1;
-               // return (Token){foundl1, err_line, err_col, {0}};
+              
         }
     }
           return self;
-        //return (Token){self, err_line, err_col, {0}};
+  
 }
 
 
@@ -458,7 +417,7 @@ int yylex()
         case '+':
         {
             next_ch();
-            TokenType token = lookahead('+', tk_INC, tk_ADD);
+            TokenType token = LA('+', tk_INC, tk_ADD);
             if (token == tk_INC)
             {
                 if (TOKENSDUMP == 1)
@@ -466,7 +425,7 @@ int yylex()
                 return token;
             }
                
-            token = lookahead('=', tk_EQADD, tk_ADD);
+            token = LA('=', tk_EQADD, tk_ADD);
             if (token == tk_EQADD)
             {
                 if (TOKENSDUMP == 1)
@@ -485,7 +444,7 @@ int yylex()
         case '-':
         {
             next_ch();
-            TokenType token = lookahead('>', tk_PTRSELECT, tk_SUB);
+            TokenType token = LA('>', tk_PTRSELECT, tk_SUB);
             if (token == tk_PTRSELECT) 
             {
                 if (TOKENSDUMP == 1)
@@ -493,7 +452,7 @@ int yylex()
                 return token;
             }
                 
-            token = lookahead('-', tk_DEC, tk_SUB);
+            token = LA('-', tk_DEC, tk_SUB);
             if (token == tk_DEC) 
             {
                 if (TOKENSDUMP == 1)
@@ -501,7 +460,7 @@ int yylex()
                 return token;
             }
                 
-            token = lookahead('=', tk_EQSUB, tk_SUB);
+            token = LA('=', tk_EQSUB, tk_SUB);
             if (token == tk_EQSUB) 
             {
                 if (TOKENSDUMP == 1)
@@ -511,12 +470,12 @@ int yylex()
                 
             if (TOKENSDUMP == 1)
                 write_dump("tk_SUB", "-");
-            return token; // return self, if whole lookahead false
+            return token; 
         }
         case '*':
         {
             next_ch(); 
-            TokenType token = lookahead('=', tk_EQMUL, tk_MUL);
+            TokenType token = LA('=', tk_EQMUL, tk_MUL);
             if (token == tk_EQMUL) 
             {
                 if (TOKENSDUMP == 1)
@@ -539,7 +498,7 @@ int yylex()
               next_ch(); return yylex();
           }
 
-          TokenType token = lookahead('=', tk_EQDIV, tk_DIV);
+          TokenType token = LA('=', tk_EQDIV, tk_DIV);
           if (token == tk_EQDIV) 
           {   
               if (TOKENSDUMP == 1)
@@ -551,11 +510,11 @@ int yylex()
           return div_or_cmt(); 
         }
 
-        case '%': next_ch(); return lookahead('=', tk_EQMOD, tk_MOD);
+        case '%': next_ch(); return LA('=', tk_EQMOD, tk_MOD);
         case '&': 
         {   
             next_ch(); 
-            TokenType token = lookahead('=', tk_EQAND, tk_AND);
+            TokenType token = LA('=', tk_EQAND, tk_AND);
             if (token == tk_EQAND)
             {
                 if (TOKENSDUMP == 1)
@@ -563,7 +522,7 @@ int yylex()
                 return token;
             }
                 
-            token = lookahead('&', tk_LOGICAND, tk_AND);
+            token = LA('&', tk_LOGICAND, tk_AND);
             if (token == tk_LOGICAND) 
             {   
                 if (TOKENSDUMP == 1)
@@ -571,7 +530,7 @@ int yylex()
                 return token;
             }
                 
-            token = lookahead2('^', '=', tk_EQANDXOR, tk_ANDXOR, tk_AND);
+            token = LA2('^', '=', tk_EQANDXOR, tk_ANDXOR, tk_AND);
             
             if (token == tk_EQANDXOR) 
             {
@@ -596,14 +555,14 @@ int yylex()
         case '|':
         {
             next_ch();
-            TokenType token = lookahead('|', tk_LOGICOR, tk_OR);
+            TokenType token = LA('|', tk_LOGICOR, tk_OR);
             if (token == tk_LOGICOR) 
             {
                 if (TOKENSDUMP == 1)
                     write_dump("tk_LOGICOR", "||");
                 return token;
             }
-            token = lookahead('=', tk_EQOR, tk_OR);
+            token = LA('=', tk_EQOR, tk_OR);
             if (token == tk_EQOR) 
             {
                 if (TOKENSDUMP == 1)
@@ -619,8 +578,8 @@ int yylex()
             }
                
         }
-        case '^': next_ch(); return lookahead('=', tk_EQXOR, tk_XOR);
-        case '=': next_ch(); return lookahead('=', tk_EQ, tk_ASSIGN);
+        case '^': next_ch(); return LA('=', tk_EQXOR, tk_XOR);
+        case '=': next_ch(); return LA('=', tk_EQ, tk_ASSIGN);
         case '(':
         {
             next_ch();
@@ -681,7 +640,7 @@ int yylex()
                         write_dump("tk_ELLIPSIS", "...");
                     return tk_ELLIPSIS;
                 }else 
-                   yyerror( "Syntax error (lookahead): unrecognized character, code:  .\n", the_ch, the_ch);
+                   yyerror( "Syntax error (LA): unrecognized character, code:  .\n", the_ch, the_ch);
                 
             }
             if (TOKENSDUMP == 1)
@@ -696,17 +655,10 @@ int yylex()
                 write_dump("tk_SEMI", ";");
             return tk_SEMI;
         }
-        /*case '_':
-        {
-            next_ch();
-            if (TOKENSDUMP == 1)
-                write_dump("tk_UNDERSCORE", "_");
-            return tk_UNDERSCORE;
-        }*/
         case ':': 
         {
             next_ch(); 
-            TokenType token =  lookahead('=', tk_SHORTDECL, tk_COLON);
+            TokenType token =  LA('=', tk_SHORTDECL, tk_COLON);
             if (token == tk_SHORTDECL) {
                 if (TOKENSDUMP == 1)
                     write_dump("tk_SHORTDECL", ":=");
@@ -722,7 +674,7 @@ int yylex()
         case '!':
         {
             next_ch(); 
-            TokenType token = lookahead('=', tk_NOTEQ, tk_NEG);
+            TokenType token = LA('=', tk_NOTEQ, tk_NEG);
             if (token == tk_NOTEQ) 
             {
                 if (TOKENSDUMP == 1)
@@ -739,13 +691,13 @@ int yylex()
         case '<':
         {
             next_ch();
-            TokenType token = lookahead('=', tk_EQLSS, tk_LSS);
+            TokenType token = LA('=', tk_EQLSS, tk_LSS);
             if (token == tk_EQLSS)
                 return token;
-            token = lookahead('-', tk_ARROW, tk_LSS);
+            token = LA('-', tk_ARROW, tk_LSS);
             if (token == tk_ARROW)
                 return token;
-            token = lookahead2('<', '=', tk_EQLSHIFT, tk_LSHIFT, tk_LSS);
+            token = LA2('<', '=', tk_EQLSHIFT, tk_LSHIFT, tk_LSS);
             if (token == tk_EQLSHIFT || token == tk_LSHIFT)
                 return token;
             if (token == tk_LSS)
@@ -755,7 +707,7 @@ int yylex()
         case '>':
         {
             next_ch();
-            TokenType token = lookahead('=', tk_EQGRT, tk_GRT);
+            TokenType token = LA('=', tk_EQGRT, tk_GRT);
             if (token == tk_EQGRT)
             {
                 if (TOKENSDUMP == 1)
@@ -763,7 +715,7 @@ int yylex()
                 return token;
             }
                 
-            token = lookahead2('>', '=', tk_RSHIFT, tk_EQRSHIFT, tk_GRT);
+            token = LA2('>', '=', tk_RSHIFT, tk_EQRSHIFT, tk_GRT);
             if (token == tk_RSHIFT || token == tk_EQRSHIFT)
                 return token;
             if (token == tk_GRT)
@@ -787,8 +739,6 @@ int yylex()
                     write_dump("tk_GRT", ">");
                 return token;
             }
-
-
         }
         case '"': return string_lit(the_ch);
          
@@ -801,34 +751,8 @@ int yylex()
         }
         default: 
         {
-
-           
-
             return ident_or_num();
-
-            /*if (tokenType == tk_VAR)
-            {
-                if (yylex() == tk_IDENT)
-                {
-                    semantic_value_var_user_type = text;
-                    printf("var user type seen %s", text);
-
-                    if (yylex() == tk_IDENT)
-                    {
-                        semantic_value_var_ident_after_usertype = text;
-                        return tk_INTERNAL_VARUSERTYPE;
-                    }
-                    else {
-                        return tk_VAR;
-                    }
-                }
-                
-            }
-            return tokenType;*/
         }
-            
-        
-        
     }
 }
 

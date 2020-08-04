@@ -1,5 +1,4 @@
 %defines "src/bisonparser/parser.h"
-
 %{
     #include <stdio.h> /* for printf and e.g */
     #include <string.h>
@@ -15,7 +14,6 @@
 %union{
     char *semantic_value; // for storing semantic values from stringlit, num or ident
 }
-%token tk_INTERNAL_VARUSERTYPE;
 /*Original keywords*/
 %token tk_BREAK
 %token tk_CASE
@@ -134,7 +132,7 @@
 %token tk_FALSE
 %token tk_IOTA
 
-%type <semantic_value> lookup_in_symtable qualified_user_type
+
 
 
 %%
@@ -232,73 +230,101 @@ import_body:
 
 
 common_decl:
-
-    tk_VAR 
-    var_decl
-   
+    tk_VAR var_decl 
 
     | tk_VAR 
-    tk_LPAREN 
+    tk_LPAREN
     var_decl_list 
-  
-    tk_RPAREN 
-
-  
-;
-
-var_decl_list:
-    var_decl
-
-    |var_decl_list
-    var_decl 
+    tk_RPAREN
 ;
 
 var_decl:
-     
-    var_decl_name_list
-    var_type
-   
-    |var_decl_name_list 
-    var_type
+    decl_name_list ntype
 
-    tk_ASSIGN 
-    var_expr_list 
-
-    | var_decl_name_list 
+    |decl_name_list 
+    ntype 
     tk_ASSIGN
-    var_expr_list
+    expr_list 
+
+    |decl_name_list 
+    tk_ASSIGN
+    expr_list  
 ;
 
+var_decl_list:
+    var_decl 
 
+    | var_decl_list 
+    tk_SEMI 
+    var_decl 
+;
 
-var_decl_name_list:
-    tk_IDENT  
+decl_name:
+    tk_IDENT
     {
-        printf("var name: %s ", get_queued_semantic_value());
+        printf("decl name: %s ", get_queued_semantic_value());
     }
+;
 
-    | var_decl_name_list
+decl_name_list:
+    decl_name 
+
+    |decl_name_list 
     tk_COMMA 
-    tk_IDENT 
-     {
-        printf("var name %s, ", get_queued_semantic_value());
-    }
+    decl_name 
+;
+
+expr:
+    tk_IDENT
+    |tk_STRINGLIT
+    |tk_NUM 
+;
+
+expr_list:
+    expr 
+
+    |expr_list 
+    tk_COMMA 
+    expr 
+;
+
+
+ntype:
+    ptrtype 
+    |lookup_symbol_table
+    |dotname
+    |builtin_type
+;
+
+ptrtype:
+    tk_MUL 
+    ntype 
+;
+
+dotname:
     
+
+    name 
+    tk_DOT 
+    lookup_symbol_table 
 ;
 
-
-
-var_type:
-    builtin_type 
+lookup_symbol_table:
+   name
     {
-         printf("var type: %s\n", get_queued_semantic_value());
+       
+            printf("\nsymbol for lookup: '%s'\n", get_queued_semantic_value());
+            if (lookup_symbol_table(get_queued_semantic_value())==1){
+                printf("\nsymbol found in symbol table: '%s'\n", get_queued_semantic_value()); 
+            }else 
+             yyerror("undefined user type '%s'\n", get_queued_semantic_value()); 
     }
-    | pointer_user_type 
-    | user_type
 ;
+
+
 
 builtin_type:
-    tk_T_STRING 
+tk_T_STRING 
    
     |tk_T_BOOL 
     
@@ -333,86 +359,10 @@ builtin_type:
     |tk_T_COMPLEX64
   
     |tk_T_COMPLEX128
-    
 ;
 
-pointer_user_type:
-    /*add symtable here, becouse usertype for var can be only valid if it is exists in symtable as real id*/
-   tk_MUL 
-   lookup_in_symtable 
-   {
-       printf("var usertype (ptr): '%s'\n", $2);
-   }
-
-   
-   |qualified_user_type
-   {
-       printf("var usertype (qualified ptr): '%s'\n", $1);
-   }
-   tk_MUL 
-;
-
-user_type:
-    lookup_in_symtable
-   {
-       printf("var usertype: '%s'\n", $1);
-   }
-   
-   |tk_IDENT 
-   qualified_user_type
-   {
-       printf("var usertype (qualified): '%s'\n", get_queued_semantic_value());
-   }
-   
-;
-
-qualified_user_type:
-    tk_DOT 
-    lookup_in_symtable
-    {
-        $$ = $2;
-        
-    }
-;
-
-lookup_in_symtable:
-    tk_IDENT{
-       // printf("this is value for lookup: %s\n", text);
-        char *semantic = get_queued_semantic_value();
-        if (lookup_symbol_table(semantic) == 1){
-            printf("\nsymbol found in symbol table: '%s'\n", semantic);
-            $$ = $1;
-        }
-            
-        else 
-            yyerror("undefined user type\n"); 
-    }
-;
-
-var_expr_list:
-    var_expr
-
-    |var_expr_list
-    tk_COMMA 
-    var_expr
-;
-
-var_expr:
+name:
     tk_IDENT
-    {
-        printf("var value: '%s' ", get_queued_semantic_value());
-    }
-
-    |tk_STRINGLIT
-    {
-        printf("var value: '%s' ", get_queued_semantic_value());
-    }
-    | tk_NUM 
-    {
-        printf("var value: '%s' ", get_queued_semantic_value());
-    }
-
-    
 ;
 
 class_decl:

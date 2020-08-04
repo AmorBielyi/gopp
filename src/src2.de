@@ -21,46 +21,56 @@ goimport(
 
 class myClass{
 	h,j,o float64
-	a,b = 1
 }
 
 class P {
 	a,b,c float64
-	a,b = 1
 }
 
 class TokenStruct{
 	a,b,c float64
-	a,b = 1
 }
 
 class myStringType{
 	a,b,c float64
-	a,b = 1
 }
 
-var osama int 
-var benladen = 1
-var a,b,c myClass = 1,"string_value","another_str_val"
-var a,b,c smthpackage.myStringType
+var osama int
+var osama *int 
+var osame = 1,2,3
+var osama *int = 1,2,3
+var osama int = 1,2,3
 
-var y = z
-var a,b,c float64
-var k complex128
-var d *P 
-var instance *myClass
-var d,g = 4,3
-var token_s, tiktok *TokenStruct 
+var osama, osama2 int
+var osama,osama2 *int 
+var osame,osama2 = 1,2,3
+var osama,osama2 *int = 1,2,3
+var osama,osama2 int = 1,2,3
 
+var osama *h.myClass
+var osama h.myClass
+var osamat P 
 
 var (
-	a,b,c *myClass  = 1,"string_value","another_str_val"
-	a,b,c float64
-	k complex128
-	d *P = 1
-	d,g = 4,3
-	token_s *TokenStruct
+	osame int;
+	osamar *int = 1,2,3
 )
+
+
+
+
+// var benladen = 1
+// var a *hh.myClass 
+// var a hh.myClass
+
+// var a,h myClass // error
+
+// var a,b,c myClass = 1,"string_value","another_str_val"
+// var a,b,c *myClass = 1,"string_value","another_str_val"
+// var a,b,c *smthpackage.myStringType
+// var a,b,c smthpackage.myStringType
+
+
 
 
 
@@ -69,7 +79,7 @@ var (
 // int maxId = 0;
 
 
-// void main(){
+// func main(){
 //     log.SetFlags(log.Lshortfile);
 //     server := char.NewServer("/entry");
 //     go server.Listen();
@@ -140,4 +150,35 @@ var (
 //             }
 //         }
 
+// }
+
+// public class Students{
+// 	private age int
+// 	private firstName string
+// 	private lastName string
+// 	private score double 
+
+// 	public Students (int age, string firstName, lastName ){
+// 		this.age = age
+// 		this.firstName = firstName 
+// 		this.lastName = lastName 
+// 	}
+
+// 	public func getAge(){
+
+// 	}
+
+// 	public func getFullName(){
+
+// 	}
+
+// 	public func getScore(){
+
+// 	}
+// }
+
+
+// func main(){
+// 	myStudent = new Students(15, "Roma", "Wise")
+// 	fmt.Println(myStudents.getFullName())
 // }

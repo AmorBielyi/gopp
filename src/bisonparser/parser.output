@@ -1,6 +1,5 @@
 Terminals unused in grammar
 
-    tk_INTERNAL_VARUSERTYPE
     tk_BREAK
     tk_CASE
     tk_CHAN
@@ -42,7 +41,6 @@ Terminals unused in grammar
     tk_XOR
     tk_LSBRACKET
     tk_RSBRACKET
-    tk_SEMI
     tk_UNDERSCORE
     tk_COLON
     tk_LSHIFT
@@ -113,259 +111,256 @@ Grammar
    19 common_decl: tk_VAR var_decl
    20            | tk_VAR tk_LPAREN var_decl_list tk_RPAREN
 
-   21 var_decl_list: var_decl
-   22              | var_decl_list var_decl
+   21 var_decl: decl_name_list ntype
+   22         | decl_name_list ntype tk_ASSIGN expr_list
+   23         | decl_name_list tk_ASSIGN expr_list
 
-   23 var_decl: var_decl_name_list var_type
-   24         | var_decl_name_list var_type tk_ASSIGN var_expr_list
-   25         | var_decl_name_list tk_ASSIGN var_expr_list
+   24 var_decl_list: var_decl
+   25              | var_decl_list tk_SEMI var_decl
 
-   26 var_decl_name_list: tk_IDENT
-   27                   | var_decl_name_list tk_COMMA tk_IDENT
+   26 decl_name: tk_IDENT
 
-   28 var_type: builtin_type
-   29         | pointer_user_type
-   30         | user_type
+   27 decl_name_list: decl_name
+   28               | decl_name_list tk_COMMA decl_name
 
-   31 builtin_type: tk_T_STRING
-   32             | tk_T_BOOL
-   33             | tk_T_INT8
-   34             | tk_T_UINT8
-   35             | tk_T_BYTE
-   36             | tk_T_INT16
-   37             | tk_T_UINT16
-   38             | tk_T_INT32
-   39             | tk_T_UINT32
-   40             | tk_T_RUNE
-   41             | tk_T_INT64
-   42             | tk_T_UINT64
-   43             | tk_T_INT
-   44             | tk_T_UINTPTR
-   45             | tk_T_FLOAT32
-   46             | tk_T_FLOAT64
-   47             | tk_T_COMPLEX64
-   48             | tk_T_COMPLEX128
+   29 expr: tk_IDENT
+   30     | tk_STRINGLIT
+   31     | tk_NUM
 
-   49 pointer_user_type: tk_MUL lookup_in_symtable
+   32 expr_list: expr
+   33          | expr_list tk_COMMA expr
 
-   50 $@2: %empty
+   34 ntype: ptrtype
+   35      | lookup_symbol_table
+   36      | dotname
+   37      | builtin_type
 
-   51 pointer_user_type: qualified_user_type $@2 tk_MUL
+   38 ptrtype: tk_MUL ntype
 
-   52 user_type: lookup_in_symtable
-   53          | tk_IDENT qualified_user_type
+   39 dotname: name tk_DOT lookup_symbol_table
 
-   54 qualified_user_type: tk_DOT lookup_in_symtable
+   40 lookup_symbol_table: name
 
-   55 lookup_in_symtable: tk_IDENT
+   41 builtin_type: tk_T_STRING
+   42             | tk_T_BOOL
+   43             | tk_T_INT8
+   44             | tk_T_UINT8
+   45             | tk_T_BYTE
+   46             | tk_T_INT16
+   47             | tk_T_UINT16
+   48             | tk_T_INT32
+   49             | tk_T_UINT32
+   50             | tk_T_RUNE
+   51             | tk_T_INT64
+   52             | tk_T_UINT64
+   53             | tk_T_INT
+   54             | tk_T_UINTPTR
+   55             | tk_T_FLOAT32
+   56             | tk_T_FLOAT64
+   57             | tk_T_COMPLEX64
+   58             | tk_T_COMPLEX128
 
-   56 var_expr_list: var_expr
-   57              | var_expr_list tk_COMMA var_expr
+   59 name: tk_IDENT
 
-   58 var_expr: tk_IDENT
-   59         | tk_STRINGLIT
-   60         | tk_NUM
+   60 $@2: %empty
 
-   61 $@3: %empty
-
-   62 class_decl: tk_CLASS tk_IDENT $@3 tk_LCBRACKET var_decl_list tk_RCBRACKET
+   61 class_decl: tk_CLASS tk_IDENT $@2 tk_LCBRACKET var_decl_list tk_RCBRACKET
 
 
 Terminals, with rules where they appear
 
     $end (0) 0
     error (256)
-    tk_INTERNAL_VARUSERTYPE (258)
-    tk_BREAK (259)
-    tk_CASE (260)
-    tk_CHAN (261)
-    tk_CONST (262)
-    tk_CONTINUE (263)
-    tk_DEFAULT (264)
-    tk_DEFER (265)
-    tk_ELSE (266)
-    tk_FALLTHROUGH (267)
-    tk_FOR (268)
-    tk_GO (269)
-    tk_GOTO (270)
-    tk_IF (271)
-    tk_INTERFACE (272)
-    tk_MAP (273)
-    tk_PACKAGE (274) 2
-    tk_RANGE (275)
-    tk_RETURN (276)
-    tk_SELECT (277)
-    tk_STRUCT (278)
-    tk_SWITCH (279)
-    tk_TYPE (280)
-    tk_VAR (281) 19 20
-    tk_CLASS (282) 62
-    tk_EXTENDS (283)
-    tk_IMPLEMENTS (284)
-    tk_THIS (285)
-    tk_NEW (286)
-    tk_SUPER (287)
-    tk_PUBLIC (288)
-    tk_PRIVATE (289)
-    tk_PTRSELECT (290)
-    tk_OVERRIDE (291)
-    tk_VOID (292)
-    tk_IMPORT (293) 10 12
-    tk_GOIMPORT (294) 11 13
-    tk_T_STRING (295) 31
-    tk_T_BOOL (296) 32
-    tk_T_INT8 (297) 33
-    tk_T_UINT8 (298) 34
-    tk_T_BYTE (299) 35
-    tk_T_INT16 (300) 36
-    tk_T_UINT16 (301) 37
-    tk_T_INT32 (302) 38
-    tk_T_UINT32 (303) 39
-    tk_T_RUNE (304) 40
-    tk_T_INT64 (305) 41
-    tk_T_UINT64 (306) 42
-    tk_T_INT (307) 43
-    tk_T_UINT (308)
-    tk_T_UINTPTR (309) 44
-    tk_T_FLOAT32 (310) 45
-    tk_T_FLOAT64 (311) 46
-    tk_T_COMPLEX64 (312) 47
-    tk_T_COMPLEX128 (313) 48
-    tk_ADD (314)
-    tk_SUB (315)
-    tk_MUL (316) 49 51
-    tk_DIV (317)
-    tk_MOD (318)
-    tk_AND (319)
-    tk_OR (320)
-    tk_XOR (321)
-    tk_ASSIGN (322) 24 25
-    tk_LPAREN (323) 10 11 20
-    tk_RPAREN (324) 10 11 20
-    tk_LSBRACKET (325)
-    tk_RSBRACKET (326)
-    tk_LCBRACKET (327) 62
-    tk_RCBRACKET (328) 62
-    tk_COMMA (329) 27 57
-    tk_DOT (330) 54
-    tk_SEMI (331)
-    tk_UNDERSCORE (332)
-    tk_COLON (333)
-    tk_LSHIFT (334)
-    tk_RSHIFT (335)
-    tk_EQXOR (336)
-    tk_EQOR (337)
-    tk_EQAND (338)
-    tk_EQANDXOR (339)
-    tk_EQRSHIFT (340)
-    tk_EQLSHIFT (341)
-    tk_LOGICAND (342)
-    tk_LOGICOR (343)
-    tk_EQADD (344)
-    tk_EQSUB (345)
-    tk_EQMUL (346)
-    tk_EQDIV (347)
-    tk_EQMOD (348)
-    tk_ANDXOR (349)
-    tk_NEG (350)
-    tk_LSS (351)
-    tk_GRT (352)
-    tk_NOTEQ (353)
-    tk_EQ (354)
-    tk_EQLSS (355)
-    tk_EQGRT (356)
-    tk_SHORTDECL (357)
-    tk_ARROW (358)
-    tk_INC (359)
-    tk_DEC (360)
-    tk_ELLIPSIS (361)
-    tk_STRINGLIT <semantic_value> (362) 17 18 59
-    tk_NUM <semantic_value> (363) 60
-    tk_IDENT <semantic_value> (364) 2 17 26 27 53 55 58 62
-    tk_TRUE (365)
-    tk_FALSE (366)
-    tk_IOTA (367)
+    tk_BREAK (258)
+    tk_CASE (259)
+    tk_CHAN (260)
+    tk_CONST (261)
+    tk_CONTINUE (262)
+    tk_DEFAULT (263)
+    tk_DEFER (264)
+    tk_ELSE (265)
+    tk_FALLTHROUGH (266)
+    tk_FOR (267)
+    tk_GO (268)
+    tk_GOTO (269)
+    tk_IF (270)
+    tk_INTERFACE (271)
+    tk_MAP (272)
+    tk_PACKAGE (273) 2
+    tk_RANGE (274)
+    tk_RETURN (275)
+    tk_SELECT (276)
+    tk_STRUCT (277)
+    tk_SWITCH (278)
+    tk_TYPE (279)
+    tk_VAR (280) 19 20
+    tk_CLASS (281) 61
+    tk_EXTENDS (282)
+    tk_IMPLEMENTS (283)
+    tk_THIS (284)
+    tk_NEW (285)
+    tk_SUPER (286)
+    tk_PUBLIC (287)
+    tk_PRIVATE (288)
+    tk_PTRSELECT (289)
+    tk_OVERRIDE (290)
+    tk_VOID (291)
+    tk_IMPORT (292) 10 12
+    tk_GOIMPORT (293) 11 13
+    tk_T_STRING (294) 41
+    tk_T_BOOL (295) 42
+    tk_T_INT8 (296) 43
+    tk_T_UINT8 (297) 44
+    tk_T_BYTE (298) 45
+    tk_T_INT16 (299) 46
+    tk_T_UINT16 (300) 47
+    tk_T_INT32 (301) 48
+    tk_T_UINT32 (302) 49
+    tk_T_RUNE (303) 50
+    tk_T_INT64 (304) 51
+    tk_T_UINT64 (305) 52
+    tk_T_INT (306) 53
+    tk_T_UINT (307)
+    tk_T_UINTPTR (308) 54
+    tk_T_FLOAT32 (309) 55
+    tk_T_FLOAT64 (310) 56
+    tk_T_COMPLEX64 (311) 57
+    tk_T_COMPLEX128 (312) 58
+    tk_ADD (313)
+    tk_SUB (314)
+    tk_MUL (315) 38
+    tk_DIV (316)
+    tk_MOD (317)
+    tk_AND (318)
+    tk_OR (319)
+    tk_XOR (320)
+    tk_ASSIGN (321) 22 23
+    tk_LPAREN (322) 10 11 20
+    tk_RPAREN (323) 10 11 20
+    tk_LSBRACKET (324)
+    tk_RSBRACKET (325)
+    tk_LCBRACKET (326) 61
+    tk_RCBRACKET (327) 61
+    tk_COMMA (328) 28 33
+    tk_DOT (329) 39
+    tk_SEMI (330) 25
+    tk_UNDERSCORE (331)
+    tk_COLON (332)
+    tk_LSHIFT (333)
+    tk_RSHIFT (334)
+    tk_EQXOR (335)
+    tk_EQOR (336)
+    tk_EQAND (337)
+    tk_EQANDXOR (338)
+    tk_EQRSHIFT (339)
+    tk_EQLSHIFT (340)
+    tk_LOGICAND (341)
+    tk_LOGICOR (342)
+    tk_EQADD (343)
+    tk_EQSUB (344)
+    tk_EQMUL (345)
+    tk_EQDIV (346)
+    tk_EQMOD (347)
+    tk_ANDXOR (348)
+    tk_NEG (349)
+    tk_LSS (350)
+    tk_GRT (351)
+    tk_NOTEQ (352)
+    tk_EQ (353)
+    tk_EQLSS (354)
+    tk_EQGRT (355)
+    tk_SHORTDECL (356)
+    tk_ARROW (357)
+    tk_INC (358)
+    tk_DEC (359)
+    tk_ELLIPSIS (360)
+    tk_STRINGLIT <semantic_value> (361) 17 18 30
+    tk_NUM <semantic_value> (362) 31
+    tk_IDENT <semantic_value> (363) 2 17 26 29 59 61
+    tk_TRUE (364)
+    tk_FALSE (365)
+    tk_IOTA (366)
 
 
 Nonterminals, with rules where they appear
 
-    $accept (113)
+    $accept (112)
         on left: 0
-    source (114)
+    source (113)
         on left: 1
         on right: 0
-    package_stmt (115)
+    package_stmt (114)
         on left: 2
         on right: 1
-    decls (116)
+    decls (115)
         on left: 3 4
         on right: 1 4
-    imports (117)
+    imports (116)
         on left: 5 6
         on right: 1 6
-    decl (118)
+    decl (117)
         on left: 7 8
         on right: 3 4
-    import_decl (119)
+    import_decl (118)
         on left: 9 10 11
         on right: 5 6
-    import (120)
+    import (119)
         on left: 12 13
         on right: 9
-    import_bodys (121)
+    import_bodys (120)
         on left: 14 15
         on right: 10 11 15
-    import_body (122)
+    import_body (121)
         on left: 17 18
         on right: 12 13 14 15
-    $@1 (123)
+    $@1 (122)
         on left: 16
         on right: 17
-    common_decl (124)
+    common_decl (123)
         on left: 19 20
         on right: 7
+    var_decl (124)
+        on left: 21 22 23
+        on right: 19 24 25
     var_decl_list (125)
-        on left: 21 22
-        on right: 20 22 62
-    var_decl (126)
-        on left: 23 24 25
-        on right: 19 21 22
-    var_decl_name_list (127)
-        on left: 26 27
-        on right: 23 24 25 27
-    var_type (128)
-        on left: 28 29 30
-        on right: 23 24
-    builtin_type (129)
-        on left: 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48
-        on right: 28
-    pointer_user_type (130)
-        on left: 49 51
-        on right: 29
-    $@2 (131)
-        on left: 50
-        on right: 51
-    user_type (132)
-        on left: 52 53
-        on right: 30
-    qualified_user_type <semantic_value> (133)
-        on left: 54
-        on right: 51 53
-    lookup_in_symtable <semantic_value> (134)
-        on left: 55
-        on right: 49 52 54
-    var_expr_list (135)
-        on left: 56 57
-        on right: 24 25 57
-    var_expr (136)
-        on left: 58 59 60
-        on right: 56 57
-    class_decl (137)
-        on left: 62
-        on right: 8
-    $@3 (138)
+        on left: 24 25
+        on right: 20 25 61
+    decl_name (126)
+        on left: 26
+        on right: 27 28
+    decl_name_list (127)
+        on left: 27 28
+        on right: 21 22 23 28
+    expr (128)
+        on left: 29 30 31
+        on right: 32 33
+    expr_list (129)
+        on left: 32 33
+        on right: 22 23 33
+    ntype (130)
+        on left: 34 35 36 37
+        on right: 21 22 38
+    ptrtype (131)
+        on left: 38
+        on right: 34
+    dotname (132)
+        on left: 39
+        on right: 36
+    lookup_symbol_table (133)
+        on left: 40
+        on right: 35 39
+    builtin_type (134)
+        on left: 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58
+        on right: 37
+    name (135)
+        on left: 59
+        on right: 39 40
+    class_decl (136)
         on left: 61
-        on right: 62
+        on right: 8
+    $@2 (137)
+        on left: 60
+        on right: 61
 
 
 State 0
@@ -534,15 +529,16 @@ State 17
     tk_LPAREN  shift, and go to state 28
     tk_IDENT   shift, and go to state 29
 
-    var_decl            go to state 30
-    var_decl_name_list  go to state 31
+    var_decl        go to state 30
+    decl_name       go to state 31
+    decl_name_list  go to state 32
 
 
 State 18
 
-   62 class_decl: tk_CLASS . tk_IDENT $@3 tk_LCBRACKET var_decl_list tk_RCBRACKET
+   61 class_decl: tk_CLASS . tk_IDENT $@2 tk_LCBRACKET var_decl_list tk_RCBRACKET
 
-    tk_IDENT  shift, and go to state 32
+    tk_IDENT  shift, and go to state 33
 
 
 State 19
@@ -555,7 +551,7 @@ State 19
 
     $default  reduce using rule 1 (source)
 
-    decl         go to state 33
+    decl         go to state 34
     common_decl  go to state 22
     class_decl   go to state 23
 
@@ -593,11 +589,11 @@ State 24
    10 import_decl: tk_IMPORT tk_LPAREN import_bodys . tk_RPAREN
    15 import_bodys: import_bodys . import_body
 
-    tk_RPAREN     shift, and go to state 34
+    tk_RPAREN     shift, and go to state 35
     tk_STRINGLIT  shift, and go to state 12
     tk_IDENT      shift, and go to state 13
 
-    import_body  go to state 35
+    import_body  go to state 36
 
 
 State 25
@@ -611,7 +607,7 @@ State 26
 
    17 import_body: tk_IDENT $@1 . tk_STRINGLIT
 
-    tk_STRINGLIT  shift, and go to state 36
+    tk_STRINGLIT  shift, and go to state 37
 
 
 State 27
@@ -619,11 +615,11 @@ State 27
    11 import_decl: tk_GOIMPORT tk_LPAREN import_bodys . tk_RPAREN
    15 import_bodys: import_bodys . import_body
 
-    tk_RPAREN     shift, and go to state 37
+    tk_RPAREN     shift, and go to state 38
     tk_STRINGLIT  shift, and go to state 12
     tk_IDENT      shift, and go to state 13
 
-    import_body  go to state 35
+    import_body  go to state 36
 
 
 State 28
@@ -632,16 +628,17 @@ State 28
 
     tk_IDENT  shift, and go to state 29
 
-    var_decl_list       go to state 38
-    var_decl            go to state 39
-    var_decl_name_list  go to state 31
+    var_decl        go to state 39
+    var_decl_list   go to state 40
+    decl_name       go to state 31
+    decl_name_list  go to state 32
 
 
 State 29
 
-   26 var_decl_name_list: tk_IDENT .
+   26 decl_name: tk_IDENT .
 
-    $default  reduce using rule 26 (var_decl_name_list)
+    $default  reduce using rule 26 (decl_name)
 
 
 State 30
@@ -653,333 +650,349 @@ State 30
 
 State 31
 
-   23 var_decl: var_decl_name_list . var_type
-   24         | var_decl_name_list . var_type tk_ASSIGN var_expr_list
-   25         | var_decl_name_list . tk_ASSIGN var_expr_list
-   27 var_decl_name_list: var_decl_name_list . tk_COMMA tk_IDENT
+   27 decl_name_list: decl_name .
 
-    tk_T_STRING      shift, and go to state 40
-    tk_T_BOOL        shift, and go to state 41
-    tk_T_INT8        shift, and go to state 42
-    tk_T_UINT8       shift, and go to state 43
-    tk_T_BYTE        shift, and go to state 44
-    tk_T_INT16       shift, and go to state 45
-    tk_T_UINT16      shift, and go to state 46
-    tk_T_INT32       shift, and go to state 47
-    tk_T_UINT32      shift, and go to state 48
-    tk_T_RUNE        shift, and go to state 49
-    tk_T_INT64       shift, and go to state 50
-    tk_T_UINT64      shift, and go to state 51
-    tk_T_INT         shift, and go to state 52
-    tk_T_UINTPTR     shift, and go to state 53
-    tk_T_FLOAT32     shift, and go to state 54
-    tk_T_FLOAT64     shift, and go to state 55
-    tk_T_COMPLEX64   shift, and go to state 56
-    tk_T_COMPLEX128  shift, and go to state 57
-    tk_MUL           shift, and go to state 58
-    tk_ASSIGN        shift, and go to state 59
-    tk_COMMA         shift, and go to state 60
-    tk_DOT           shift, and go to state 61
-    tk_IDENT         shift, and go to state 62
-
-    var_type             go to state 63
-    builtin_type         go to state 64
-    pointer_user_type    go to state 65
-    user_type            go to state 66
-    qualified_user_type  go to state 67
-    lookup_in_symtable   go to state 68
+    $default  reduce using rule 27 (decl_name_list)
 
 
 State 32
 
-   62 class_decl: tk_CLASS tk_IDENT . $@3 tk_LCBRACKET var_decl_list tk_RCBRACKET
+   21 var_decl: decl_name_list . ntype
+   22         | decl_name_list . ntype tk_ASSIGN expr_list
+   23         | decl_name_list . tk_ASSIGN expr_list
+   28 decl_name_list: decl_name_list . tk_COMMA decl_name
 
-    $default  reduce using rule 61 ($@3)
+    tk_T_STRING      shift, and go to state 41
+    tk_T_BOOL        shift, and go to state 42
+    tk_T_INT8        shift, and go to state 43
+    tk_T_UINT8       shift, and go to state 44
+    tk_T_BYTE        shift, and go to state 45
+    tk_T_INT16       shift, and go to state 46
+    tk_T_UINT16      shift, and go to state 47
+    tk_T_INT32       shift, and go to state 48
+    tk_T_UINT32      shift, and go to state 49
+    tk_T_RUNE        shift, and go to state 50
+    tk_T_INT64       shift, and go to state 51
+    tk_T_UINT64      shift, and go to state 52
+    tk_T_INT         shift, and go to state 53
+    tk_T_UINTPTR     shift, and go to state 54
+    tk_T_FLOAT32     shift, and go to state 55
+    tk_T_FLOAT64     shift, and go to state 56
+    tk_T_COMPLEX64   shift, and go to state 57
+    tk_T_COMPLEX128  shift, and go to state 58
+    tk_MUL           shift, and go to state 59
+    tk_ASSIGN        shift, and go to state 60
+    tk_COMMA         shift, and go to state 61
+    tk_IDENT         shift, and go to state 62
 
-    $@3  go to state 69
+    ntype                go to state 63
+    ptrtype              go to state 64
+    dotname              go to state 65
+    lookup_symbol_table  go to state 66
+    builtin_type         go to state 67
+    name                 go to state 68
 
 
 State 33
+
+   61 class_decl: tk_CLASS tk_IDENT . $@2 tk_LCBRACKET var_decl_list tk_RCBRACKET
+
+    $default  reduce using rule 60 ($@2)
+
+    $@2  go to state 69
+
+
+State 34
 
     4 decls: decls decl .
 
     $default  reduce using rule 4 (decls)
 
 
-State 34
+State 35
 
    10 import_decl: tk_IMPORT tk_LPAREN import_bodys tk_RPAREN .
 
     $default  reduce using rule 10 (import_decl)
 
 
-State 35
+State 36
 
    15 import_bodys: import_bodys import_body .
 
     $default  reduce using rule 15 (import_bodys)
 
 
-State 36
+State 37
 
    17 import_body: tk_IDENT $@1 tk_STRINGLIT .
 
     $default  reduce using rule 17 (import_body)
 
 
-State 37
+State 38
 
    11 import_decl: tk_GOIMPORT tk_LPAREN import_bodys tk_RPAREN .
 
     $default  reduce using rule 11 (import_decl)
 
 
-State 38
-
-   20 common_decl: tk_VAR tk_LPAREN var_decl_list . tk_RPAREN
-   22 var_decl_list: var_decl_list . var_decl
-
-    tk_RPAREN  shift, and go to state 70
-    tk_IDENT   shift, and go to state 29
-
-    var_decl            go to state 71
-    var_decl_name_list  go to state 31
-
-
 State 39
 
-   21 var_decl_list: var_decl .
+   24 var_decl_list: var_decl .
 
-    $default  reduce using rule 21 (var_decl_list)
+    $default  reduce using rule 24 (var_decl_list)
 
 
 State 40
 
-   31 builtin_type: tk_T_STRING .
+   20 common_decl: tk_VAR tk_LPAREN var_decl_list . tk_RPAREN
+   25 var_decl_list: var_decl_list . tk_SEMI var_decl
 
-    $default  reduce using rule 31 (builtin_type)
+    tk_RPAREN  shift, and go to state 70
+    tk_SEMI    shift, and go to state 71
 
 
 State 41
 
-   32 builtin_type: tk_T_BOOL .
-
-    $default  reduce using rule 32 (builtin_type)
-
-
-State 42
-
-   33 builtin_type: tk_T_INT8 .
-
-    $default  reduce using rule 33 (builtin_type)
-
-
-State 43
-
-   34 builtin_type: tk_T_UINT8 .
-
-    $default  reduce using rule 34 (builtin_type)
-
-
-State 44
-
-   35 builtin_type: tk_T_BYTE .
-
-    $default  reduce using rule 35 (builtin_type)
-
-
-State 45
-
-   36 builtin_type: tk_T_INT16 .
-
-    $default  reduce using rule 36 (builtin_type)
-
-
-State 46
-
-   37 builtin_type: tk_T_UINT16 .
-
-    $default  reduce using rule 37 (builtin_type)
-
-
-State 47
-
-   38 builtin_type: tk_T_INT32 .
-
-    $default  reduce using rule 38 (builtin_type)
-
-
-State 48
-
-   39 builtin_type: tk_T_UINT32 .
-
-    $default  reduce using rule 39 (builtin_type)
-
-
-State 49
-
-   40 builtin_type: tk_T_RUNE .
-
-    $default  reduce using rule 40 (builtin_type)
-
-
-State 50
-
-   41 builtin_type: tk_T_INT64 .
+   41 builtin_type: tk_T_STRING .
 
     $default  reduce using rule 41 (builtin_type)
 
 
-State 51
+State 42
 
-   42 builtin_type: tk_T_UINT64 .
+   42 builtin_type: tk_T_BOOL .
 
     $default  reduce using rule 42 (builtin_type)
 
 
-State 52
+State 43
 
-   43 builtin_type: tk_T_INT .
+   43 builtin_type: tk_T_INT8 .
 
     $default  reduce using rule 43 (builtin_type)
 
 
-State 53
+State 44
 
-   44 builtin_type: tk_T_UINTPTR .
+   44 builtin_type: tk_T_UINT8 .
 
     $default  reduce using rule 44 (builtin_type)
 
 
-State 54
+State 45
 
-   45 builtin_type: tk_T_FLOAT32 .
+   45 builtin_type: tk_T_BYTE .
 
     $default  reduce using rule 45 (builtin_type)
 
 
-State 55
+State 46
 
-   46 builtin_type: tk_T_FLOAT64 .
+   46 builtin_type: tk_T_INT16 .
 
     $default  reduce using rule 46 (builtin_type)
 
 
-State 56
+State 47
 
-   47 builtin_type: tk_T_COMPLEX64 .
+   47 builtin_type: tk_T_UINT16 .
 
     $default  reduce using rule 47 (builtin_type)
 
 
-State 57
+State 48
 
-   48 builtin_type: tk_T_COMPLEX128 .
+   48 builtin_type: tk_T_INT32 .
 
     $default  reduce using rule 48 (builtin_type)
 
 
+State 49
+
+   49 builtin_type: tk_T_UINT32 .
+
+    $default  reduce using rule 49 (builtin_type)
+
+
+State 50
+
+   50 builtin_type: tk_T_RUNE .
+
+    $default  reduce using rule 50 (builtin_type)
+
+
+State 51
+
+   51 builtin_type: tk_T_INT64 .
+
+    $default  reduce using rule 51 (builtin_type)
+
+
+State 52
+
+   52 builtin_type: tk_T_UINT64 .
+
+    $default  reduce using rule 52 (builtin_type)
+
+
+State 53
+
+   53 builtin_type: tk_T_INT .
+
+    $default  reduce using rule 53 (builtin_type)
+
+
+State 54
+
+   54 builtin_type: tk_T_UINTPTR .
+
+    $default  reduce using rule 54 (builtin_type)
+
+
+State 55
+
+   55 builtin_type: tk_T_FLOAT32 .
+
+    $default  reduce using rule 55 (builtin_type)
+
+
+State 56
+
+   56 builtin_type: tk_T_FLOAT64 .
+
+    $default  reduce using rule 56 (builtin_type)
+
+
+State 57
+
+   57 builtin_type: tk_T_COMPLEX64 .
+
+    $default  reduce using rule 57 (builtin_type)
+
+
 State 58
 
-   49 pointer_user_type: tk_MUL . lookup_in_symtable
+   58 builtin_type: tk_T_COMPLEX128 .
 
-    tk_IDENT  shift, and go to state 72
-
-    lookup_in_symtable  go to state 73
+    $default  reduce using rule 58 (builtin_type)
 
 
 State 59
 
-   25 var_decl: var_decl_name_list tk_ASSIGN . var_expr_list
+   38 ptrtype: tk_MUL . ntype
 
-    tk_STRINGLIT  shift, and go to state 74
-    tk_NUM        shift, and go to state 75
-    tk_IDENT      shift, and go to state 76
+    tk_T_STRING      shift, and go to state 41
+    tk_T_BOOL        shift, and go to state 42
+    tk_T_INT8        shift, and go to state 43
+    tk_T_UINT8       shift, and go to state 44
+    tk_T_BYTE        shift, and go to state 45
+    tk_T_INT16       shift, and go to state 46
+    tk_T_UINT16      shift, and go to state 47
+    tk_T_INT32       shift, and go to state 48
+    tk_T_UINT32      shift, and go to state 49
+    tk_T_RUNE        shift, and go to state 50
+    tk_T_INT64       shift, and go to state 51
+    tk_T_UINT64      shift, and go to state 52
+    tk_T_INT         shift, and go to state 53
+    tk_T_UINTPTR     shift, and go to state 54
+    tk_T_FLOAT32     shift, and go to state 55
+    tk_T_FLOAT64     shift, and go to state 56
+    tk_T_COMPLEX64   shift, and go to state 57
+    tk_T_COMPLEX128  shift, and go to state 58
+    tk_MUL           shift, and go to state 59
+    tk_IDENT         shift, and go to state 62
 
-    var_expr_list  go to state 77
-    var_expr       go to state 78
+    ntype                go to state 72
+    ptrtype              go to state 64
+    dotname              go to state 65
+    lookup_symbol_table  go to state 66
+    builtin_type         go to state 67
+    name                 go to state 68
 
 
 State 60
 
-   27 var_decl_name_list: var_decl_name_list tk_COMMA . tk_IDENT
+   23 var_decl: decl_name_list tk_ASSIGN . expr_list
 
-    tk_IDENT  shift, and go to state 79
+    tk_STRINGLIT  shift, and go to state 73
+    tk_NUM        shift, and go to state 74
+    tk_IDENT      shift, and go to state 75
+
+    expr       go to state 76
+    expr_list  go to state 77
 
 
 State 61
 
-   54 qualified_user_type: tk_DOT . lookup_in_symtable
+   28 decl_name_list: decl_name_list tk_COMMA . decl_name
 
-    tk_IDENT  shift, and go to state 72
+    tk_IDENT  shift, and go to state 29
 
-    lookup_in_symtable  go to state 80
+    decl_name  go to state 78
 
 
 State 62
 
-   53 user_type: tk_IDENT . qualified_user_type
-   55 lookup_in_symtable: tk_IDENT .
+   59 name: tk_IDENT .
 
-    tk_DOT  shift, and go to state 61
-
-    $default  reduce using rule 55 (lookup_in_symtable)
-
-    qualified_user_type  go to state 81
+    $default  reduce using rule 59 (name)
 
 
 State 63
 
-   23 var_decl: var_decl_name_list var_type .
-   24         | var_decl_name_list var_type . tk_ASSIGN var_expr_list
+   21 var_decl: decl_name_list ntype .
+   22         | decl_name_list ntype . tk_ASSIGN expr_list
 
-    tk_ASSIGN  shift, and go to state 82
+    tk_ASSIGN  shift, and go to state 79
 
-    $default  reduce using rule 23 (var_decl)
+    $default  reduce using rule 21 (var_decl)
 
 
 State 64
 
-   28 var_type: builtin_type .
+   34 ntype: ptrtype .
 
-    $default  reduce using rule 28 (var_type)
+    $default  reduce using rule 34 (ntype)
 
 
 State 65
 
-   29 var_type: pointer_user_type .
+   36 ntype: dotname .
 
-    $default  reduce using rule 29 (var_type)
+    $default  reduce using rule 36 (ntype)
 
 
 State 66
 
-   30 var_type: user_type .
+   35 ntype: lookup_symbol_table .
 
-    $default  reduce using rule 30 (var_type)
+    $default  reduce using rule 35 (ntype)
 
 
 State 67
 
-   51 pointer_user_type: qualified_user_type . $@2 tk_MUL
+   37 ntype: builtin_type .
 
-    $default  reduce using rule 50 ($@2)
-
-    $@2  go to state 83
+    $default  reduce using rule 37 (ntype)
 
 
 State 68
 
-   52 user_type: lookup_in_symtable .
+   39 dotname: name . tk_DOT lookup_symbol_table
+   40 lookup_symbol_table: name .
 
-    $default  reduce using rule 52 (user_type)
+    tk_DOT  shift, and go to state 80
+
+    $default  reduce using rule 40 (lookup_symbol_table)
 
 
 State 69
 
-   62 class_decl: tk_CLASS tk_IDENT $@3 . tk_LCBRACKET var_decl_list tk_RCBRACKET
+   61 class_decl: tk_CLASS tk_IDENT $@2 . tk_LCBRACKET var_decl_list tk_RCBRACKET
 
-    tk_LCBRACKET  shift, and go to state 84
+    tk_LCBRACKET  shift, and go to state 81
 
 
 State 70
@@ -991,163 +1004,161 @@ State 70
 
 State 71
 
-   22 var_decl_list: var_decl_list var_decl .
+   25 var_decl_list: var_decl_list tk_SEMI . var_decl
 
-    $default  reduce using rule 22 (var_decl_list)
+    tk_IDENT  shift, and go to state 29
+
+    var_decl        go to state 82
+    decl_name       go to state 31
+    decl_name_list  go to state 32
 
 
 State 72
 
-   55 lookup_in_symtable: tk_IDENT .
+   38 ptrtype: tk_MUL ntype .
 
-    $default  reduce using rule 55 (lookup_in_symtable)
+    $default  reduce using rule 38 (ptrtype)
 
 
 State 73
 
-   49 pointer_user_type: tk_MUL lookup_in_symtable .
+   30 expr: tk_STRINGLIT .
 
-    $default  reduce using rule 49 (pointer_user_type)
+    $default  reduce using rule 30 (expr)
 
 
 State 74
 
-   59 var_expr: tk_STRINGLIT .
+   31 expr: tk_NUM .
 
-    $default  reduce using rule 59 (var_expr)
+    $default  reduce using rule 31 (expr)
 
 
 State 75
 
-   60 var_expr: tk_NUM .
+   29 expr: tk_IDENT .
 
-    $default  reduce using rule 60 (var_expr)
+    $default  reduce using rule 29 (expr)
 
 
 State 76
 
-   58 var_expr: tk_IDENT .
+   32 expr_list: expr .
 
-    $default  reduce using rule 58 (var_expr)
+    $default  reduce using rule 32 (expr_list)
 
 
 State 77
 
-   25 var_decl: var_decl_name_list tk_ASSIGN var_expr_list .
-   57 var_expr_list: var_expr_list . tk_COMMA var_expr
+   23 var_decl: decl_name_list tk_ASSIGN expr_list .
+   33 expr_list: expr_list . tk_COMMA expr
 
-    tk_COMMA  shift, and go to state 85
+    tk_COMMA  shift, and go to state 83
 
-    $default  reduce using rule 25 (var_decl)
+    $default  reduce using rule 23 (var_decl)
 
 
 State 78
 
-   56 var_expr_list: var_expr .
+   28 decl_name_list: decl_name_list tk_COMMA decl_name .
 
-    $default  reduce using rule 56 (var_expr_list)
+    $default  reduce using rule 28 (decl_name_list)
 
 
 State 79
 
-   27 var_decl_name_list: var_decl_name_list tk_COMMA tk_IDENT .
+   22 var_decl: decl_name_list ntype tk_ASSIGN . expr_list
 
-    $default  reduce using rule 27 (var_decl_name_list)
+    tk_STRINGLIT  shift, and go to state 73
+    tk_NUM        shift, and go to state 74
+    tk_IDENT      shift, and go to state 75
+
+    expr       go to state 76
+    expr_list  go to state 84
 
 
 State 80
 
-   54 qualified_user_type: tk_DOT lookup_in_symtable .
+   39 dotname: name tk_DOT . lookup_symbol_table
 
-    $default  reduce using rule 54 (qualified_user_type)
+    tk_IDENT  shift, and go to state 62
+
+    lookup_symbol_table  go to state 85
+    name                 go to state 86
 
 
 State 81
 
-   53 user_type: tk_IDENT qualified_user_type .
+   61 class_decl: tk_CLASS tk_IDENT $@2 tk_LCBRACKET . var_decl_list tk_RCBRACKET
 
-    $default  reduce using rule 53 (user_type)
+    tk_IDENT  shift, and go to state 29
+
+    var_decl        go to state 39
+    var_decl_list   go to state 87
+    decl_name       go to state 31
+    decl_name_list  go to state 32
 
 
 State 82
 
-   24 var_decl: var_decl_name_list var_type tk_ASSIGN . var_expr_list
+   25 var_decl_list: var_decl_list tk_SEMI var_decl .
 
-    tk_STRINGLIT  shift, and go to state 74
-    tk_NUM        shift, and go to state 75
-    tk_IDENT      shift, and go to state 76
-
-    var_expr_list  go to state 86
-    var_expr       go to state 78
+    $default  reduce using rule 25 (var_decl_list)
 
 
 State 83
 
-   51 pointer_user_type: qualified_user_type $@2 . tk_MUL
+   33 expr_list: expr_list tk_COMMA . expr
 
-    tk_MUL  shift, and go to state 87
+    tk_STRINGLIT  shift, and go to state 73
+    tk_NUM        shift, and go to state 74
+    tk_IDENT      shift, and go to state 75
+
+    expr  go to state 88
 
 
 State 84
 
-   62 class_decl: tk_CLASS tk_IDENT $@3 tk_LCBRACKET . var_decl_list tk_RCBRACKET
+   22 var_decl: decl_name_list ntype tk_ASSIGN expr_list .
+   33 expr_list: expr_list . tk_COMMA expr
 
-    tk_IDENT  shift, and go to state 29
+    tk_COMMA  shift, and go to state 83
 
-    var_decl_list       go to state 88
-    var_decl            go to state 39
-    var_decl_name_list  go to state 31
+    $default  reduce using rule 22 (var_decl)
 
 
 State 85
 
-   57 var_expr_list: var_expr_list tk_COMMA . var_expr
+   39 dotname: name tk_DOT lookup_symbol_table .
 
-    tk_STRINGLIT  shift, and go to state 74
-    tk_NUM        shift, and go to state 75
-    tk_IDENT      shift, and go to state 76
-
-    var_expr  go to state 89
+    $default  reduce using rule 39 (dotname)
 
 
 State 86
 
-   24 var_decl: var_decl_name_list var_type tk_ASSIGN var_expr_list .
-   57 var_expr_list: var_expr_list . tk_COMMA var_expr
+   40 lookup_symbol_table: name .
 
-    tk_COMMA  shift, and go to state 85
-
-    $default  reduce using rule 24 (var_decl)
+    $default  reduce using rule 40 (lookup_symbol_table)
 
 
 State 87
 
-   51 pointer_user_type: qualified_user_type $@2 tk_MUL .
+   25 var_decl_list: var_decl_list . tk_SEMI var_decl
+   61 class_decl: tk_CLASS tk_IDENT $@2 tk_LCBRACKET var_decl_list . tk_RCBRACKET
 
-    $default  reduce using rule 51 (pointer_user_type)
+    tk_RCBRACKET  shift, and go to state 89
+    tk_SEMI       shift, and go to state 71
 
 
 State 88
 
-   22 var_decl_list: var_decl_list . var_decl
-   62 class_decl: tk_CLASS tk_IDENT $@3 tk_LCBRACKET var_decl_list . tk_RCBRACKET
+   33 expr_list: expr_list tk_COMMA expr .
 
-    tk_RCBRACKET  shift, and go to state 90
-    tk_IDENT      shift, and go to state 29
-
-    var_decl            go to state 71
-    var_decl_name_list  go to state 31
+    $default  reduce using rule 33 (expr_list)
 
 
 State 89
 
-   57 var_expr_list: var_expr_list tk_COMMA var_expr .
+   61 class_decl: tk_CLASS tk_IDENT $@2 tk_LCBRACKET var_decl_list tk_RCBRACKET .
 
-    $default  reduce using rule 57 (var_expr_list)
-
-
-State 90
-
-   62 class_decl: tk_CLASS tk_IDENT $@3 tk_LCBRACKET var_decl_list tk_RCBRACKET .
-
-    $default  reduce using rule 62 (class_decl)
+    $default  reduce using rule 61 (class_decl)
