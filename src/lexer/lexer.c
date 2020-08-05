@@ -173,7 +173,7 @@ void gpperror(const char *fmt, ...)
     va_start(ap, fmt);
     vsprintf_s(buf, sizeof(buf), fmt, ap);
     va_end(ap);
-    printf("Ln %d, Col %d, current_value '%s', %s.", line, col,get_queued_semantic_value(), buf);
+    printf("Ln %d, Col %d, %s.", line, col, buf);
     exit(1);
 }
 
@@ -405,17 +405,21 @@ static token_type get_keyword_type(const char *ident)
     qsort(kwds, NELEMS(kwds), sizeof(kwds[0]), kwd_cmp);
     kwp = bsearch(&ident, kwds, NELEMS(kwds), sizeof(kwds[0]), kwd_cmp);
     if (kwp == NULL) {
-        if (TOKENSDUMP == 1)
-            fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: '%hs'\n", line, col, semantic_value);
+        // if (TOKENSDUMP == 1)
+        //     fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: '%hs'\n", line, col, get_queued_semantic_value());
             
         if (lex_semantic_value_queue_state == -1) {
             reserved_semantic_value = text;
             lex_semantic_value_queue_state++;
+            if (TOKENSDUMP == 1)
+            fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: '%hs'\n", line, col, get_queued_semantic_value());
             return tk_IDENT;
         }
         if (lex_semantic_value_queue_state > -1) {
             lex_semantic_value_queue_state--;
             semantic_value = text;
+            if (TOKENSDUMP == 1)
+            fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_IDENT\t\tSemanticValue: '%hs'\n", line, col, get_queued_semantic_value());
             return tk_IDENT;
         }
     }
@@ -860,7 +864,6 @@ int gpplex()
         
         case EOF:
         {
-            printf("EOF");
             if (TOKENSDUMP == 1)
                 fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_EOF\n", line, col);
             return tk_EOF;
@@ -873,6 +876,7 @@ int gpplex()
         
         
     }
+    gpperror("unknown");
 }
 
 
