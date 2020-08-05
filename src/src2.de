@@ -22,7 +22,7 @@ goimport (
 	h "hello"
 	b "banga"
 )
-var x = 1
-var a,b,c = 1,"var value"
+var x myClass = 1
+var a,b,c myClassd  = 1,"var value"
 var d,e = 1
-var f = 1
+var f studentName = 1

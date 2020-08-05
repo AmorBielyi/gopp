@@ -84,7 +84,7 @@ void parse_import_decl_with_alias(char *semantic_value_alias_name)
         
 }
 /* IMPORTS RULE END */
-
+int is_var_name_list_end = 0;
 
 /* VAR RULE BEGIN */
 void parse_var_decl_name(){
@@ -92,16 +92,25 @@ void parse_var_decl_name(){
         token = gpplex();
     }
     switch(token){
-        case tk_IDENT:
+        if (is_var_name_list_end == 0){
+            case tk_IDENT:
              printf("var: name '%s' ", get_queued_semantic_value());
              token = gpplex();
+             if(token == tk_IDENT){
+                 printf("var: type '%s' ", get_queued_semantic_value());
+                 token = gpplex();
+             }
              if (token == tk_COMMA){
                 token = gpplex();
                 from_scope = 1;
                 parse_var_decl_name_list();
-                parse_var_decl_expr();
+                 parse_var_decl_expr();
+                // HERE ??? 
+               
                 from_scope = 0; // or before parse_var_decl_expr(); ??? line up
             } 
+        }
+        
     }
 
 }
@@ -132,10 +141,17 @@ void parse_var_decl_name_list(){
     do{
         parse_var_decl_name();
     }while(token == tk_IDENT || token == tk_COMMA);
+    is_var_name_list_end = 1;
 }
 
 void parse_top_vars_decl(){
     parse_var_decl_name();
+   // printf("tok: %u", token);
+    // if (token == tk_IDENT){
+    //     printf("var: type '%s' ", get_queued_semantic_value());
+    //     token = gpplex();
+    // }
+  //  printf("tok: %u", token);
     if (token == tk_ASSIGN){
         token = gpplex();
         parse_var_decl_expr();
