@@ -7,6 +7,7 @@ void parse_grammar();
 void parse_import_decl_without_alias();
 void parse_import_decl_with_alias();
 void parse_recc_imports_decl_scope();
+void parse_var_decl_name_list();
 
 /* PACKAGE RULE BEGIN */
 void parse_package_stmt()
@@ -83,6 +84,40 @@ void parse_import_decl_with_alias(char *semantic_value_alias_name)
 /* IMPORTS RULE END */
 
 
+/* VAR RULE BEGIN */
+void parse_var_decl(){
+    if (from_scope != 1) {
+        token = gpplex();
+    }
+    
+    if (token == tk_IDENT){
+        printf("var: name '%s' ", get_queued_semantic_value());
+        token = gpplex();
+        if (token == tk_COMMA){
+            token = gpplex();
+            from_scope = 1;
+            parse_var_decl_name_list();
+            from_scope = 0;
+        }
+        // printf("var: name '%s', ", get_queued_semantic_value());
+        // token = gpplex();
+        // if (token == tk_T_INT){
+        //     printf("type (builtin): 'int'\n");
+        //     token = gpplex();
+        // }
+    }
+
+}
+
+void parse_var_decl_name_list(){
+    do{
+        parse_var_decl();
+    }while(token == tk_IDENT || token == tk_COMMA);
+}
+
+
+/* VAR RULE END */
+
 void parse_grammar()
 {
     switch(token){
@@ -96,9 +131,13 @@ void parse_grammar()
             parse_grammar();
             break;
         /* TEST RULE; BEGIN THIS */
-        case tk_CLASS:
-            printf("hello class\n");
-            token = gpplex();
+        // case tk_CLASS:
+        //     printf("hello class\n");
+        //     token = gpplex();
+        //     parse_grammar();
+        //     break;
+        case tk_VAR:
+            parse_var_decl();
             parse_grammar();
             break;
         case tk_IDENT:

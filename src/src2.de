@@ -22,7 +22,8 @@ goimport (
 	h "hello"
 	b "banga"
 )
-
-class
-class
+var x
+var a,b,c
+var d,e
+var f
 
