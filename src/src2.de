@@ -6,3 +6,19 @@ import "handler.gpp"
 import omega "gpp/src/package"
 import delta "gpp/src/package2"
 goimport "fmt"
+import (
+	"hello"
+	"banga"
+	h "hello"
+	b "banga"
+)
+goimport "fmt"
+import "handler.gpp"
+import omega "gpp/src/package"
+import delta "gpp/src/package2"
+goimport (
+	"hello"
+	"banga"
+	h "hello"
+	b "banga"
+)
