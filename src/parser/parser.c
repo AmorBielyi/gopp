@@ -8,11 +8,11 @@ void parse_import_decl_without_alias();
 void parse_import_decl_with_alias();
 void parse_recc_imports_decl_scope();
 void parse_var_decl_name_list();
-void parse_var_expr_list();
-void parse_var_expr();
+void parse_var_decl_expr_list();
+void parse_var_decl_expr();
 
 /* PACKAGE RULE BEGIN */
-void parse_package_stmt()
+void parse_top_package_stmt()
 {
     token = gpplex();
     if(token == tk_IDENT)
@@ -27,7 +27,7 @@ void parse_package_stmt()
 
 int from_scope = 0;
 /* IMPORTS RULE BEGIN */
-void parse_imports_decl()
+void parse_top_imports_decl()
 {
     if (from_scope != 1){
         token = gpplex();
@@ -59,7 +59,7 @@ void parse_imports_decl()
 
 void parse_recc_imports_decl_scope(){
     do {
-         parse_imports_decl();
+         parse_top_imports_decl();
     }while(token == tk_IDENT || token == tk_STRINGLIT);
 }
 
@@ -87,7 +87,7 @@ void parse_import_decl_with_alias(char *semantic_value_alias_name)
 
 
 /* VAR RULE BEGIN */
-void parse_var_decl(){
+void parse_var_decl_name(){
     if (from_scope != 1) {
         token = gpplex();
     }
@@ -99,14 +99,14 @@ void parse_var_decl(){
                 token = gpplex();
                 from_scope = 1;
                 parse_var_decl_name_list();
-                parse_var_expr();
-                from_scope = 0; // or before parse_var_expr(); ??? line up
+                parse_var_decl_expr();
+                from_scope = 0; // or before parse_var_decl_expr(); ??? line up
             } 
     }
 
 }
 
-void parse_var_expr(){
+void parse_var_decl_expr(){
     switch(token){
         case tk_IDENT:
         case tk_STRINGLIT:
@@ -116,37 +116,48 @@ void parse_var_expr(){
             if (token == tk_COMMA){
                 token = gpplex();
                 // from_scope =1 ??
-                parse_var_expr_list();
+                parse_var_decl_expr_list();
                 // from_scope = 0;
             }
     }
 }
 
-void parse_var_expr_list(){
+void parse_var_decl_expr_list(){
     do{
-        parse_var_expr();
+        parse_var_decl_expr();
     }while(token == tk_IDENT || token == tk_STRINGLIT || token == tk_NUM || token == tk_COMMA);
 }
 
 void parse_var_decl_name_list(){
     do{
-        parse_var_decl();
+        parse_var_decl_name();
     }while(token == tk_IDENT || token == tk_COMMA);
 }
 
-
+void parse_top_vars_decl(){
+    parse_var_decl_name();
+    if (token == tk_ASSIGN){
+        token = gpplex();
+        parse_var_decl_expr();
+        parse_grammar();
+        }else{
+            gpperror("uninitialized variable, expected assigned value\n");
+        }
+}
 /* VAR RULE END */
+
+
 
 void parse_grammar()
 {
     switch(token){
         case tk_PACKAGE:
-            parse_package_stmt();
+            parse_top_package_stmt();
             parse_grammar();
             break;
         case tk_IMPORT:
         case tk_GOIMPORT:
-            parse_imports_decl();
+            parse_top_imports_decl();
             parse_grammar();
             break;
         /* TEST RULE; BEGIN THIS */
@@ -156,14 +167,7 @@ void parse_grammar()
         //     parse_grammar();
         //     break;
         case tk_VAR:
-            parse_var_decl();
-            if (token == tk_ASSIGN){
-                token = gpplex();
-                 parse_var_expr();
-                 parse_grammar();
-            }else{
-                gpperror("uninitialized variable, expected assigned value\n");
-            }
+            parse_top_vars_decl();
             parse_grammar();
             break;
         case tk_IDENT:
