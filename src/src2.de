@@ -22,7 +22,23 @@ goimport (
 	h "hello"
 	b "banga"
 )
-var x myClass = 1
-var a,b,c myClassd  = 1,"var value"
-var d,e = 1
-var f studentName = 1
+
+var x = 1
+var x = 1,2,"str_value1"
+var x,y =1
+var x,y,z = 1,2,"str_value2"
+
+var x myType1 = 1
+var x myType2 = 1,2,"str_value3"
+var x,y myType3 =1
+var x,y,z myType4 = 1,2,"str_value4"
+
+var x int = 1
+var x float32  = 1,2,"str_value1"
+var x,y complex128 = 1
+var x,y,z rune = 1,2,"str_value2"
+
+// var x myType = 1
+// var a,b,c myClassd  = 1,"var value"
+// var d,e int = 1
+// var f studentName = 1
