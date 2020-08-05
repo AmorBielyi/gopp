@@ -8,6 +8,8 @@ void parse_import_decl_without_alias();
 void parse_import_decl_with_alias();
 void parse_recc_imports_decl_scope();
 void parse_var_decl_name_list();
+void parse_var_expr_list();
+void parse_var_expr();
 
 /* PACKAGE RULE BEGIN */
 void parse_package_stmt()
@@ -89,24 +91,41 @@ void parse_var_decl(){
     if (from_scope != 1) {
         token = gpplex();
     }
-    
-    if (token == tk_IDENT){
-        printf("var: name '%s' ", get_queued_semantic_value());
-        token = gpplex();
-        if (token == tk_COMMA){
-            token = gpplex();
-            from_scope = 1;
-            parse_var_decl_name_list();
-            from_scope = 0;
-        }
-        // printf("var: name '%s', ", get_queued_semantic_value());
-        // token = gpplex();
-        // if (token == tk_T_INT){
-        //     printf("type (builtin): 'int'\n");
-        //     token = gpplex();
-        // }
+    switch(token){
+        case tk_IDENT:
+             printf("var: name '%s' ", get_queued_semantic_value());
+             token = gpplex();
+             if (token == tk_COMMA){
+                token = gpplex();
+                from_scope = 1;
+                parse_var_decl_name_list();
+                parse_var_expr();
+                from_scope = 0; // or before parse_var_expr(); ??? line up
+            } 
     }
 
+}
+
+void parse_var_expr(){
+    switch(token){
+        case tk_IDENT:
+        case tk_STRINGLIT:
+        case tk_NUM:
+            printf("var: value '%s, '", get_queued_semantic_value());
+            token = gpplex();
+            if (token == tk_COMMA){
+                token = gpplex();
+                // from_scope =1 ??
+                parse_var_expr_list();
+                // from_scope = 0;
+            }
+    }
+}
+
+void parse_var_expr_list(){
+    do{
+        parse_var_expr();
+    }while(token == tk_IDENT || token == tk_STRINGLIT || token == tk_NUM || token == tk_COMMA);
 }
 
 void parse_var_decl_name_list(){
@@ -138,6 +157,13 @@ void parse_grammar()
         //     break;
         case tk_VAR:
             parse_var_decl();
+            if (token == tk_ASSIGN){
+                token = gpplex();
+                 parse_var_expr();
+                 parse_grammar();
+            }else{
+                gpperror("uninitialized variable, expected assigned value\n");
+            }
             parse_grammar();
             break;
         case tk_IDENT:
