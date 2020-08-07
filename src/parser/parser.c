@@ -11,6 +11,7 @@ void parse_var_decl_name_list();
 void parse_var_decl_expr_list();
 void parse_var_decl_expr();
 void parse_builtin_type();
+int is_builtin_type(token_type token);
 
 /* PACKAGE RULE BEGIN */
 void parse_top_package_stmt()
@@ -86,23 +87,30 @@ void parse_import_decl_with_alias(char *semantic_value_alias_name)
 }
 /* IMPORTS RULE END */
 
-
+int is_pointer_type = 0 ;
 /* VAR RULE BEGIN */
 void parse_var_decl_name(){
     if (from_scope != 1) {
         token = gpplex();
     }
     switch(token){
-        //if (is_var_name_list_end == 0){
+       // int is_pointer_type = 0;
             case tk_IDENT:
              printf("var: name '%s' ", get_queued_semantic_value());
              token = gpplex();
-             parse_builtin_type();
             
-            //  if (token == tk_T_INT){
-            //      printf("var: type (builtin) 'int' ");
-            //      token = gpplex();
-            //  }
+    
+             if (token == tk_MUL){
+                 is_pointer_type = 1;
+                 token = gpplex();
+                 //printf("token type %u\n", token);
+                 if (token != tk_IDENT && is_builtin_type(token) != 1)
+                 {
+                     gpperror("expected type name after pointer symbol '*'");
+                 } 
+             }
+             
+             parse_builtin_type();
              if(token == tk_IDENT){
                  char *semantic_value_qualifiedpackage_or_type = _strdup(get_queued_semantic_value());
                 // printf("var: type '%s' ", get_queued_semantic_value());
@@ -110,13 +118,18 @@ void parse_var_decl_name(){
                  if (token == tk_DOT){
                      token = gpplex();
                      if (token == tk_IDENT){
-                          printf("var: type (qualified) '%s' from package '%s' ", get_queued_semantic_value(), semantic_value_qualifiedpackage_or_type);
+                         printf("var: type (qualified) '%s' from package '%s' ", get_queued_semantic_value(), semantic_value_qualifiedpackage_or_type);
+                         if (is_pointer_type == 1)
+                            printf("var: type (qualified ptr) '%s' from package '%s' ", get_queued_semantic_value(), semantic_value_qualifiedpackage_or_type);
                           token = gpplex();
                      }else{
                          gpperror("expected qualified type after '.'\n");
                      }
                  }else{
-                     printf("var: type '%s' ", semantic_value_qualifiedpackage_or_type);
+
+                    printf("var: type '%s' ", semantic_value_qualifiedpackage_or_type);
+                    if(is_pointer_type == 1)
+                        printf("var: type (ptr) '%s' ", semantic_value_qualifiedpackage_or_type);
                  }
              }
              if (token == tk_COMMA){
@@ -178,83 +191,162 @@ void parse_top_vars_decl(){
 
 /*SPECIAL RULE BUILTIN TYPE BEGIN*/
 void parse_builtin_type(){
-   
-     
-
     switch(token){
-        //     break;
         case tk_T_BOOL:
+            if(is_pointer_type == 1)
+                printf("var: type (builtin ptr) 'bool'");    
             printf("var: type (builtin) 'bool'");
             token = gpplex();
+            break;
         case tk_T_BYTE:
+            if(is_pointer_type == 1)
+                printf("var: type (builtin ptr) 'byte'");
             printf("var: type (builtin) 'byte'");
             token = gpplex();
             break;
         case tk_T_COMPLEX128:
+            if(is_pointer_type == 1)
+                printf("var: type (builtin ptr) 'complex128'");
             printf("var: type (builtin) 'complex128'");
             token = gpplex();
             break;
         case tk_T_COMPLEX64:
+            if(is_pointer_type == 1)
+                printf("var: type (builtin ptr) 'complex64'");
             printf("var: type (builtin) 'complex64'");
             token = gpplex();
             break;
         case tk_T_FLOAT32:
+            if(is_pointer_type == 1)
+                printf("var: type (builtin ptr) 'float32'");
             printf("var type (builtin) 'float32'");
             token = gpplex();
             break;
         case tk_T_INT16:
+            if(is_pointer_type == 1)
+                printf("var: type (builtin ptr) 'int16'");
             printf("var: type (builtin) 'int16'");
             token = gpplex();
             break;
         case tk_T_INT32:
+            if(is_pointer_type == 1)
+                printf("var: type (builtin ptr) 'int32'");
             printf("var: type (builtin) 'int32'");
             token = gpplex();
             break;
         case tk_T_INT64:
+            if(is_pointer_type == 1)
+                printf("var: type (builtin ptr) 'int64'");
             printf("var: type (builtin) 'int64'");
             token = gpplex();
             break;
         case tk_T_INT8:
+            if(is_pointer_type == 1)
+                printf("var: type (builtin ptr) 'int8'");
             printf("var: type (builtin) 'int8'");
             token = gpplex();
             break;
         case tk_T_INT:
+            if(is_pointer_type == 1)
+                printf("var: type (builtin ptr) 'int'");
             printf("var: type (builtin) 'int'");
             token = gpplex();
             break;
         case tk_T_RUNE:
+            if(is_pointer_type == 1)
+                printf("var: type (builtin ptr) 'rune'");
             printf("var: type (builtin) 'rune'");
             token = gpplex();
             break;
         case tk_T_STRING:
+            if(is_pointer_type == 1)
+                printf("var: type (builtin ptr) 'string'");
             printf("var: type (builtin) 'string'");
             token = gpplex();
             break;
         case tk_T_UINT16:
+            if(is_pointer_type == 1)
+                printf("var: type (builtin ptr) 'uint16'");
             printf("var: type (builtin) 'uint16'");
             token = gpplex();
             break;
         case tk_T_UINT32:
+            if(is_pointer_type == 1)
+                printf("var: type (builtin ptr) 'uint32'");
             printf("var: type (builtin) 'uint32'");
             token = gpplex();
             break;
         case tk_T_UINT64:
+            if(is_pointer_type == 1)
+                printf("var: type (builtin ptr) 'uint64'");
             printf("var: type (builtin) 'uint64'");
             token = gpplex();
             break;
         case tk_T_UINT8:
+            if(is_pointer_type == 1)
+                printf("var: type (builtin ptr) 'uint8'");
             printf("var: type (builtin) 'uint8'");
             token = gpplex();
             break;
         case tk_T_UINT:
+            if(is_pointer_type == 1)
+                printf("var: type (builtin ptr) 'uint'");
             printf("var: type (builtin) 'uint'");
             token = gpplex();
             break;
         case tk_T_UINTPTR:
+            if(is_pointer_type == 1)
+                printf("var: type (builtin ptr) 'uintptr'");
             printf("var: type (builtin) 'uintptr'");
             token = gpplex();
             break;
     } 
+}
+
+int is_builtin_type(token_type tok)
+{
+    switch(tok){
+        case tk_T_BOOL:
+            return 1;
+        case tk_T_BYTE:
+            return 1;
+        case tk_T_COMPLEX128:
+            return 1;
+        case tk_T_COMPLEX64:
+            return 1;
+        case tk_T_FLOAT32:
+            return 1;
+        case tk_T_FLOAT64:
+            return 1;
+        case tk_T_INT16:
+            return 1;
+        case tk_T_INT32:
+            return 1;
+        case tk_T_INT64:
+            return 1;
+        case tk_T_INT8:
+            return 1;
+        case tk_T_INT:
+            return 1;
+        case tk_T_RUNE:
+            return 1;
+        case tk_T_STRING:
+            return 1;
+        case tk_T_UINT16:
+            return 1;
+        case tk_T_UINT32:
+            return 1;
+        case tk_T_UINT64:
+            return 1;
+        case tk_T_UINT8:
+            return 1;
+        case tk_T_UINT:
+            return 1;
+        case tk_T_UINTPTR:
+            return 1;
+        default:
+            return 0;
+    }
 }
 /*SPECIAL RULE BUILTIN TYPE END*/
 
