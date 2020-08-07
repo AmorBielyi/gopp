@@ -38,6 +38,11 @@ var x float32  = 1,2,"str_value1"
 var x,y complex128 = 1
 var x,y,z rune = 1,2,"str_value2"
 
+var x mypkg1.myType1 = 1
+var x mypkg2.myType2 = 1,2,"str_value3"
+var x,y mypkg3.myType3 =1
+var x,y,z mypkg4. = 1,2,"str_value4"
+
 // var x myType = 1
 // var a,b,c myClassd  = 1,"var value"
 // var d,e int = 1

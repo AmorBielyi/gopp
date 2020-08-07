@@ -4,8 +4,8 @@
 
 token_type token;
 void parse_grammar();
-void parse_import_decl_without_alias();
-void parse_import_decl_with_alias();
+void parse_import_decl_without_alias(char *);
+void parse_import_decl_with_alias(char* );
 void parse_import_decl_list();
 void parse_var_decl_name_list();
 void parse_var_decl_expr_list();
@@ -98,13 +98,26 @@ void parse_var_decl_name(){
              printf("var: name '%s' ", get_queued_semantic_value());
              token = gpplex();
              parse_builtin_type();
+            
             //  if (token == tk_T_INT){
             //      printf("var: type (builtin) 'int' ");
             //      token = gpplex();
             //  }
              if(token == tk_IDENT){
-                 printf("var: type '%s' ", get_queued_semantic_value());
+                 char *semantic_value_qualifiedpackage_or_type = _strdup(get_queued_semantic_value());
+                // printf("var: type '%s' ", get_queued_semantic_value());
                  token = gpplex();
+                 if (token == tk_DOT){
+                     token = gpplex();
+                     if (token == tk_IDENT){
+                          printf("var: type (qualified) '%s' from package '%s' ", get_queued_semantic_value(), semantic_value_qualifiedpackage_or_type);
+                          token = gpplex();
+                     }else{
+                         gpperror("expected qualified type after '.'\n");
+                     }
+                 }else{
+                     printf("var: type '%s' ", semantic_value_qualifiedpackage_or_type);
+                 }
              }
              if (token == tk_COMMA){
                 token = gpplex();
