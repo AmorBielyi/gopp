@@ -11,14 +11,24 @@ long TOKENSDUMP;
 
 FILE *source_fp;
 FILE* tokens_stream_dump;
-
+char * filename;
 int main(int argc, char *argv[])
 {
-  
+    
     if (argc >= 2){
         TOKENSDUMP  = strtol(argv[2], NULL, 10);
         if (TOKENSDUMP == 1)
             create_dump();
+        filename = argv[1];
+        char *ssc;
+        int l = 0;
+        ssc = strstr(filename, "\\");
+        do{
+            l = strlen(ssc) + 1;
+            filename = &filename[strlen(filename)-l+2];
+            ssc = strstr(filename, "\\");
+        }while(ssc);
+        //printf("filename: %s\n", filename);
         errno_t err = fopen_s(&source_fp, argv[1], "r");
         if (err == 0){
             printf("\nBegin parsing %s\n\n", argv[1]);
@@ -33,7 +43,7 @@ int main(int argc, char *argv[])
                 fclose(tokens_stream_dump);
             ftime(&end);
             double diff = (double)(1000.0 * (end.time - start.time) + (end.millitm - start.millitm));
-            printf("\nParsing time: %f seconds = %f milliseconds = %f microseconds", diff / 1000, diff, diff * (double)1000);
+            printf("\nSuccessfully parsed\nTime: %f seconds = %f milliseconds = %f microseconds", diff / 1000, diff, diff * (double)1000);
         }else{
           fprintf(stderr, "Error: can't open source file %s ", argv[1]); exit(1);
         }

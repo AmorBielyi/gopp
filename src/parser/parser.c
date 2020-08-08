@@ -23,7 +23,7 @@ void parse_top_package_stmt()
         token = gpplex();
     }  
     else
-        gpperror("expected package name");
+        gpperror(1,"expected package name");
 }
 /* PACKAGE RULE END */
 
@@ -40,7 +40,7 @@ void parse_top_import_decl()
             parse_import_decl_without_alias(get_queued_semantic_value());
            break;
         case !tk_STRINGLIT:
-            gpperror("expected import source");
+            gpperror(1,"expected import source");
         case tk_IDENT:
             parse_import_decl_with_alias(get_queued_semantic_value());
             break;
@@ -53,7 +53,7 @@ void parse_top_import_decl()
                  token = gpplex();
                  break;
              }else{
-                 gpperror("expected ')' after import scope\n");
+                 gpperror(1,"expected ')' after import scope\n");
              }
     }
         
@@ -82,7 +82,7 @@ void parse_import_decl_with_alias(char *semantic_value_alias_name)
         token = gpplex();
         //parse_grammar();
     }else
-        gpperror("expected package source after alias");
+        gpperror(1,"expected package source after alias");
         
 }
 /* IMPORTS RULE END */
@@ -107,7 +107,7 @@ void parse_var_decl_name(){
                  //printf("token type %u\n", token);
                  if (token != tk_IDENT && is_builtin_type(token) != 1)
                  {
-                     gpperror("expected type name after pointer symbol '*'");
+                     gpperror(1,"expected type name after pointer symbol '*'");
                  } 
              }
              
@@ -117,7 +117,7 @@ void parse_var_decl_name(){
             */
              if (is_var_decl == 0){ 
                  if(token == tk_IDENT){
-                     gpperror("invalid constant type %s", get_queued_semantic_value());
+                     gpperror(1,"invalid constant type %s", get_queued_semantic_value());
                  }
              }
 
@@ -137,7 +137,7 @@ void parse_var_decl_name(){
                             printf("var: type (qualified ptr) '%s' from package '%s' ", get_queued_semantic_value(), semantic_value_qualifiedpackage_or_type);
                           token = gpplex();
                      }else{
-                         gpperror("expected qualified type after '.'\n");
+                         gpperror(1,"expected qualified type after '.'\n");
                      }
                  }else{
 
@@ -200,7 +200,9 @@ void parse_top_vars_or_const_decl(){
         parse_grammar();
         }else{
             if (is_var_decl == 0){ // if const declaration was/is
-                gpperror("const declaration cannot have type without expression\n%d:%d: missing value in const declaration", line, col);
+                gpperror(0,"const declaration cannot have type without expression");
+                gpperror(1, "missing value in const declaration");
+
                 
                // gpperror("var declaration cannot have type without expression\n");
             }
@@ -402,7 +404,7 @@ void parse_grammar()
         case tk_IDENT:
         case tk_NUM:
         case tk_STRINGLIT:
-            gpperror("unexpected '%s', expected declaration or statement", get_queued_semantic_value());
+            gpperror(1,"unexpected '%s', expected declaration or statement", get_queued_semantic_value());
     }
 }
 
@@ -411,7 +413,7 @@ void gppparse()
 {
     token = gpplex();
     if(token != tk_PACKAGE)
-        gpperror("expected package statement\n");
+        gpperror(1,"expected package statement\n");
     do{
         parse_grammar();
     }while(token != tk_EOF);

@@ -133,7 +133,7 @@
     tk_IOTA
   } token_type;
 
-
+extern char * filename;
 extern long TOKENSDUMP;
 extern FILE* tokens_stream_dump;
 //typedef int token_type;
@@ -166,15 +166,16 @@ extern FILE *source_fp;
 int line =1, col = 0, the_ch = ' ';
 da_dim(text, char);
 
-void gpperror(const char *fmt, ...)
+void gpperror(int is_exit, const char *fmt, ...)
 {
     char buf[1000];
     va_list ap;
     va_start(ap, fmt);
     vsprintf_s(buf, sizeof(buf), fmt, ap);
     va_end(ap);
-    printf("\n%d:%d: %s", line, col, buf);
-    exit(1);
+    printf("\n./%s:%d:%d: %s", filename, line, col, buf);
+    if (is_exit == 1)
+        exit(1);
 }
 
 char* get_queued_semantic_value() {
@@ -206,17 +207,17 @@ static int back_ch(int ch)
 static token_type char_lit(int n)
 { /* 'x' */
  if (the_ch == '\'')
-    gpperror("Syntax error: empty character constant");
+    gpperror(1,"Syntax error: empty character constant");
 if (the_ch == '\\'){
     next_ch();
     if(the_ch == 'n')
         n = 10;
     else if (the_ch == '\\')
         n = '\\';
-    else gpperror( "Syntax error: unknown escape sequence \\%c", the_ch);
+    else gpperror(1, "Syntax error: unknown escape sequence \\%c", the_ch);
 } 
 if(next_ch() != '\'')
-    gpperror("Syntax error: multi-character constant");
+    gpperror(1,"Syntax error: multi-character constant");
 next_ch();
 semantic_value = (char *)n; // maybe error here 
 
@@ -247,7 +248,7 @@ static token_type div_or_cmt() {  /* (divide)'/' or comment */
                 return gpplex();
             }
         } else if (the_ch == EOF)
-            gpperror("EOF in comment");
+            gpperror(1,"EOF in comment");
         else
             next_ch();
     }
@@ -260,8 +261,8 @@ static token_type string_lit(int start)
     da_rewind(text);
 
     while(next_ch() != start){
-        if(the_ch == '\n') gpperror( "Syntax error: EOL in string");
-        if (the_ch == EOF) gpperror( "Syntax error: EOF in string");
+        if(the_ch == '\n') gpperror(1, "Syntax error: EOL in string");
+        if (the_ch == EOF) gpperror(1, "Syntax error: EOF in string");
         da_append(text, (char)the_ch);
     }
     da_append(text, '\0');
@@ -313,7 +314,7 @@ int insert_symbol_table(char *semantic_value)
         }
         if(++entry >= symbol_table +NHASH) entry = symbol_table;
     }
-    gpperror("symbol table overflow\n");
+    gpperror(1,"symbol table overflow\n");
     abort();
 }
 
@@ -451,7 +452,7 @@ static token_type ident_or_num()
     }
     
     if (da_len(text) == 0)
-        gpperror("Syntax error: Syntax error: unrecognized character, code:  (%d) '%c'\n", the_ch, the_ch);
+        gpperror(1,"Syntax error: Syntax error: unrecognized character, code:  (%d) '%c'\n", the_ch, the_ch);
 
   
     
@@ -461,10 +462,10 @@ static token_type ident_or_num()
     and if first char of ident is digit return syntax error according to Go rule  */
         if(text[0] >=1 && isdigit(text[0])){
             if(is_ident)
-                gpperror("Syntax error: invalid identifier, can't begin with digit '%c'", text[0], text[0]);
+                gpperror(1,"Syntax error: invalid identifier, can't begin with digit '%c'", text[0], text[0]);
              n = strtol(text, NULL, 0);
             if (n == LONG_MAX && errno == ERANGE)
-                gpperror("Syntax error: Number exceeds maximum value");
+                gpperror(1,"Syntax error: Number exceeds maximum value");
             semantic_value = text;
             if (TOKENSDUMP == 1)
                 fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n", line, col, semantic_value);
@@ -491,7 +492,7 @@ static token_type LA
        
     }
     if(self == EOF)
-        gpperror("Syntax error (LA): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
+        gpperror(1,"Syntax error (LA): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
     return self;
 
 }
@@ -506,7 +507,7 @@ static token_type LA2
 )
 {
     if (self == EOF)
-            gpperror( "Syntax error (LA n2): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
+            gpperror(1, "Syntax error (LA n2): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
 
     if (the_ch == except1){
         next_ch();
@@ -758,7 +759,7 @@ int gpplex()
                         write_dump("tk_ELLIPSIS", "...");
                     return tk_ELLIPSIS;
                 }else 
-                   gpperror( "Syntax error (LA): unrecognized character, code:  .\n", the_ch, the_ch);
+                   gpperror( 1,"Syntax error (LA): unrecognized character, code:  .\n", the_ch, the_ch);
                 
             }
             if (TOKENSDUMP == 1)
@@ -876,7 +877,7 @@ int gpplex()
         
         
     }
-    gpperror("unknown");
+    gpperror(1,"unknown");
 }
 
 
