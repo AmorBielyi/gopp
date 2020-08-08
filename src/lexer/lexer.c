@@ -163,7 +163,7 @@ unsigned hash_symbol_table(char *semantic_value);
 
 extern FILE *source_fp;
 
-static int line =1, col = 0, the_ch = ' ';
+int line =1, col = 0, the_ch = ' ';
 da_dim(text, char);
 
 void gpperror(const char *fmt, ...)
@@ -173,7 +173,7 @@ void gpperror(const char *fmt, ...)
     va_start(ap, fmt);
     vsprintf_s(buf, sizeof(buf), fmt, ap);
     va_end(ap);
-    printf("Ln %d, Col %d, %s.", line, col, buf);
+    printf("\n%d:%d: %s", line, col, buf);
     exit(1);
 }
 

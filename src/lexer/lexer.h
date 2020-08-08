@@ -117,3 +117,4 @@
   char *get_queued_semantic_value();
   int lookup_symbol_table(char *semantic_value);
   int insert_symbol_table(char *semantic_value);
+  extern int line, col;

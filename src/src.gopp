@@ -28,7 +28,7 @@ var x = 1,2,"str_value1"
 var x,y =1
 var x,y,z = 1,2,"str_value2"
 
-var x myType1 = 1
+var x myType1 
 var x myType2 = 1,2,"str_value3"
 var x,y myType3 =1
 var x,y,z myType4 = 1,2,"str_value4"
@@ -51,12 +51,15 @@ var x,y,z *rune = 1,2,"str_value2"
 var x mypkg1.myType1 = 1
 var x mypkg2.myType2 = 1,2,"str_value3"
 var x,y mypkg3.myType3 =1
-var x,y,z mypkg4.myType4 = 1,2,"str_value4"
+var x,y,z = 1,2,"str_value4"
 
 var x *mypkg1.myType1 = 1
 var x *mypkg2.myType2 = 1,2,"str_value3"
 var x,y *mypkg3.myType3 =1
 var x,y,z *mypkg4.myType4 = 1,2,"str_value4"
+
+const x = 1
+const x string = "cstr1","cstr2","cstr3"
 
 // var x myType = 1
 // var a,b,c myClassd  = 1,"var value"

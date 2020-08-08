@@ -86,7 +86,7 @@ void parse_import_decl_with_alias(char *semantic_value_alias_name)
         
 }
 /* IMPORTS RULE END */
-
+int is_var_decl = 0;
 int is_pointer_type = 0 ;
 /* VAR RULE BEGIN */
 void parse_var_decl_name(){
@@ -95,10 +95,11 @@ void parse_var_decl_name(){
     }
     switch(token){
        // int is_pointer_type = 0;
+      
             case tk_IDENT:
              printf("var: name '%s' ", get_queued_semantic_value());
              token = gpplex();
-            
+           
     
              if (token == tk_MUL){
                  is_pointer_type = 1;
@@ -111,6 +112,19 @@ void parse_var_decl_name(){
              }
              
              parse_builtin_type();
+            /* 
+                for const declaration only 
+            */
+             if (is_var_decl == 0){ 
+                 if(token == tk_IDENT){
+                     gpperror("invalid constant type %s", get_queued_semantic_value());
+                 }
+             }
+
+            /* 
+                for var declaration only 
+            */
+            if(is_var_decl == 1){  
              if(token == tk_IDENT){
                  char *semantic_value_qualifiedpackage_or_type = _strdup(get_queued_semantic_value());
                 // printf("var: type '%s' ", get_queued_semantic_value());
@@ -132,6 +146,7 @@ void parse_var_decl_name(){
                         printf("var: type (ptr) '%s' ", semantic_value_qualifiedpackage_or_type);
                  }
              }
+            } // end is_var_decl == 1
              if (token == tk_COMMA){
                 token = gpplex();
                 from_scope = 1;
@@ -176,7 +191,7 @@ void parse_var_decl_name_list(){
    // is_var_name_list_end = 1;
 }
 
-void parse_top_vars_decl(){
+void parse_top_vars_or_const_decl(){
     parse_var_decl_name();
 
     if (token == tk_ASSIGN){
@@ -184,7 +199,13 @@ void parse_top_vars_decl(){
         parse_var_decl_expr();
         parse_grammar();
         }else{
-            gpperror("uninitialized variable, expected assigned value\n");
+            if (is_var_decl == 0){ // if const declaration was/is
+                gpperror("const declaration cannot have type without expression\n%d:%d: missing value in const declaration", line, col);
+                
+               // gpperror("var declaration cannot have type without expression\n");
+            }
+
+            
         }
 }
 /* VAR RULE END */
@@ -349,7 +370,7 @@ int is_builtin_type(token_type tok)
     }
 }
 /*SPECIAL RULE BUILTIN TYPE END*/
-
+char* decl_type;
 void parse_grammar()
 {
     switch(token){
@@ -369,7 +390,13 @@ void parse_grammar()
         //     parse_grammar();
         //     break;
         case tk_VAR:
-            parse_top_vars_decl();
+            is_var_decl = 1;
+            parse_top_vars_or_const_decl();
+            parse_grammar();
+            break;
+        case tk_CONST:
+            is_var_decl = 0;
+            parse_top_vars_or_const_decl();
             parse_grammar();
             break;
         case tk_IDENT:
