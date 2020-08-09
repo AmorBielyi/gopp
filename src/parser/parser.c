@@ -417,6 +417,7 @@ void parse_grammar()
         case tk_INCLUDE:
             is_goinclude_decl_type = 0;
             parse_top_import_decl();
+
             // printf("current token: %u\n", token);
             // token = gpplex();
             // printf("current token by 1: %u\n", token);
