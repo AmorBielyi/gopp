@@ -1,34 +1,43 @@
 package ☢chat
-import "fmt"
-import "main"
-import ws "src/webserver"
-import "handler.gpp"
-import omega "gpp/src/package"
-import delta "gpp/src/package2"
-goimport "fmt"
-import (
+goinclude "fmt";
+goinclude "strings";
+goinclude "bool";
+goinclude cmplx "complex";
+include ws "up/src/webserver";
+include "up/src/handler";
+include omega "up/src/package";
+include delta "up/src/package2";
+include "fmt";
+include (
 	"hello"
 	"banga"
 	h "hello"
 	b "banga"
 )
-goimport "fmt"
-import "handler.gpp"
-import omega "gpp/src/package"
-import delta "gpp/src/package2"
-goimport (
+include "up/src/handler";
+include omega "up/src/package";
+include delta "up/src/package2";
+include (
 	"hello"
 	"banga"
 	h "hello"
 	b "banga"
 )
+
+goinclude (
+	"hello"
+	"banga"
+	h "hello"
+	b "banga"
+)
+
 
 var x = 1
 var x = 1,2,"str_value1"
 var x,y =1
 var x,y,z = 1,2,"str_value2"
 
-var x myType1 
+var x myType1
 var x myType2 = 1,2,"str_value3"
 var x,y myType3 =1
 var x,y,z myType4 = 1,2,"str_value4"
