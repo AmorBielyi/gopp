@@ -35,6 +35,7 @@ void parse_top_import_decl()
         token = gpplex();
     }
     
+
     switch(token){
         case tk_STRINGLIT:
             parse_import_decl_without_alias(get_queued_semantic_value());
