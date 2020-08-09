@@ -2,7 +2,7 @@
 #include <string.h>
 #include "../lexer/lexer.h"
 
-token_type token;
+static token_type token;
 void parse_grammar();
 void parse_import_decl_without_alias(char *);
 void parse_import_decl_with_alias(char* );
@@ -28,6 +28,7 @@ void parse_top_package_stmt()
 /* PACKAGE RULE END */
 
 int from_scope = 0;
+int is_goinclude_decl_type = 0;
 /* IMPORTS RULE BEGIN */
 void parse_top_import_decl()
 {
@@ -38,9 +39,19 @@ void parse_top_import_decl()
     switch(token){
         case tk_STRINGLIT:
             parse_import_decl_without_alias(get_queued_semantic_value());
+            if (from_scope != 1){
+                if (token == tk_SEMI)
+                    token = gpplex();
+                else
+                    gpperror(1,"expected semi");
+            }
+            
            break;
         case !tk_STRINGLIT:
-            gpperror(1,"expected import source");
+            if (is_goinclude_decl_type == 1)
+                gpperror(1,"expected goinclude source");
+            gpperror(1,"expected include source");
+            
         case tk_IDENT:
             parse_import_decl_with_alias(get_queued_semantic_value());
             break;
@@ -49,11 +60,14 @@ void parse_top_import_decl()
             from_scope = 1;
             parse_import_decl_list();
             from_scope = 0;
+            
             if (token == tk_RPAREN){
                  token = gpplex();
                  break;
              }else{
-                 gpperror(1,"expected ')' after import scope\n");
+                 if (is_goinclude_decl_type ==1 )
+                    gpperror(1, "expected ')' after goinclude scope");
+                 gpperror(1,"expected ')' after include scope\n");
              }
     }
         
@@ -63,26 +77,41 @@ void parse_import_decl_list(){
     do {
          parse_top_import_decl();
     }while(token == tk_IDENT || token == tk_STRINGLIT);
+    
 }
 
 void parse_import_decl_without_alias(char* semantic_value_source_name)
-{
-        printf("import source '%s'\n", semantic_value_source_name);
+{       
+        if (is_goinclude_decl_type == 1)
+            printf("goinclude source '%s'\n", semantic_value_source_name);
+        else         
+            printf("include source '%s'\n", semantic_value_source_name);
         token = gpplex();
        // parse_grammar();
 }
 
 void parse_import_decl_with_alias(char *semantic_value_alias_name)
-{
-    printf("import: alias '%s' ", semantic_value_alias_name);
+{   
+    if (is_goinclude_decl_type == 1)
+        printf("goinclude: alias '%s' ", semantic_value_alias_name);
+    else 
+        printf("include: alias '%s' ", semantic_value_alias_name);
     token = gpplex();
+    
     if (token == tk_STRINGLIT)
     {
         printf("source '%s'\n",get_queued_semantic_value());
         token = gpplex();
         //parse_grammar();
     }else
-        gpperror(1,"expected package source after alias");
+        gpperror(1,"expected source after alias");
+
+    if (from_scope != 1){
+                if (token == tk_SEMI)
+                    token = gpplex();
+                else
+                    gpperror(1,"expected semi");
+            }
         
 }
 /* IMPORTS RULE END */
@@ -142,6 +171,7 @@ void parse_var_decl_name(){
                  }else{
 
                     printf("var: type '%s' ", semantic_value_qualifiedpackage_or_type);
+                   
                     if(is_pointer_type == 1)
                         printf("var: type (ptr) '%s' ", semantic_value_qualifiedpackage_or_type);
                  }
@@ -152,7 +182,7 @@ void parse_var_decl_name(){
                 token = gpplex();
                 from_scope = 1;
                 parse_var_decl_name_list();
-                 parse_var_decl_expr();
+                parse_var_decl_expr();
                 // HERE ??? 
                
                 from_scope = 0; // or before parse_var_decl_expr(); ??? line up
@@ -194,7 +224,7 @@ void parse_var_decl_name_list(){
 
 void parse_top_vars_or_const_decl(){
     parse_var_decl_name();
-
+    
     if (token == tk_ASSIGN){
         token = gpplex();
         parse_var_decl_expr();
@@ -374,6 +404,7 @@ int is_builtin_type(token_type tok)
 }
 /*SPECIAL RULE BUILTIN TYPE END*/
 char* decl_type;
+
 void parse_grammar()
 {
     switch(token){
@@ -381,11 +412,24 @@ void parse_grammar()
             parse_top_package_stmt();
             parse_grammar();
             break;
-        case tk_IMPORT:
-        case tk_GOIMPORT:
+        case tk_INCLUDE:
+            is_goinclude_decl_type = 0;
             parse_top_import_decl();
+            // printf("current token: %u\n", token);
+            // token = gpplex();
+            // printf("current token by 1: %u\n", token);
             parse_grammar();
             break;
+        case tk_GOINCLUDE:
+            is_goinclude_decl_type = 1;
+            parse_top_import_decl();
+            // printf("current token: %u\n", token);
+            // token = gpplex();
+            // printf("current token by 1: %u\n", token);
+            parse_grammar();
+            break;
+          
+            
         /* TEST RULE; BEGIN THIS */
         // case tk_CLASS:
         //     printf("hello class\n");
@@ -394,7 +438,7 @@ void parse_grammar()
         //     break;
         case tk_VAR:
             is_var_decl = 1;
-            parse_top_vars_or_const_decl();
+            parse_top_vars_or_const_decl(); 
             parse_grammar();
             break;
         case tk_CONST:
