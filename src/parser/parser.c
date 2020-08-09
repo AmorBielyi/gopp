@@ -34,6 +34,7 @@ void parse_top_import_decl()
     if (from_scope != 1){
         token = gpplex();
     }
+
     
     switch(token){
         case tk_STRINGLIT:
