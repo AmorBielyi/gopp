@@ -383,9 +383,11 @@ void parse_grammar()
             break;
         case tk_IMPORT:
         case tk_GOIMPORT:
+
             parse_top_import_decl();
             parse_grammar();
             break;
+             
         /* TEST RULE; BEGIN THIS */
         // case tk_CLASS:
         //     printf("hello class\n");
