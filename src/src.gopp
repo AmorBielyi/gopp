@@ -61,6 +61,7 @@ var x,y,z *mypkg4.myType4 = 1,2,"str_value4"
 const x =1
 const x string = "cstr1","cstr2","cstr3"
 
+
 // var x myType = 1
 // var a,b,c myClassd  = 1,"var value"
 // var d,e int = 1
