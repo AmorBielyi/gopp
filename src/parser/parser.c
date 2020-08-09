@@ -145,6 +145,7 @@ void parse_var_decl_name(){
                     if(is_pointer_type == 1)
                         printf("var: type (ptr) '%s' ", semantic_value_qualifiedpackage_or_type);
                  }
+
              }
             } // end is_var_decl == 1
              if (token == tk_COMMA){
