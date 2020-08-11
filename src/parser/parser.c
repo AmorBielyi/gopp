@@ -204,7 +204,6 @@ void parse_top_vars_or_const_decl(){
                 gpperror(0,"const declaration cannot have type without expression");
                 gpperror(1, "missing value in const declaration");
 
-                
                // gpperror("var declaration cannot have type without expression\n");
             }
 
@@ -370,7 +369,6 @@ int is_builtin_type(token_type tok)
             return 1;
         default:
             return 0;
-
     }
 }
 /*SPECIAL RULE BUILTIN TYPE END*/
@@ -384,11 +382,9 @@ void parse_grammar()
             break;
         case tk_IMPORT:
         case tk_GOIMPORT:
-
             parse_top_import_decl();
             parse_grammar();
             break;
-             
         /* TEST RULE; BEGIN THIS */
         // case tk_CLASS:
         //     printf("hello class\n");

@@ -56,8 +56,8 @@
     tk_PRIVATE,
     tk_PTRSELECT,
     tk_OVERRIDE,
-    tk_INCLUDE,
-    tk_GOINCLUDE,
+    tk_IMPORT,
+    tk_GOIMPORT,
     tk_T_STRING,
     tk_T_BOOL,
     tk_T_INT8,
@@ -375,8 +375,8 @@ static token_type get_keyword_type(const char *ident)
         {"public", tk_PUBLIC},
         {"private", tk_PRIVATE},
         {"override", tk_OVERRIDE},
-        {"include", tk_INCLUDE},
-        {"goinclude", tk_GOINCLUDE},
+        {"import", tk_IMPORT},
+        {"goimport", tk_GOIMPORT},
         /* Original built-in types */ 
         {"string", tk_T_STRING},
         {"bool", tk_T_BOOL},
@@ -927,8 +927,8 @@ void dump_keywords(token_type token)
         case tk_GO:write_dump( "tk_GO","go");break;
         case tk_GOTO: write_dump( "tk_GOTO","goto");break;
         case tk_IF: write_dump( "tk_IF","if");break; 
-        case tk_INCLUDE:write_dump( "tk_INCLUDE","#include");break; 
-        case tk_GOINCLUDE: write_dump( "tk_GOINCLUDE","goimport");break; 
+        case tk_IMPORT:write_dump( "tk_IMPORT","#include");break; 
+        case tk_GOIMPORT: write_dump( "tk_GOIMPORT","goimport");break; 
         case tk_INTERFACE:write_dump( "tk_INTERFACE","interface");break; 
         case tk_MAP:write_dump( "tk_MAP","map");break; 
         case tk_PACKAGE:write_dump( "tk_PACKAGE","package");break; 

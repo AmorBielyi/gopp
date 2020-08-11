@@ -1,43 +1,34 @@
 package ☢chat
-goinclude "fmt";
-goinclude "strings";
-goinclude "bool";
-goinclude cmplx "complex";
-include ws "up/src/webserver";
-include "up/src/handler";
-include omega "up/src/package";
-include delta "up/src/package2";
-include "fmt";
-include (
+import "fmt"
+import "main"
+import ws "src/webserver"
+import "handler.gpp"
+import omega "gpp/src/package"
+import delta "gpp/src/package2"
+goimport "fmt"
+import (
 	"hello"
 	"banga"
 	h "hello"
 	b "banga"
 )
-include "up/src/handler";
-include omega "up/src/package";
-include delta "up/src/package2";
-include (
+goimport "fmt"
+import "handler.gpp"
+import omega "gpp/src/package"
+import delta "gpp/src/package2"
+goimport (
 	"hello"
 	"banga"
 	h "hello"
 	b "banga"
 )
-
-goinclude (
-	"hello"
-	"banga"
-	h "hello"
-	b "banga"
-)
-
 
 var x = 1
 var x = 1,2,"str_value1"
 var x,y =1
 var x,y,z = 1,2,"str_value2"
 
-var x myType1
+var x myType1 
 var x myType2 = 1,2,"str_value3"
 var x,y myType3 =1
 var x,y,z myType4 = 1,2,"str_value4"
@@ -69,7 +60,6 @@ var x,y,z *mypkg4.myType4 = 1,2,"str_value4"
 
 const x =1
 const x string = "cstr1","cstr2","cstr3"
-
 
 // var x myType = 1
 // var a,b,c myClassd  = 1,"var value"
