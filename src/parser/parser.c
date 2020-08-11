@@ -370,6 +370,7 @@ int is_builtin_type(token_type tok)
             return 1;
         default:
             return 0;
+
     }
 }
 /*SPECIAL RULE BUILTIN TYPE END*/
