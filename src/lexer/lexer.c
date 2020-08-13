@@ -56,8 +56,9 @@
     tk_PRIVATE,
     tk_PTRSELECT,
     tk_OVERRIDE,
-    tk_IMPORT,
-    tk_GOIMPORT,
+    tk_INCLUDE,
+    tk_GOINCLUDE,
+    tk_AS,
     tk_T_STRING,
     tk_T_BOOL,
     tk_T_INT8,
@@ -137,7 +138,7 @@ extern char * filename;
 extern long TOKENSDUMP;
 extern FILE* tokens_stream_dump;
 //typedef int token_type;
-int gpplex();
+int apxlex();
 void write_dump(char* token_name, char* token_value);
 void dump_keywords(token_type token);
 
@@ -163,10 +164,10 @@ unsigned hash_symbol_table(char *semantic_value);
 
 extern FILE *source_fp;
 
-int line =1, col = 0, the_ch = ' ';
+int line =1, col , the_ch = ' ';
 da_dim(text, char);
 
-void gpperror(int is_exit, const char *fmt, ...)
+void apxerror (const char *fmt )
 {
     char buf[1000];
     va_list ap;
@@ -174,8 +175,30 @@ void gpperror(int is_exit, const char *fmt, ...)
     vsprintf_s(buf, sizeof(buf), fmt, ap);
     va_end(ap);
     printf("\n./%s:%d:%d: %s", filename, line, col, buf);
-    if (is_exit == 1)
-        exit(1);
+    
+}
+
+void apxerror_custom_position (int cline, int ccol, const char *fmt)
+{
+    char buf[1000];
+    va_list ap;
+    va_start(ap, fmt);
+    vsprintf_s(buf, sizeof(buf), fmt, ap);
+    va_end(ap);
+    printf("\n./%s:%d:%d: %s, found '%s'", filename, cline, ccol, buf, get_queued_semantic_value());
+    
+}
+
+void apxerror_fatal(const char *fmt, ...)
+{
+    apxerror(fmt);
+    exit(1);
+}
+
+void apxerror_custom_position_fatal(int line, int col, const char*fmt, ...)
+{
+    apxerror_custom_position(line, col, fmt);
+    exit(1);
 }
 
 char* get_queued_semantic_value() {
@@ -199,7 +222,7 @@ static int next_ch()
 }
 
 
-static int back_ch(int ch)
+static void back_ch(int ch)
 {
     ungetc(ch , source_fp);
 }
@@ -207,17 +230,17 @@ static int back_ch(int ch)
 static token_type char_lit(int n)
 { /* 'x' */
  if (the_ch == '\'')
-    gpperror(1,"Syntax error: empty character constant");
+    apxerror_fatal("Syntax error: empty character constant");
 if (the_ch == '\\'){
     next_ch();
     if(the_ch == 'n')
         n = 10;
     else if (the_ch == '\\')
         n = '\\';
-    else gpperror(1, "Syntax error: unknown escape sequence \\%c", the_ch);
+    else apxerror_fatal( "Syntax error: unknown escape sequence \\%c", the_ch);
 } 
 if(next_ch() != '\'')
-    gpperror(1,"Syntax error: multi-character constant");
+    apxerror_fatal("Syntax error: multi-character constant");
 next_ch();
 semantic_value = (char *)n; // maybe error here 
 
@@ -229,29 +252,27 @@ return tk_NUM;
 }
 
 static token_type div_or_cmt() {  /* (divide)'/' or comment */
-    if (the_ch != '*')
-
-        if (TOKENSDUMP == 1)
-             write_dump("tk_DIV", "/");
-
-        return tk_DIV;
-       
-    if (the_ch == '/')
-        printf("\nsingle comment\n");
-   /* when comment found */
-   next_ch();
-    for (;;) {
+    if (the_ch == '*')
+    {
+        next_ch();
+        for (;;) {
         
-        if (the_ch == '*') {
-            if (next_ch() == '/') {
-                next_ch();
-                return gpplex();
+            if (the_ch == '*') {
+                if (next_ch() == '/') {
+                    next_ch();
+                    return apxlex();
             }
-        } else if (the_ch == EOF)
-            gpperror(1,"EOF in comment");
-        else
-            next_ch();
+        }       else if (the_ch == EOF)
+                    apxerror_fatal("EOF in comment");
+            else
+                next_ch();
     }
+    next_ch();
+    return apxlex();
+    }
+
+   /* when comment found */
+   
 }
 
 
@@ -261,8 +282,8 @@ static token_type string_lit(int start)
     da_rewind(text);
 
     while(next_ch() != start){
-        if(the_ch == '\n') gpperror(1, "Syntax error: EOL in string");
-        if (the_ch == EOF) gpperror(1, "Syntax error: EOF in string");
+        if(the_ch == '\n') apxerror_fatal( "Syntax error: EOL in string");
+        if (the_ch == EOF) apxerror_fatal( "Syntax error: EOF in string");
         da_append(text, (char)the_ch);
     }
     da_append(text, '\0');
@@ -314,8 +335,9 @@ int insert_symbol_table(char *semantic_value)
         }
         if(++entry >= symbol_table +NHASH) entry = symbol_table;
     }
-    gpperror(1,"symbol table overflow\n");
+    apxerror_fatal("symbol table overflow\n");
     abort();
+
 }
 
 int lookup_symbol_table(char* semantic_value)
@@ -375,8 +397,9 @@ static token_type get_keyword_type(const char *ident)
         {"public", tk_PUBLIC},
         {"private", tk_PRIVATE},
         {"override", tk_OVERRIDE},
-        {"import", tk_IMPORT},
-        {"goimport", tk_GOIMPORT},
+        {"include", tk_INCLUDE},
+        {"goinclude", tk_GOINCLUDE},
+        {"as", tk_AS},
         /* Original built-in types */ 
         {"string", tk_T_STRING},
         {"bool", tk_T_BOOL},
@@ -439,7 +462,8 @@ int isutf8unicode(int c)
 }
 
 static token_type ident_or_num()
-{   int n = 0;
+{   
+    int n = 0;
     int is_ident = false;
     da_rewind(text);
    
@@ -448,11 +472,11 @@ static token_type ident_or_num()
         da_append(text, the_ch);
         if (!isdigit(the_ch))
             is_ident = true;
-        next_ch();
+       next_ch();
     }
     
     if (da_len(text) == 0)
-        gpperror(1,"Syntax error: Syntax error: unrecognized character, code:  (%d) '%c'\n", the_ch, the_ch);
+        apxerror_fatal("Syntax error: Syntax error: unrecognized character, code:  (%d) '%c'\n", the_ch, the_ch);
 
   
     
@@ -462,10 +486,10 @@ static token_type ident_or_num()
     and if first char of ident is digit return syntax error according to Go rule  */
         if(text[0] >=1 && isdigit(text[0])){
             if(is_ident)
-                gpperror(1,"Syntax error: invalid identifier, can't begin with digit '%c'", text[0], text[0]);
+                apxerror_fatal("Syntax error: invalid identifier, can't begin with digit '%c'", text[0], text[0]);
              n = strtol(text, NULL, 0);
             if (n == LONG_MAX && errno == ERANGE)
-                gpperror(1,"Syntax error: Number exceeds maximum value");
+                apxerror_fatal("Syntax error: Number exceeds maximum value");
             semantic_value = text;
             if (TOKENSDUMP == 1)
                 fwprintf(tokens_stream_dump, L"Source: Ln %d, Col %d\t\tToken: tk_NUM\t\tSemanticValue: '%hs'\n", line, col, semantic_value);
@@ -492,7 +516,7 @@ static token_type LA
        
     }
     if(self == EOF)
-        gpperror(1,"Syntax error (LA): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
+        apxerror_fatal("Syntax error (LA): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
     return self;
 
 }
@@ -507,7 +531,7 @@ static token_type LA2
 )
 {
     if (self == EOF)
-            gpperror(1, "Syntax error (LA n2): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
+            apxerror_fatal( "Syntax error (LA n2): Syntax error: unrecognized character, code:  '%c' (%d)\n", the_ch, the_ch);
 
     if (the_ch == except1){
         next_ch();
@@ -526,7 +550,7 @@ static token_type LA2
 }
 
 
-int gpplex()
+int apxlex()
 {
     
     /* skip whitespace */
@@ -608,13 +632,21 @@ int gpplex()
         }
         case '/':
         {
-          next_ch();
-          /* skip single comment before '\n' */
+         next_ch();
+         if (the_ch == '*'){
+             do{
+                 next_ch();
+             }while(the_ch != '*');
+             next_ch();
+             if (the_ch != '/')
+                apxerror_fatal("multi-line comment not terminated");
+         }
+          
           if (the_ch == '/'){ 
               do{
                   next_ch();
               }while(the_ch != '\n');
-              next_ch(); return gpplex();
+              next_ch(); return apxlex();
           }
 
           token_type token = LA('=', tk_EQDIV, tk_DIV);
@@ -626,7 +658,7 @@ int gpplex()
           }
                 
           /* skip multi comment before */
-          return div_or_cmt(); 
+          return token; 
         }
 
         case '%': next_ch(); return LA('=', tk_EQMOD, tk_MOD);
@@ -759,7 +791,7 @@ int gpplex()
                         write_dump("tk_ELLIPSIS", "...");
                     return tk_ELLIPSIS;
                 }else 
-                   gpperror( 1,"Syntax error (LA): unrecognized character, code:  .\n", the_ch, the_ch);
+                   apxerror_fatal("Syntax error (LA): unrecognized character, code:  .\n", the_ch, the_ch);
                 
             }
             if (TOKENSDUMP == 1)
@@ -877,7 +909,7 @@ int gpplex()
         
         
     }
-    gpperror(1,"unknown");
+    apxerror_fatal("unknown");
 }
 
 
@@ -927,8 +959,8 @@ void dump_keywords(token_type token)
         case tk_GO:write_dump( "tk_GO","go");break;
         case tk_GOTO: write_dump( "tk_GOTO","goto");break;
         case tk_IF: write_dump( "tk_IF","if");break; 
-        case tk_IMPORT:write_dump( "tk_IMPORT","#include");break; 
-        case tk_GOIMPORT: write_dump( "tk_GOIMPORT","goimport");break; 
+        case tk_INCLUDE:write_dump( "tk_INCLUDE","#include");break; 
+        case tk_GOINCLUDE: write_dump( "tk_GOINCLUDE","goimport");break; 
         case tk_INTERFACE:write_dump( "tk_INTERFACE","interface");break; 
         case tk_MAP:write_dump( "tk_MAP","map");break; 
         case tk_PACKAGE:write_dump( "tk_PACKAGE","package");break; 

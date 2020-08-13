@@ -1,110 +1,173 @@
-#include <stdio.h>
-#include <string.h>
+/*
+     Apex recursive descent parser in pure C
+*/
+#include <stdio.h> // for printf
+#include <string.h> // for _strdup
 #include "../lexer/lexer.h"
 
-token_type token;
-void parse_grammar();
-void parse_import_decl_without_alias(char *);
+/*
+    globals
+*/
+static token_type _token;
+static char *_semantic_value;
+static int _backed_line, _backed_col;
+extern int line, col;
+
+
+/*
+    interfaces
+*/
 void parse_import_decl_with_alias(char* );
 void parse_import_decl_list();
 void parse_var_decl_name_list();
 void parse_var_decl_expr_list();
 void parse_var_decl_expr();
 void parse_builtin_type();
-int is_builtin_type(token_type token);
+int is_builtin_type(token_type _token);
 
-/* PACKAGE RULE BEGIN */
-void parse_top_package_stmt()
+
+
+
+/*
+    get next token
+*/
+void next_token()
 {
-    token = gpplex();
-    if(token == tk_IDENT)
+    _token = apxlex();
+    _semantic_value = get_queued_semantic_value();
+}
+
+/*
+    backup line and column position after specific token
+*/
+void backup_position()
+{
+    _backed_line = line;
+    _backed_col = col;
+}
+
+/*
+    RULE NAME: terminator 
+    RULE INFO: special rule for terminator 
+*/
+void rule_special_terminator(){
+   
+    if (_token == tk_SEMI)
+        next_token();
+    else 
+        apxerror_custom_position_fatal(_backed_line, _backed_col, "expected ';'");
+}
+
+/* 
+    RULE NAME: package
+    RULE INFO: top rule for package   
+*/
+void rule_top_package()
+{   
+    
+    backup_position(); //backup position after tk_PACKAGE for "expected package name" error
+
+    next_token();
+    if(_token == tk_IDENT)
     {
-        printf("package name: %s\n", get_queued_semantic_value());
-        token = gpplex();
+        
+        backup_position(); // backup position after package name for "expected ';'" error
+        
+        printf("package: name '%s'\n", _semantic_value);
+        
+        next_token();
     }  
     else
-        gpperror(1,"expected package name");
+        apxerror_custom_position_fatal(_backed_line, _backed_col, "expected identifier");
 }
-/* PACKAGE RULE END */
+
 
 int from_scope = 0;
-/* IMPORTS RULE BEGIN */
-void parse_top_import_decl()
-{
-    if (from_scope != 1){
-        token = gpplex();
-    }
-    
-    switch(token){
-        case tk_STRINGLIT:
-            parse_import_decl_without_alias(get_queued_semantic_value());
-           break;
-        case !tk_STRINGLIT:
-            gpperror(1,"expected import source");
-        case tk_IDENT:
-            parse_import_decl_with_alias(get_queued_semantic_value());
-            break;
-        case tk_LPAREN:
-            token = gpplex();
-            from_scope = 1;
-            parse_import_decl_list();
-            from_scope = 0;
-            if (token == tk_RPAREN){
-                 token = gpplex();
-                 break;
-             }else{
-                 gpperror(1,"expected ')' after import scope\n");
-             }
-    }
-        
-}
 
-void parse_import_decl_list(){
-    do {
-         parse_top_import_decl();
-    }while(token == tk_IDENT || token == tk_STRINGLIT);
-}
 
-void parse_import_decl_without_alias(char* semantic_value_source_name)
-{
-        printf("import source '%s'\n", semantic_value_source_name);
-        token = gpplex();
-       // parse_grammar();
-}
 
-void parse_import_decl_with_alias(char *semantic_value_alias_name)
+/* 
+    RULE NAME: include/goinclude
+
+    RULE INFO: top rule for with/without alias include and goinclude   
+ */
+void rule_top_many_include()
 {
-    printf("import: alias '%s' ", semantic_value_alias_name);
-    token = gpplex();
-    if (token == tk_STRINGLIT)
+    backup_position(); // backup position after tk_INCLUDE/tk_GOINCLUDE for "expected package to include" error
+    next_token();
+    /*
+        sub-rule for package 
+    */
+    if(_token == tk_STRINGLIT)
     {
-        printf("source '%s'\n",get_queued_semantic_value());
-        token = gpplex();
-        //parse_grammar();
-    }else
-        gpperror(1,"expected package source after alias");
+        printf("include: package '%s'", _semantic_value);
+        next_token();
+        /*
+            sub-rule for alias  
+        */
+        if (_token == tk_AS)
+        {
+            backup_position(); // backup position after tk_AS for "expected alias for package" error
+            next_token();
+            if (_token == tk_IDENT)
+            {
+                backup_position(); // backup position after tk_AS for "expected ';'" error
+                printf(", alias '%s'", _semantic_value);
+                next_token();
+            }
+            else 
+                apxerror_custom_position_fatal(_backed_line, _backed_col,"expected identifier");
+        }
+        printf("\n"); // for pretty parse result output
         
-}
+    }
+    else
+        apxerror_custom_position_fatal(_backed_line, _backed_col,"expected string literal");
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// void parse_import_decl_list(){
+//     do {
+//          rule_top_many_include();
+//     }while(_token == tk_IDENT || _token == tk_STRINGLIT || _token == tk_AS);
+// }
+
+
+
 /* IMPORTS RULE END */
 int is_var_decl = 0;
 int is_pointer_type = 0 ;
 /* VAR RULE BEGIN */
 void parse_var_decl_name(){
     if (from_scope != 1) {
-        token = gpplex();
+        _token = apxlex();
     }
 
-           if(token == tk_IDENT){
+           if(_token == tk_IDENT){
              printf("var: name '%s' ", get_queued_semantic_value());
-             token = gpplex();
+             _token = apxlex();
            
     
-             if (token == tk_MUL){
+             if (_token == tk_MUL){
                  is_pointer_type = 1;
-                 token = gpplex();
-                 if (token != tk_IDENT && is_builtin_type(token) != 1)
+                 _token = apxlex();
+                 if (_token != tk_IDENT && is_builtin_type(_token) != 1)
                  {
-                     gpperror(1,"expected type name after pointer symbol '*'");
+                     apxerror_fatal("expected type name after pointer symbol '*'");
                  } 
              }
              
@@ -113,8 +176,8 @@ void parse_var_decl_name(){
                 for const declaration only 
             */
              if (is_var_decl == 0){ 
-                 if(token == tk_IDENT){
-                     gpperror(1,"invalid constant type %s", get_queued_semantic_value());
+                 if(_token == tk_IDENT){
+                     apxerror_fatal("invalid constant type %s", get_queued_semantic_value());
                  }
              }
 
@@ -122,18 +185,18 @@ void parse_var_decl_name(){
                 for var declaration only 
             */
             if(is_var_decl == 1){  
-             if(token == tk_IDENT){
+             if(_token == tk_IDENT){
                  char *semantic_value_qualifiedpackage_or_type = _strdup(get_queued_semantic_value());
-                 token = gpplex();
-                 if (token == tk_DOT){
-                     token = gpplex();
-                     if (token == tk_IDENT){
+                 _token = apxlex();
+                 if (_token == tk_DOT){
+                     _token = apxlex();
+                     if (_token == tk_IDENT){
                          printf("var: type (qualified) '%s' from package '%s' ", get_queued_semantic_value(), semantic_value_qualifiedpackage_or_type);
                          if (is_pointer_type == 1)
                             printf("var: type (qualified ptr) '%s' from package '%s' ", get_queued_semantic_value(), semantic_value_qualifiedpackage_or_type);
-                          token = gpplex();
+                          _token = apxlex();
                      }else{
-                         gpperror(1,"expected qualified type after '.'\n");
+                         apxerror_fatal("expected qualified type after '.'\n");
                      }
                  }else{
 
@@ -145,13 +208,13 @@ void parse_var_decl_name(){
              }
             }
 
-            if (token == tk_ASSIGN){
-                token = gpplex();
+            if (_token == tk_ASSIGN){
+                _token = apxlex();
                 parse_var_decl_expr();
                 }else{
                     if (is_var_decl == 0){ // if const declaration was/is
-                    gpperror(0,"const declaration cannot have type without expression");
-                    gpperror(1, "missing value in const declaration");
+                    apxerror("const declaration cannot have type without expression");
+                    apxerror_fatal( "missing value in const declaration");
 
                
             }
@@ -159,21 +222,21 @@ void parse_var_decl_name(){
             
         }
            
-             if (token == tk_COMMA){
-                token = gpplex();
+             if (_token == tk_COMMA){
+                _token = apxlex();
                 from_scope = 1;
                 parse_var_decl_name_list();
-                if (token == tk_ASSIGN){
-                    token = gpplex();
+                if (_token == tk_ASSIGN){
+                    _token = apxlex();
                     parse_var_decl_expr();
                     
 
                 }else{
                     if (is_var_decl == 0){ // if const declaration was/is
-                        gpperror(0,"const declaration cannot have type without expression");
-                        gpperror(1, "missing value in const declaration");
+                        apxerror("const declaration cannot have type without expression");
+                        apxerror_fatal("missing value in const declaration");
 
-               // gpperror("var declaration cannot have type without expression\n");
+               // apxerror("var declaration cannot have type without expression\n");
                 }
 
             
@@ -191,14 +254,14 @@ void parse_var_decl_name(){
 
 
 void parse_var_decl_expr(){
-    switch(token){
+    switch(_token){
         case tk_IDENT:
         case tk_STRINGLIT:
         case tk_NUM:
             printf("var: value '%s'", get_queued_semantic_value());
-            token = gpplex();
-            if (token == tk_COMMA){
-                token = gpplex();
+            _token = apxlex();
+            if (_token == tk_COMMA){
+                _token = apxlex();
                 // from_scope =1 ??
                 parse_var_decl_expr_list();
                 // from_scope = 0;
@@ -209,13 +272,13 @@ void parse_var_decl_expr(){
 void parse_var_decl_expr_list(){
     do{
         parse_var_decl_expr();
-    }while(token == tk_IDENT || token == tk_STRINGLIT || token == tk_NUM || token == tk_COMMA);
+    }while(_token == tk_IDENT || _token == tk_STRINGLIT || _token == tk_NUM || _token == tk_COMMA);
 }
 
 void parse_var_decl_name_list(){
     do{
         parse_var_decl_name();
-    }while(token == tk_IDENT || token == tk_COMMA);
+    }while(_token == tk_IDENT || _token == tk_COMMA);
    // is_var_name_list_end = 1;
 }
 
@@ -223,16 +286,16 @@ void parse_top_vars_or_const_decl(){
     parse_var_decl_name();
     
 
-    // if (token == tk_ASSIGN){
-    //     token = gpplex();
+    // if (_token == tk_ASSIGN){
+    //     _token = apxlex();
     //     parse_var_decl_expr();
     //    // parse_grammar();
     //     }else{
     //         if (is_var_decl == 0){ // if const declaration was/is
-    //             gpperror(0,"const declaration cannot have type without expression");
-    //             gpperror(1, "missing value in const declaration");
+    //             apxerror("const declaration cannot have type without expression");
+    //             apxerror_fatal( "missing value in const declaration");
 
-    //            // gpperror("var declaration cannot have type without expression\n");
+    //            // apxerror("var declaration cannot have type without expression\n");
     //         }
 
             
@@ -242,114 +305,114 @@ void parse_top_vars_or_const_decl(){
 
 /*SPECIAL RULE BUILTIN TYPE BEGIN*/
 void parse_builtin_type(){
-    switch(token){
+    switch(_token){
         case tk_T_BOOL:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'bool'");    
             printf("var: type (builtin) 'bool'");
-            token = gpplex();
+            _token = apxlex();
             break;
         case tk_T_BYTE:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'byte'");
             printf("var: type (builtin) 'byte'");
-            token = gpplex();
+            _token = apxlex();
             break;
         case tk_T_COMPLEX128:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'complex128'");
             printf("var: type (builtin) 'complex128'");
-            token = gpplex();
+            _token = apxlex();
             break;
         case tk_T_COMPLEX64:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'complex64'");
             printf("var: type (builtin) 'complex64'");
-            token = gpplex();
+            _token = apxlex();
             break;
         case tk_T_FLOAT32:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'float32'");
             printf("var type (builtin) 'float32'");
-            token = gpplex();
+            _token = apxlex();
             break;
         case tk_T_INT16:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'int16'");
             printf("var: type (builtin) 'int16'");
-            token = gpplex();
+            _token = apxlex();
             break;
         case tk_T_INT32:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'int32'");
             printf("var: type (builtin) 'int32'");
-            token = gpplex();
+            _token = apxlex();
             break;
         case tk_T_INT64:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'int64'");
             printf("var: type (builtin) 'int64'");
-            token = gpplex();
+            _token = apxlex();
             break;
         case tk_T_INT8:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'int8'");
             printf("var: type (builtin) 'int8'");
-            token = gpplex();
+            _token = apxlex();
             break;
         case tk_T_INT:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'int'");
             printf("var: type (builtin) 'int'");
-            token = gpplex();
+            _token = apxlex();
             break;
         case tk_T_RUNE:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'rune'");
             printf("var: type (builtin) 'rune'");
-            token = gpplex();
+            _token = apxlex();
             break;
         case tk_T_STRING:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'string'");
             printf("var: type (builtin) 'string'");
-            token = gpplex();
+            _token = apxlex();
             break;
         case tk_T_UINT16:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'uint16'");
             printf("var: type (builtin) 'uint16'");
-            token = gpplex();
+            _token = apxlex();
             break;
         case tk_T_UINT32:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'uint32'");
             printf("var: type (builtin) 'uint32'");
-            token = gpplex();
+            _token = apxlex();
             break;
         case tk_T_UINT64:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'uint64'");
             printf("var: type (builtin) 'uint64'");
-            token = gpplex();
+            _token = apxlex();
             break;
         case tk_T_UINT8:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'uint8'");
             printf("var: type (builtin) 'uint8'");
-            token = gpplex();
+            _token = apxlex();
             break;
         case tk_T_UINT:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'uint'");
             printf("var: type (builtin) 'uint'");
-            token = gpplex();
+            _token = apxlex();
             break;
         case tk_T_UINTPTR:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'uintptr'");
             printf("var: type (builtin) 'uintptr'");
-            token = gpplex();
+            _token = apxlex();
             break;
     } 
 }
@@ -403,20 +466,22 @@ int is_builtin_type(token_type tok)
 char* decl_type;
 void parse_grammar()
 {
-    switch(token){
+    switch(_token){
         case tk_PACKAGE:
-            parse_top_package_stmt();
+            rule_top_package();
+            rule_special_terminator();
             parse_grammar();
             break;
-        case tk_IMPORT:
-        case tk_GOIMPORT:
-            parse_top_import_decl();
+        case tk_INCLUDE:
+        case tk_GOINCLUDE:
+            rule_top_many_include();
+            rule_special_terminator();
             parse_grammar();
             break;
         /* TEST RULE; BEGIN THIS */
         // case tk_CLASS:
         //     printf("hello class\n");
-        //     token = gpplex();
+        //     _token = apxlex();
         //     parse_grammar();
         //     break;
         case tk_VAR:
@@ -432,17 +497,17 @@ void parse_grammar()
         case tk_IDENT:
         case tk_NUM:
         case tk_STRINGLIT:
-            gpperror(1,"unexpected '%s', expected declaration or statement", get_queued_semantic_value());
+            apxerror_fatal("unexpected '%s', expected declaration or statement", get_queued_semantic_value());
     }
 }
 
 
 void gppparse()
 {
-    token = gpplex();
-    if(token != tk_PACKAGE)
-        gpperror(1,"expected package statement\n");
+    _token = apxlex();
+    if(_token != tk_PACKAGE)
+        apxerror_fatal("expected package statement\n");
     do{
         parse_grammar();
-    }while(token != tk_EOF);
+    }while(_token != tk_EOF);
 }

@@ -1,27 +1,26 @@
-package ☢chat
-import "fmt"
-import "main"
-import ws "src/webserver"
-import "handler.gpp"
-import omega "gpp/src/package"
-import delta "gpp/src/package2"
-goimport "fmt"
-import (
-	"hello"
-	"banga"
-	h "hello"
-	b "banga"
-)
-goimport "fmt"
-import "handler.gpp"
-import omega "gpp/src/package"
-import delta "gpp/src/package2"
-goimport (
-	"hello"
-	"banga"
-	h "hello"
-	b "banga"
-)
+
+/*
+	test Apex source file
+*/
+
+// test package grammar
+package ☢main;
+
+// test include grammar 
+include "fmt";
+include "main";
+include "src/webserver" as _;  
+include "handler.gpp";
+include "gpp/src/package" as ☢omega;
+include "gpp/src/package2" as delta;
+
+//test goinclude grammar
+goinclude "fmt";
+goinclude "main";
+goinclude "src/webserver" as ws;
+goinclude "handler.gpp";
+goinclude "gpp/src/package" as omega ;
+goinclude "gpp/src/package2" as delta;
 
 var x = 1
 var x = 1,2,"str_value1"

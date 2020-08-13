@@ -35,8 +35,9 @@
     tk_PRIVATE,
     tk_PTRSELECT,
     tk_OVERRIDE,
-    tk_IMPORT,
-    tk_GOIMPORT,
+    tk_INCLUDE,
+    tk_GOINCLUDE,
+    tk_AS,
     tk_T_STRING,
     tk_T_BOOL,
     tk_T_INT8,
@@ -112,9 +113,11 @@
     tk_IOTA
   } token_type;
 
-  token_type gpplex();
-  void gpperror(int is_exit, const char* fmt, ...);
+  token_type apxlex();
+  void apxerror(const char* fmt, ...);
+  void apxerror_custom_position(int line, int col, const char *fmt, ...);
+  void apxerror_fatal(const char* fmt, ...);
+  void apxerror_custom_position_fatal(int line, int col, const char *fmt, ...);
   char *get_queued_semantic_value();
   int lookup_symbol_table(char *semantic_value);
   int insert_symbol_table(char *semantic_value);
-  extern int line, col;
