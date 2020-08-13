@@ -93,10 +93,8 @@ void parse_var_decl_name(){
     if (from_scope != 1) {
         token = gpplex();
     }
-    switch(token){
-       // int is_pointer_type = 0;
-      
-            case tk_IDENT:
+
+           if(token == tk_IDENT){
              printf("var: name '%s' ", get_queued_semantic_value());
              token = gpplex();
            
@@ -104,7 +102,6 @@ void parse_var_decl_name(){
              if (token == tk_MUL){
                  is_pointer_type = 1;
                  token = gpplex();
-                 //printf("token type %u\n", token);
                  if (token != tk_IDENT && is_builtin_type(token) != 1)
                  {
                      gpperror(1,"expected type name after pointer symbol '*'");
@@ -127,7 +124,6 @@ void parse_var_decl_name(){
             if(is_var_decl == 1){  
              if(token == tk_IDENT){
                  char *semantic_value_qualifiedpackage_or_type = _strdup(get_queued_semantic_value());
-                // printf("var: type '%s' ", get_queued_semantic_value());
                  token = gpplex();
                  if (token == tk_DOT){
                      token = gpplex();
@@ -147,21 +143,52 @@ void parse_var_decl_name(){
                  }
 
              }
-            } // end is_var_decl == 1
+            }
+
+            if (token == tk_ASSIGN){
+                token = gpplex();
+                parse_var_decl_expr();
+                }else{
+                    if (is_var_decl == 0){ // if const declaration was/is
+                    gpperror(0,"const declaration cannot have type without expression");
+                    gpperror(1, "missing value in const declaration");
+
+               
+            }
+
+            
+        }
+           
              if (token == tk_COMMA){
                 token = gpplex();
                 from_scope = 1;
                 parse_var_decl_name_list();
-                 parse_var_decl_expr();
+                if (token == tk_ASSIGN){
+                    token = gpplex();
+                    parse_var_decl_expr();
+                    
+
+                }else{
+                    if (is_var_decl == 0){ // if const declaration was/is
+                        gpperror(0,"const declaration cannot have type without expression");
+                        gpperror(1, "missing value in const declaration");
+
+               // gpperror("var declaration cannot have type without expression\n");
+                }
+
+            
+        }
+                // parse_var_decl_expr();
                 // HERE ??? 
                
                 from_scope = 0; // or before parse_var_decl_expr(); ??? line up
             } 
-        //}
-        
-    }
+        }
+
+   // }  end 
 
 }
+
 
 void parse_var_decl_expr(){
     switch(token){
@@ -194,21 +221,22 @@ void parse_var_decl_name_list(){
 
 void parse_top_vars_or_const_decl(){
     parse_var_decl_name();
+    
 
-    if (token == tk_ASSIGN){
-        token = gpplex();
-        parse_var_decl_expr();
-        parse_grammar();
-        }else{
-            if (is_var_decl == 0){ // if const declaration was/is
-                gpperror(0,"const declaration cannot have type without expression");
-                gpperror(1, "missing value in const declaration");
+    // if (token == tk_ASSIGN){
+    //     token = gpplex();
+    //     parse_var_decl_expr();
+    //    // parse_grammar();
+    //     }else{
+    //         if (is_var_decl == 0){ // if const declaration was/is
+    //             gpperror(0,"const declaration cannot have type without expression");
+    //             gpperror(1, "missing value in const declaration");
 
-               // gpperror("var declaration cannot have type without expression\n");
-            }
+    //            // gpperror("var declaration cannot have type without expression\n");
+    //         }
 
             
-        }
+    //     }
 }
 /* VAR RULE END */
 
