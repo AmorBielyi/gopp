@@ -134,6 +134,7 @@ int in_list = 0;
 int is_rule_for_builtint_type = 0;
 int is_rule_for_usertype = 0;
 int is_rule_for_pointer_type = 0 ;
+int is_rule_for_qualified_type = 0;
 
 void rule_top_var_const()
 {
@@ -143,57 +144,32 @@ void rule_top_var_const()
 
     rule_inner_builtin_type();
 
-    
-   
     if (_token == tk_IDENT)
     {
-        char * semantic_value_var_name_or_usertype = _strdup(_semantic_value);
-
+        char * backed_semantic = _strdup(_semantic_value);
         next_token();
-
-         // do the same as with tk_MUL upper do for qualifed package and atc
-
-        if (_token == tk_IDENT)
+        if (_token == tk_DOT)
         {
-            char* qualified_name_or_type_or_name = _strdup(_semantic_value);
             next_token();
-
-            if (_token == tk_DOT)
+            if (_token == tk_IDENT)
             {
+                is_rule_for_qualified_type = 1;
+                printf("var: usertype (qualified) '%s', package '%s'", _semantic_value, backed_semantic);
                 next_token();
-                
             }
         }
 
-         // *** save line **  
-
-        if (_token == tk_MUL)
-        {
-            is_rule_for_pointer_type = 1;
-            next_token();
-            if (_token == tk_COMMA || _token == tk_ASSIGN || _token == tk_SEMI)
-            {
-                apxerror_custom_position_fatal(line, col, "pointer can't be here");
-            } 
-        }
-
-       
-
         if (_token == tk_IDENT)
         {
-            is_rule_for_usertype = 1;
-            printf("var: usertype: '%s'", semantic_value_var_name_or_usertype);
-            printf("var: name '%s'", _semantic_value);
+            if(is_rule_for_qualified_type != 1)
+                printf("var: usertype  '%s', name: '%s'", backed_semantic, _semantic_value);
             next_token();
         }
-       
         else 
         {
-           
-            printf("var: name '%s'", semantic_value_var_name_or_usertype);
+            printf("var: name: '%s'", _semantic_value);
         }
-        printf("token is %u", _token);
-
+    }
 
         if (_token == tk_COMMA)
         {
@@ -209,12 +185,7 @@ void rule_top_var_const()
             next_token();
             rule_inner_initializer();
         }
-
-        
-       
-    }else{
-        apxerror_custom_position_fatal(_backed_line,_backed_col,"expected ident");
-    }
+        is_rule_for_qualified_type = 0;
     
 }
 
