@@ -22,7 +22,10 @@ void parse_import_decl_list();
 void parse_var_decl_name_list();
 void parse_var_decl_expr_list();
 void parse_var_decl_expr();
-void parse_builtin_type();
+void rule_inner_builtin_type();
+void rule_inner_ident_list();
+void rule_inner_initializer_list();
+void rule_inner_initializer();
 int is_builtin_type(token_type _token);
 
 
@@ -91,7 +94,7 @@ int from_scope = 0;
 
     RULE INFO: top rule for with/without alias include and goinclude   
  */
-void rule_top_many_include()
+void rule_top_include()
 {
     backup_position(); // backup position after tk_INCLUDE/tk_GOINCLUDE for "expected package to include" error
     next_token();
@@ -126,7 +129,88 @@ void rule_top_many_include()
 
     }
 
+int is_rule_for_var = 0;
+int in_list = 0;
 
+void rule_top_var_const()
+{
+    backup_position(); // backup position after tk_VAR/tk_CONST for "expected ident or type name" error
+    if (in_list != 1)
+        next_token();
+
+    rule_inner_builtin_type();
+
+    if (_token == tk_IDENT)
+    {
+        char * semantic_value_var_name_or_usertype = _strdup(_semantic_value);
+       // printf("var: name '%s'\n", _semantic_value);
+        next_token();
+        if (_token == tk_IDENT)
+        {
+            printf("var: usertype: '%s'", semantic_value_var_name_or_usertype);
+            printf("var: name '%s'", _semantic_value);
+            next_token();
+            
+
+        }else{
+            printf("var: name '%s'", semantic_value_var_name_or_usertype);
+        }
+        
+
+        if (_token == tk_COMMA)
+        {
+               next_token();
+               in_list =1; 
+               rule_inner_ident_list();
+               in_list =0;
+
+               
+        }
+
+        if (_token == tk_ASSIGN)
+        {
+            next_token();
+            rule_inner_initializer();
+           // next_token(); // ?
+           //return;
+        }
+        // here for const; that const cant be 'const a;' must be const a = 1
+
+
+    }else{
+        apxerror_custom_position_fatal(_backed_line,_backed_col,"expected ident");
+    }
+    
+}
+
+void rule_inner_ident_list()
+{
+    do{
+        rule_top_var_const();
+    }while(_token == tk_IDENT || _token == tk_COMMA);
+}
+
+void rule_inner_initializer()
+{
+    if (_token == tk_IDENT || _token == tk_STRINGLIT || _token == tk_NUM)
+    {
+        printf("var: value '%s' ", _semantic_value);
+        next_token();
+        if (_token == tk_COMMA)
+        {
+            next_token();
+            rule_inner_initializer_list();
+            //next_token();
+        }
+    }
+}
+
+void rule_inner_initializer_list()
+{
+    do{
+        rule_inner_initializer();
+    }while(_token == tk_IDENT || _token == tk_STRINGLIT || _token == tk_NUM);
+}
 
 
 
@@ -142,7 +226,7 @@ void rule_top_many_include()
 
 // void parse_import_decl_list(){
 //     do {
-//          rule_top_many_include();
+//          rule_top_include();
 //     }while(_token == tk_IDENT || _token == tk_STRINGLIT || _token == tk_AS);
 // }
 
@@ -171,7 +255,7 @@ void parse_var_decl_name(){
                  } 
              }
              
-             parse_builtin_type();
+             rule_inner_builtin_type();
             /* 
                 for const declaration only 
             */
@@ -304,42 +388,48 @@ void parse_top_vars_or_const_decl(){
 /* VAR RULE END */
 
 /*SPECIAL RULE BUILTIN TYPE BEGIN*/
-void parse_builtin_type(){
+void rule_inner_builtin_type(){
     switch(_token){
         case tk_T_BOOL:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'bool'");    
             printf("var: type (builtin) 'bool'");
+            backup_position();
             _token = apxlex();
             break;
         case tk_T_BYTE:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'byte'");
             printf("var: type (builtin) 'byte'");
+            backup_position();
             _token = apxlex();
             break;
         case tk_T_COMPLEX128:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'complex128'");
             printf("var: type (builtin) 'complex128'");
+            backup_position();
             _token = apxlex();
             break;
         case tk_T_COMPLEX64:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'complex64'");
             printf("var: type (builtin) 'complex64'");
+            backup_position();
             _token = apxlex();
             break;
         case tk_T_FLOAT32:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'float32'");
             printf("var type (builtin) 'float32'");
+            backup_position();
             _token = apxlex();
             break;
         case tk_T_INT16:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'int16'");
             printf("var: type (builtin) 'int16'");
+            backup_position();
             _token = apxlex();
             break;
         case tk_T_INT32:
@@ -352,66 +442,77 @@ void parse_builtin_type(){
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'int64'");
             printf("var: type (builtin) 'int64'");
+            backup_position();
             _token = apxlex();
             break;
         case tk_T_INT8:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'int8'");
             printf("var: type (builtin) 'int8'");
+            backup_position();
             _token = apxlex();
             break;
         case tk_T_INT:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'int'");
             printf("var: type (builtin) 'int'");
+            backup_position();
             _token = apxlex();
             break;
         case tk_T_RUNE:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'rune'");
             printf("var: type (builtin) 'rune'");
+            backup_position();
             _token = apxlex();
             break;
         case tk_T_STRING:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'string'");
             printf("var: type (builtin) 'string'");
+            backup_position();
             _token = apxlex();
             break;
         case tk_T_UINT16:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'uint16'");
             printf("var: type (builtin) 'uint16'");
+            backup_position();
             _token = apxlex();
             break;
         case tk_T_UINT32:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'uint32'");
             printf("var: type (builtin) 'uint32'");
+            backup_position();
             _token = apxlex();
             break;
         case tk_T_UINT64:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'uint64'");
             printf("var: type (builtin) 'uint64'");
+            backup_position();
             _token = apxlex();
             break;
         case tk_T_UINT8:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'uint8'");
             printf("var: type (builtin) 'uint8'");
+            backup_position();
             _token = apxlex();
             break;
         case tk_T_UINT:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'uint'");
             printf("var: type (builtin) 'uint'");
+            backup_position();
             _token = apxlex();
             break;
         case tk_T_UINTPTR:
             if(is_pointer_type == 1)
                 printf("var: type (builtin ptr) 'uintptr'");
             printf("var: type (builtin) 'uintptr'");
+            backup_position();
             _token = apxlex();
             break;
     } 
@@ -474,7 +575,7 @@ void parse_grammar()
             break;
         case tk_INCLUDE:
         case tk_GOINCLUDE:
-            rule_top_many_include();
+            rule_top_include();
             rule_special_terminator();
             parse_grammar();
             break;
@@ -485,15 +586,23 @@ void parse_grammar()
         //     parse_grammar();
         //     break;
         case tk_VAR:
-            is_var_decl = 1;
-            parse_top_vars_or_const_decl();
+            is_rule_for_var = 1;
+            rule_top_var_const();
             parse_grammar();
             break;
+            // is_var_decl = 1;
+            // parse_top_vars_or_const_decl();
+            // parse_grammar();
+           // break;
         case tk_CONST:
-            is_var_decl = 0;
-            parse_top_vars_or_const_decl();
+            is_rule_for_var = 0;
+            rule_top_var_const();
             parse_grammar();
             break;
+            // is_var_decl = 0;
+            // parse_top_vars_or_const_decl();
+            // parse_grammar();
+            // break;
         case tk_IDENT:
         case tk_NUM:
         case tk_STRINGLIT:

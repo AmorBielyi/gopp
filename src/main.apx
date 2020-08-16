@@ -22,41 +22,57 @@ goinclude "handler.gpp";
 goinclude "gpp/src/package" as omega ;
 goinclude "gpp/src/package2" as delta;
 
+var x
 var x = 1
 var x = 1,2,"str_value1"
 var x,y =1
 var x,y,z = 1,2,"str_value2"
 
-var x myType1 
-var x myType2 = 1,2,"str_value3"
-var x,y myType3 =1
-var x,y,z myType4 = 1,2,"str_value4"
+var myType1
+var myType1 x  
+var myType2 x = 1,2,"str_value3"
+var myType3 x,y =1
+var myType4 x,y,z = 1,2,"str_value4"
 
-var x *myType1 = 1
-var x *myType2 = 1,2,"str_value3"
-var x,y *myType3 =1
-var x,y,z *myType4 = 1,2,"str_value4"
 
-var x int = 1
-var x float32  = 1,2,"str_value1"
-var x,y complex128 = 1
-var x,y,z rune = 1,2,"str_value2"
+// var x = 1
+// var x = 1,2,"str_value1"
+// var x,y =1
+// var x,y,z = 1,2,"str_value2"
 
-var x *int = 1
-var x *float32  = 1,2,"str_value1"
-var x,y *complex128 = 1
-var x,y,z *rune = 1,2,"str_value2"
+// var x myType1 
+// var x myType2 = 1,2,"str_value3"
+// var x,y myType3 =1
+// var x,y,z myType4 = 1,2,"str_value4"
 
-var x mypkg1.myType1 = 1
-var x mypkg2.myType2 = 1,2,"str_value3"
-var x,y mypkg3.myType3 =1
-var x,y,z = 1,2,"str_value4"
+// var x *myType1 = 1
+// var x *myType2 = 1,2,"str_value3"
+// var x,y *myType3 =1
+// var x,y,z *myType4 = 1,2,"str_value4"
 
-var x *mypkg1.myType1 = 1
-var x *mypkg2.myType2 = 1,2,"str_value3"
-var x,y *mypkg3.myType3 =1
-var x,y,z *mypkg4.myType4 = 1,2,"str_value4"
+// var int *x = 1 // for now 
 
-const x =1
-const x string = "cstr1","cstr2","cstr3"
+
+// var x int = 1
+// var x float32  = 1,2,"str_value1"
+// var x,y complex128 = 1
+// var x,y,z rune = 1,2,"str_value2"
+
+// var x *int = 1
+// var x *float32  = 1,2,"str_value1"
+// var x,y *complex128 = 1
+// var x,y,z *rune = 1,2,"str_value2"
+
+// var x mypkg1.myType1 = 1
+// var x mypkg2.myType2 = 1,2,"str_value3"
+// var x,y mypkg3.myType3 =1
+// var x,y,z = 1,2,"str_value4"
+
+// var x *mypkg1.myType1 = 1
+// var x *mypkg2.myType2 = 1,2,"str_value3"
+// var x,y *mypkg3.myType3 =1
+// var x,y,z *mypkg4.myType4 = 1,2,"str_value4"
+
+// const x =1
+// const x string = "cstr1","cstr2","cstr3"
 
