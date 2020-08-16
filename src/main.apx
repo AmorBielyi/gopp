@@ -22,17 +22,17 @@ goinclude "handler.gpp";
 goinclude "gpp/src/package" as omega ;
 goinclude "gpp/src/package2" as delta;
 
-var x
-var x = 1
-var x = 1,2,"str_value1"
-var x,y =1
-var x,y,z = 1,2,"str_value2"
+var x ;
+var x = 1;
+var x = 1,2,"str_value1";
+var x,y =1;
+var x,y,z  = 1,2,"str_value2";
 
-var myType1
-var myType1 x  
-var myType2 x = 1,2,"str_value3"
-var myType3 x,y =1
-var myType4 x,y,z = 1,2,"str_value4"
+var myType1 ;
+var myType1 *x ;
+var myType2 *x = 1,2,"str_value3";
+var myType3 *x,y =1;
+var myType4 *x,y,z = 1,2,"str_value4";
 
 
 // var x = 1
