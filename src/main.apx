@@ -29,7 +29,7 @@ var x,y = 1;
 var x,y = 1,2,"str_value2";
 
 var myType1 t1 = 1;
-var myType2, t1 = 1,2,"str_value4";
+var myType2 t1 = 1,2,"str_value4";
 var myType3 t1,t2;
 var myType4 t1, t2 = 1,2, "str_value5";
 

@@ -168,14 +168,15 @@ void rule_top_var_const()
             if (_token == tk_DOT)
             {
                 next_token();
+                backup_position();
                 if (_token == tk_IDENT)
                 {
                     is_rule_for_qualified_type = 1;
                     printf("var: usertype (qualified) '%s', package '%s'", _semantic_value, backed_semantic);
                     next_token();
                 }
-                // else 
-                //     apxerror_custom_position_fatal(line, col, "expected ident");
+                 else 
+                    apxerror_custom_position_fatal(_backed_line, _backed_col, "expected ident");
             }
 
             if (_token == tk_MUL)
@@ -196,6 +197,8 @@ void rule_top_var_const()
             }
             else 
             {
+                if (is_rule_for_qualified_type == 1 && in_list != 1)
+                    apxerror_custom_position_fatal(line, col, "expected ident");
                 printf("var: name '%s'", _semantic_value);
             }
         }
@@ -204,14 +207,14 @@ void rule_top_var_const()
         
     }
     else
-        apxerror_custom_position_fatal(line, col,"expected ident");
+        apxerror_custom_position_fatal(_backed_line, _backed_col,"expected ident");
     
-
-
+        
+        backup_position();
         if (_token == tk_COMMA)
         {
                next_token();
-               //printf("token after tk_COMMA loop is '%u and value is '%s''", _token, _semantic_value);
+               
                in_list =1; 
                rule_inner_ident_list();
                in_list =0;
@@ -232,7 +235,7 @@ void rule_inner_ident_list()
 {
    // printf("token in rule_inner_ident_list %u", _token);
      if ( _token != tk_IDENT)
-        apxerror_custom_position_fatal(line, col,"expected ident in list");
+        apxerror_custom_position_fatal(_backed_line, _backed_col,"expected ident in list");
 
     do{
        
@@ -249,8 +252,10 @@ void rule_inner_initializer()
     {
         printf("var: value '%s' ", _semantic_value);
         next_token();
+        backup_position();
         if (_token == tk_COMMA)
         {
+            
             next_token();
             rule_inner_initializer_list();
         }
@@ -260,7 +265,7 @@ void rule_inner_initializer()
 void rule_inner_initializer_list()
 {
     if ( _token != tk_NUM && _token != tk_STRINGLIT)
-        apxerror_custom_position_fatal(line, col,"expected value in list");
+        apxerror_custom_position_fatal(_backed_line, _backed_col,"expected value in list");
     do{
         rule_inner_initializer();
     }while(_token == tk_IDENT || _token == tk_STRINGLIT || _token == tk_NUM);
