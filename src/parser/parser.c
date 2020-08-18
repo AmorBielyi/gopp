@@ -129,10 +129,15 @@ void rule_top_include()
 
     }
 
+/*
+    RULE NAME: var/const
+ 
+    RULE INFO: top rule for is/not qualified/pointer user/builtin type variable/constant
+*/
+
 int is_rule_for_var = 0;
 int in_list = 0;
 int is_rule_for_builtint_type = 0;
-int is_rule_for_usertype = 0;
 int is_rule_for_pointer_type = 0 ;
 int is_rule_for_qualified_type = 0;
 
@@ -148,28 +153,44 @@ void rule_top_var_const()
     {
         char * backed_semantic = _strdup(_semantic_value);
         next_token();
-        if (_token == tk_DOT)
+        if (is_rule_for_builtint_type !=1)
         {
-            next_token();
+            if (_token == tk_DOT)
+            {
+                next_token();
+                if (_token == tk_IDENT)
+                {
+                    is_rule_for_qualified_type = 1;
+                    printf("var: usertype (qualified) '%s', package '%s'", _semantic_value, backed_semantic);
+                    next_token();
+                }
+                // else 
+                //     apxerror_custom_position_fatal(line, col, "expected ident");
+            }
+
             if (_token == tk_IDENT)
             {
-                is_rule_for_qualified_type = 1;
-                printf("var: usertype (qualified) '%s', package '%s'", _semantic_value, backed_semantic);
+                if(is_rule_for_qualified_type != 1)
+                {
+                    printf("var: usertype  '%s'",backed_semantic);
+                    printf(" var: name '%s'", _semantic_value );
+                }
+                    
                 next_token();
             }
+            else 
+            {
+                printf("var: name '%s'", _semantic_value);
+            }
         }
-
-        if (_token == tk_IDENT)
-        {
-            if(is_rule_for_qualified_type != 1)
-                printf("var: usertype  '%s', name: '%s'", backed_semantic, _semantic_value);
-            next_token();
-        }
-        else 
-        {
-            printf("var: name: '%s'", _semantic_value);
-        }
+        if (is_rule_for_builtint_type == 1)
+            printf("var: name '%s'", backed_semantic);
+        
     }
+    else
+        apxerror_custom_position_fatal(line, col,"expected ident");
+    
+
 
         if (_token == tk_COMMA)
         {
@@ -217,180 +238,6 @@ void rule_inner_initializer_list()
     }while(_token == tk_IDENT || _token == tk_STRINGLIT || _token == tk_NUM);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-// void parse_import_decl_list(){
-//     do {
-//          rule_top_include();
-//     }while(_token == tk_IDENT || _token == tk_STRINGLIT || _token == tk_AS);
-// }
-
-
-
-/* IMPORTS RULE END */
-int is_var_decl = 0;
-
-/* VAR RULE BEGIN */
-void parse_var_decl_name(){
-    if (from_scope != 1) {
-        _token = apxlex();
-    }
-
-           if(_token == tk_IDENT){
-             printf("var: name '%s' ", get_queued_semantic_value());
-             _token = apxlex();
-           
-    
-             if (_token == tk_MUL){
-                 is_rule_for_pointer_type = 1;
-                 _token = apxlex();
-                 if (_token != tk_IDENT && is_builtin_type(_token) != 1)
-                 {
-                     apxerror_fatal("expected type name after pointer symbol '*'");
-                 } 
-             }
-             
-             rule_inner_builtin_type();
-            /* 
-                for const declaration only 
-            */
-             if (is_var_decl == 0){ 
-                 if(_token == tk_IDENT){
-                     apxerror_fatal("invalid constant type %s", get_queued_semantic_value());
-                 }
-             }
-
-            /* 
-                for var declaration only 
-            */
-            if(is_var_decl == 1){  
-             if(_token == tk_IDENT){
-                 char *semantic_value_qualifiedpackage_or_type = _strdup(get_queued_semantic_value());
-                 _token = apxlex();
-                 if (_token == tk_DOT){
-                     _token = apxlex();
-                     if (_token == tk_IDENT){
-                         printf("var: type (qualified) '%s' from package '%s' ", get_queued_semantic_value(), semantic_value_qualifiedpackage_or_type);
-                         if (is_rule_for_pointer_type == 1)
-                            printf("var: type (qualified ptr) '%s' from package '%s' ", get_queued_semantic_value(), semantic_value_qualifiedpackage_or_type);
-                          _token = apxlex();
-                     }else{
-                         apxerror_fatal("expected qualified type after '.'\n");
-                     }
-                 }else{
-
-                    printf("var: type '%s' ", semantic_value_qualifiedpackage_or_type);
-                    if(is_rule_for_pointer_type == 1)
-                        printf("var: type (ptr) '%s' ", semantic_value_qualifiedpackage_or_type);
-                 }
-
-             }
-            }
-
-            if (_token == tk_ASSIGN){
-                _token = apxlex();
-                parse_var_decl_expr();
-                }else{
-                    if (is_var_decl == 0){ // if const declaration was/is
-                    apxerror("const declaration cannot have type without expression");
-                    apxerror_fatal( "missing value in const declaration");
-
-               
-            }
-
-            
-        }
-           
-             if (_token == tk_COMMA){
-                _token = apxlex();
-                from_scope = 1;
-                parse_var_decl_name_list();
-                if (_token == tk_ASSIGN){
-                    _token = apxlex();
-                    parse_var_decl_expr();
-                    
-
-                }else{
-                    if (is_var_decl == 0){ // if const declaration was/is
-                        apxerror("const declaration cannot have type without expression");
-                        apxerror_fatal("missing value in const declaration");
-
-               // apxerror("var declaration cannot have type without expression\n");
-                }
-
-            
-        }
-                // parse_var_decl_expr();
-                // HERE ??? 
-               
-                from_scope = 0; // or before parse_var_decl_expr(); ??? line up
-            } 
-        }
-
-   // }  end 
-
-}
-
-
-void parse_var_decl_expr(){
-    switch(_token){
-        case tk_IDENT:
-        case tk_STRINGLIT:
-        case tk_NUM:
-            printf("var: value '%s'", get_queued_semantic_value());
-            _token = apxlex();
-            if (_token == tk_COMMA){
-                _token = apxlex();
-                // from_scope =1 ??
-                parse_var_decl_expr_list();
-                // from_scope = 0;
-            }
-    }
-}
-
-void parse_var_decl_expr_list(){
-    do{
-        parse_var_decl_expr();
-    }while(_token == tk_IDENT || _token == tk_STRINGLIT || _token == tk_NUM || _token == tk_COMMA);
-}
-
-void parse_var_decl_name_list(){
-    do{
-        parse_var_decl_name();
-    }while(_token == tk_IDENT || _token == tk_COMMA);
-   // is_var_name_list_end = 1;
-}
-
-void parse_top_vars_or_const_decl(){
-    parse_var_decl_name();
-    
-
-    // if (_token == tk_ASSIGN){
-    //     _token = apxlex();
-    //     parse_var_decl_expr();
-    //    // parse_grammar();
-    //     }else{
-    //         if (is_var_decl == 0){ // if const declaration was/is
-    //             apxerror("const declaration cannot have type without expression");
-    //             apxerror_fatal( "missing value in const declaration");
-
-    //            // apxerror("var declaration cannot have type without expression\n");
-    //         }
-
-            
-    //     }
-}
-/* VAR RULE END */
 
 /*SPECIAL RULE BUILTIN TYPE BEGIN*/
 void rule_inner_builtin_type(){
