@@ -161,6 +161,7 @@ void rule_top_var_const()
     if (_token == tk_IDENT)
     {
         char * backed_semantic = _strdup(_semantic_value);
+        backup_position();
         next_token();
         if (is_rule_for_builtint_type !=1)
         {
@@ -210,26 +211,36 @@ void rule_top_var_const()
         if (_token == tk_COMMA)
         {
                next_token();
+               //printf("token after tk_COMMA loop is '%u and value is '%s''", _token, _semantic_value);
                in_list =1; 
                rule_inner_ident_list();
                in_list =0;
                
         }
-
+    
         if (_token == tk_ASSIGN)
         {
             next_token();
             rule_inner_initializer();
         }
         is_rule_for_qualified_type = 0;
+        
     
 }
 
 void rule_inner_ident_list()
 {
+   // printf("token in rule_inner_ident_list %u", _token);
+     if ( _token != tk_IDENT)
+        apxerror_custom_position_fatal(line, col,"expected ident in list");
+
     do{
+       
         rule_top_var_const();
     }while(_token == tk_IDENT || _token == tk_COMMA);
+
+    
+        
 }
 
 void rule_inner_initializer()
@@ -248,6 +259,8 @@ void rule_inner_initializer()
 
 void rule_inner_initializer_list()
 {
+    if ( _token != tk_NUM && _token != tk_STRINGLIT)
+        apxerror_custom_position_fatal(line, col,"expected value in list");
     do{
         rule_inner_initializer();
     }while(_token == tk_IDENT || _token == tk_STRINGLIT || _token == tk_NUM);
