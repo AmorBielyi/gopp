@@ -149,6 +149,15 @@ void rule_top_var_const()
 
     rule_inner_builtin_type();
 
+    if (is_rule_for_builtint_type == 1)
+    {
+        if (_token == tk_MUL)
+        {
+            is_rule_for_pointer_type = 1;
+            next_token();
+        } // maybe remove
+    }
+
     if (_token == tk_IDENT)
     {
         char * backed_semantic = _strdup(_semantic_value);
@@ -166,6 +175,12 @@ void rule_top_var_const()
                 }
                 // else 
                 //     apxerror_custom_position_fatal(line, col, "expected ident");
+            }
+
+            if (_token == tk_MUL)
+            {
+                is_rule_for_pointer_type = 1;
+                next_token();
             }
 
             if (_token == tk_IDENT)
