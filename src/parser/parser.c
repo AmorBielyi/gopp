@@ -192,7 +192,6 @@ void rule_top_var_const()
                     printf("var: usertype  '%s'",backed_semantic);
                     printf(" var: name '%s'", _semantic_value );
                 }
-                    
                 next_token();
             }
             else 
@@ -204,31 +203,29 @@ void rule_top_var_const()
         }
         if (is_rule_for_builtint_type == 1)
             printf("var: name '%s'", backed_semantic);
-        
     }
     else
         apxerror_custom_position_fatal(_backed_line, _backed_col,"expected ident");
     
-        
         backup_position();
+
         if (_token == tk_COMMA)
         {
                next_token();
-               
                in_list =1; 
                rule_inner_ident_list();
                in_list =0;
-               
         }
     
         if (_token == tk_ASSIGN)
         {
+            backup_position();
             next_token();
             rule_inner_initializer();
         }
+
         is_rule_for_qualified_type = 0;
-        
-    
+
 }
 
 void rule_inner_ident_list()
@@ -238,12 +235,9 @@ void rule_inner_ident_list()
         apxerror_custom_position_fatal(_backed_line, _backed_col,"expected ident in list");
 
     do{
-       
         rule_top_var_const();
     }while(_token == tk_IDENT || _token == tk_COMMA);
-
-    
-        
+  
 }
 
 void rule_inner_initializer()
@@ -255,7 +249,6 @@ void rule_inner_initializer()
         backup_position();
         if (_token == tk_COMMA)
         {
-            
             next_token();
             rule_inner_initializer_list();
         }

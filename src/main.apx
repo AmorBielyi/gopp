@@ -22,7 +22,6 @@ goinclude "handler.gpp";
 goinclude "gpp/src/package" as omega ;
 goinclude "gpp/src/package2" as delta;
 
-
 var x = 1;
 var x = 1,2,"str_value1";
 var x,y = 1;
