@@ -476,31 +476,17 @@ void parse_grammar()
             rule_special_terminator();
             parse_grammar();
             break;
-        /* TEST RULE; BEGIN THIS */
-        // case tk_CLASS:
-        //     printf("hello class\n");
-        //     _token = apxlex();
-        //     parse_grammar();
-        //     break;
         case tk_VAR:
             is_rule_for_var = 1;
             rule_top_var_const();
             rule_special_terminator();
             parse_grammar();
             break;
-            // is_var_decl = 1;
-            // parse_top_vars_or_const_decl();
-            // parse_grammar();
-           // break;
         case tk_CONST:
             is_rule_for_var = 0;
             rule_top_var_const();
             parse_grammar();
             break;
-            // is_var_decl = 0;
-            // parse_top_vars_or_const_decl();
-            // parse_grammar();
-            // break;
         case tk_IDENT:
         case tk_NUM:
         case tk_STRINGLIT:
