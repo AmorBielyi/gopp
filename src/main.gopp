@@ -46,3 +46,5 @@ var int x  = 1;
 var float32 x  = 1,2, "str_value1";
 var complex128 x,y  = 1;
 var uint32 x,y  = 1,2,"str_value2";
+
+const pkg4.myType8 t1,t2 = 1,2,"str_value5";

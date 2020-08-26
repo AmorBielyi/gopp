@@ -480,11 +480,18 @@ void parse_grammar()
             is_rule_for_var = 1;
             rule_top_var_const();
             rule_special_terminator();
+            is_rule_for_builtint_type = 0;
+            is_rule_for_pointer_type = 0;
+            is_rule_for_qualified_type = 0;
             parse_grammar();
             break;
         case tk_CONST:
             is_rule_for_var = 0;
             rule_top_var_const();
+            rule_special_terminator();
+            is_rule_for_builtint_type = 0;
+            is_rule_for_pointer_type = 0;
+            is_rule_for_qualified_type = 0;
             parse_grammar();
             break;
         case tk_IDENT:
