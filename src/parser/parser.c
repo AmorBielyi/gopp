@@ -347,6 +347,32 @@ void rule_top_class()
     }
     else 
         apxerror_custom_position_fatal(_backed_line, _backed_col, "expected ident");
+    if (_token == tk_EXTENDS)
+    {
+        backup_position();
+        next_token();
+        if (_token == tk_IDENT)
+        {
+            printf(" extends '%s' ", _semantic_value);
+            next_token();
+        }
+        else 
+            apxerror_custom_position_fatal(_backed_line, _backed_col, "expected ident");
+    }
+    if (_token == tk_IMPLEMENTS)
+    {
+        backup_position();
+        next_token();
+        if(_token == tk_IDENT)
+        {
+            printf("implements '%s'", _semantic_value);
+            next_token();
+        }
+        else 
+            apxerror_custom_position_fatal(_backed_line, _backed_col, "expected ident");
+    }
+
+    
     if (_token == tk_LCBRACKET)
     {
         backup_position();

@@ -57,47 +57,74 @@ var bool gflag = 2;
 const byte bt = 1;
 var byte gbt = 2;
 
-
+/* 
+	test whole signature of class with default access modifier
+*/
 class MyClass1
 { 
 	
-}	
-;
-private class MyClass2 
+};
+
+class MyClass1 implements Interface1
 {
 
 };
-public class MyClass3
+
+class MyClass1 extends BaseClass1
 {
 
 };
-// class MyClass 
-// {
+
+class MyClass1 extends BaseClass1 implements Interface1
+{
+
+};
+
+
+/* 
+	test whole signature of class with private access modifier
+*/
+private class MyClass2
+{ 
 	
-// }
+};
 
-// class MyClass extends BaseClass 
-// {
+private class MyClass2 implements Interface2
+{
 
-// }
+};
 
-// public class MyClass
-// {
+private class MyClass2 extends BaseClass2
+{
 
-// }
+};
 
-// public class MyClass extends BaseClass 
-// {
+private class MyClass2 extends BaseClass2 implements Interface2
+{
 
-// }
+};
 
-// private class MyClass 
-// {
 
-// }
+/* 
+	test whole signature of class with public access modifier
+*/
+public class MyClass3
+{ 
+	
+};
 
-// private class MyClass extends BaseClass 
-// {
+public class MyClass3 implements Interface3
+{
 
-// }
+};
+
+public class MyClass3 extends BaseClass3
+{
+
+};
+
+public class MyClass3 extends BaseClass3 implements Interface3
+{
+
+};
 
