@@ -298,8 +298,60 @@ void rule_inner_initializer_list()
 }
 
 
+/* 
+    RULE NAME: class
+    RULE INFO: top rule for class   
+*/
+int modifier_type = 0;
+enum access_modifier_internal_type
+{
+    ACCESS_MODIFIER_DEFAULT = -1,
+    ACCESS_MODIFIER_PRIVATE = 1 ,
+    ACCESS_MODIFIER_PUBLIC = 2 
+};
+void rule_top_class()
+{
+    
+    backup_position();
+    // for default type 
+    if (modifier_type == ACCESS_MODIFIER_DEFAULT)
+    {
+        printf("class: modifier = default ");
+    }
+            
+    next_token();
+    // for private and public class 
+    if (modifier_type == ACCESS_MODIFIER_PRIVATE || 
+     modifier_type == ACCESS_MODIFIER_PUBLIC)
+    {
+        if (_token == tk_CLASS)
+        {   
+       
+        
+            if (modifier_type == ACCESS_MODIFIER_PRIVATE)
+                printf("class: modifier = private ");
+            if (modifier_type == ACCESS_MODIFIER_PUBLIC)
+                printf("class: modifier = public ");
+            backup_position();
+            next_token();
+        }
+        else 
+            apxerror_custom_position_fatal(_backed_line, _backed_col, "expected 'class' ");
+    }
+
+    if (_token == tk_IDENT)
+    {
+        printf("name: '%s'", _semantic_value);
+        next_token();
+    }
+    else 
+        apxerror_custom_position_fatal(_backed_line, _backed_col, "expected ident");
+
+}
+
 /*SPECIAL RULE BUILTIN TYPE BEGIN*/
-void rule_inner_builtin_type() {
+void rule_inner_builtin_type() 
+{
     switch(_token) {
         case tk_T_BOOL:
             is_rule_for_builtint_type = 1;
@@ -469,6 +521,7 @@ void reset_states_var_const()
 
 /*SPECIAL RULE BUILTIN TYPE END*/
 char* decl_type;
+
 void parse_grammar()
 {
     switch(_token){
@@ -496,10 +549,27 @@ void parse_grammar()
             reset_states_var_const();
             parse_grammar();
             break;
-        // case tk_CLASS:
-        //     rule_top_class();
-        //     // ...
-        //     break;
+        case tk_CLASS:
+            modifier_type = ACCESS_MODIFIER_DEFAULT;
+            rule_top_class();
+            rule_special_terminator();
+            modifier_type = 0;
+            parse_grammar();
+            break;
+        case tk_PRIVATE:
+            modifier_type = ACCESS_MODIFIER_PRIVATE;
+            rule_top_class();
+            rule_special_terminator();
+            modifier_type = 0;
+            parse_grammar();
+            break;
+        case tk_PUBLIC:
+            modifier_type = ACCESS_MODIFIER_PUBLIC;
+            rule_top_class();
+            rule_special_terminator();
+            modifier_type = 0;
+            parse_grammar();
+            break;
         case tk_IDENT:
         case tk_NUM:
         case tk_STRINGLIT:
