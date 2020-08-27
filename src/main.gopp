@@ -58,9 +58,19 @@ const byte bt = 1;
 var byte gbt = 2;
 
 
-class MyClass1;
-private class MyClass2;
-public class MyClass3;
+class MyClass1
+{ 
+	
+}	
+;
+private class MyClass2 
+{
+
+};
+public class MyClass3
+{
+
+};
 // class MyClass 
 // {
 	

@@ -342,11 +342,31 @@ void rule_top_class()
     if (_token == tk_IDENT)
     {
         printf("name: '%s'", _semantic_value);
+        backup_position();
         next_token();
     }
     else 
         apxerror_custom_position_fatal(_backed_line, _backed_col, "expected ident");
-
+    if (_token == tk_LCBRACKET)
+    {
+        backup_position();
+        next_token();
+        /*
+            the rest of class' logick will be here (body of the class with members, methods and etc.)
+            this gramamr is alive after '{' before '}'
+        */
+       // the body is ended; check '}' to close body
+        if (_token == tk_RCBRACKET)
+        {
+            backup_position();
+            next_token();
+            // .. goes as ending to terminator 
+        }
+        else
+            apxerror_custom_position_fatal(_backed_line, _backed_col, "expected '}'");
+    }
+    else 
+        apxerror_custom_position_fatal(_backed_line, _backed_col, "expected '{'");
 }
 
 /*SPECIAL RULE BUILTIN TYPE BEGIN*/
