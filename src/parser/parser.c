@@ -5,6 +5,7 @@
 #include <string.h> // for _strdup
 #include "../lexer/lexer.h"
 
+
 /*
     globals
 */
@@ -17,18 +18,12 @@ extern int line, col;
 /*
     interfaces
 */
-void parse_import_decl_with_alias(char* );
-void parse_import_decl_list();
-void parse_var_decl_name_list();
-void parse_var_decl_expr_list();
-void parse_var_decl_expr();
+
 void rule_inner_builtin_type();
 void rule_inner_ident_list();
 void rule_inner_initializer_list();
 void rule_inner_initializer();
 int is_builtin_type(token_type _token);
-
-
 
 
 /*
@@ -140,14 +135,34 @@ int in_list = 0;
 int is_rule_for_builtint_type = 0;
 int is_rule_for_pointer_type = 0 ;
 int is_rule_for_qualified_type = 0;
+char *builtin_type_pseudosemantic;
 
 void rule_top_var_const()
 {
     backup_position(); // backup position after tk_VAR/tk_CONST for "expected ident or type name" error
     if (in_list != 1)
         next_token();
+   
+   rule_inner_builtin_type();
 
-    rule_inner_builtin_type();
+   if(builtin_type_pseudosemantic)
+   {
+
+       // code here for builtin
+
+       if(is_rule_for_pointer_type == 1)
+       {
+            if (is_rule_for_var == 1)
+                printf("var: type (builtin ptr) '%s'", builtin_type_pseudosemantic);
+            if (is_rule_for_var == 0) 
+                printf("const: type (builtin ptr) '%s'", builtin_type_pseudosemantic);
+       }
+        if (in_list == 0 && is_rule_for_var ==  1) 
+            printf("var: type (builtin) '%s'", builtin_type_pseudosemantic);
+        if (in_list == 0 && is_rule_for_var ==  0)  
+            printf("const: type (builtin) '%s'", builtin_type_pseudosemantic);
+   }
+
 
     if (is_rule_for_builtint_type == 1)
     {
@@ -172,7 +187,10 @@ void rule_top_var_const()
                 if (_token == tk_IDENT)
                 {
                     is_rule_for_qualified_type = 1;
-                    printf("var: usertype (qualified) '%s', package '%s'", _semantic_value, backed_semantic);
+                    if (is_rule_for_var == 1)
+                        printf("var: usertype (qualified) '%s', package '%s'", _semantic_value, backed_semantic);
+                    if (is_rule_for_var == 0) 
+                        printf("const: usertype (qualified) '%s', package '%s'", _semantic_value, backed_semantic);
                     next_token();
                 }
                  else 
@@ -189,8 +207,11 @@ void rule_top_var_const()
             {
                 if(is_rule_for_qualified_type != 1)
                 {
-                    printf("var: usertype  '%s'",backed_semantic);
-                    printf(" var: name '%s'", _semantic_value );
+                    if (is_rule_for_var == 1)
+                        printf("var: usertype '%s' var: name '%s'",backed_semantic, _semantic_value);
+                    if (is_rule_for_var == 0)
+                        printf("const: usertype '%s' const: name '%s'", backed_semantic, _semantic_value);
+                   // printf(" var: name '%s'", _semantic_value );
                 }
                 next_token();
             }
@@ -198,11 +219,20 @@ void rule_top_var_const()
             {
                 if (is_rule_for_qualified_type == 1 && in_list != 1)
                     apxerror_custom_position_fatal(line, col, "expected ident");
-                printf("var: name '%s'", _semantic_value);
+                if (is_rule_for_var == 1)
+                    printf("var: name '%s'", _semantic_value);
+                if (is_rule_for_var == 0) 
+                    printf("const: name '%s'", _semantic_value);
             }
         }
         if (is_rule_for_builtint_type == 1)
-            printf("var: name '%s'", backed_semantic);
+        {
+            if (is_rule_for_var == 1)
+                printf("var: name '%s'", backed_semantic);
+            if (is_rule_for_var == 0)
+                printf("const: name '%s'", backed_semantic);
+        }
+            
     }
     else
         apxerror_custom_position_fatal(_backed_line, _backed_col,"expected ident");
@@ -244,7 +274,10 @@ void rule_inner_initializer()
 {
     if (_token == tk_IDENT || _token == tk_STRINGLIT || _token == tk_NUM)
     {
-        printf("var: value '%s' ", _semantic_value);
+        if (is_rule_for_var == 1)
+            printf("var: value '%s' ", _semantic_value);
+        if (is_rule_for_var == 0) 
+            printf("const: value '%s'", _semantic_value);
         next_token();
         backup_position();
         if (_token == tk_COMMA)
@@ -266,151 +299,115 @@ void rule_inner_initializer_list()
 
 
 /*SPECIAL RULE BUILTIN TYPE BEGIN*/
-void rule_inner_builtin_type(){
-    switch(_token){
+void rule_inner_builtin_type() {
+    switch(_token) {
         case tk_T_BOOL:
-            if(is_rule_for_pointer_type == 1)
-                printf("var: type (builtin ptr) 'bool'");    
-            printf("var: type (builtin) 'bool'");
-            backup_position();
             is_rule_for_builtint_type = 1;
-            _token = apxlex();
+            builtin_type_pseudosemantic = _strdup(_semantic_value);
+            backup_position();
+            next_token();
             break;
         case tk_T_BYTE:
-            if(is_rule_for_pointer_type == 1)
-                printf("var: type (builtin ptr) 'byte'");
-            printf("var: type (builtin) 'byte'");
-            backup_position();
             is_rule_for_builtint_type = 1;
-            _token = apxlex();
+            builtin_type_pseudosemantic = _strdup(_semantic_value);
+            backup_position();
+            next_token();
             break;
         case tk_T_COMPLEX128:
-            if(is_rule_for_pointer_type == 1)
-                printf("var: type (builtin ptr) 'complex128'");
-            printf("var: type (builtin) 'complex128'");
-            backup_position();
             is_rule_for_builtint_type = 1;
-            _token = apxlex();
+            builtin_type_pseudosemantic = _strdup(_semantic_value);
+            backup_position();
+            next_token();
             break;
         case tk_T_COMPLEX64:
-            if(is_rule_for_pointer_type == 1)
-                printf("var: type (builtin ptr) 'complex64'");
-            printf("var: type (builtin) 'complex64'");
-            backup_position();
             is_rule_for_builtint_type = 1;
-            _token = apxlex();
+            builtin_type_pseudosemantic = _strdup(_semantic_value);
+            backup_position();
+            next_token();
             break;
         case tk_T_FLOAT32:
-            if(is_rule_for_pointer_type == 1)
-                printf("var: type (builtin ptr) 'float32'");
-            printf("var type (builtin) 'float32'");
-            backup_position();
             is_rule_for_builtint_type = 1;
-            _token = apxlex();
+            builtin_type_pseudosemantic = _strdup(_semantic_value);
+            backup_position();
+            next_token();
             break;
         case tk_T_INT16:
-            if(is_rule_for_pointer_type == 1)
-                printf("var: type (builtin ptr) 'int16'");
-            printf("var: type (builtin) 'int16'");
-            backup_position();
             is_rule_for_builtint_type = 1;
-            _token = apxlex();
+            builtin_type_pseudosemantic = _strdup(_semantic_value);
+            backup_position();
+            next_token();
             break;
         case tk_T_INT32:
-            if(is_rule_for_pointer_type == 1)
-                printf("var: type (builtin ptr) 'int32'");
-            printf("var: type (builtin) 'int32'");
-            backup_position();
             is_rule_for_builtint_type = 1;
-            _token = apxlex();
+            builtin_type_pseudosemantic = _strdup(_semantic_value);
+            backup_position();
+            next_token();
             break;
         case tk_T_INT64:
-            if(is_rule_for_pointer_type == 1)
-                printf("var: type (builtin ptr) 'int64'");
-            printf("var: type (builtin) 'int64'");
-            backup_position();
             is_rule_for_builtint_type = 1;
-            _token = apxlex();
+            builtin_type_pseudosemantic = _strdup(_semantic_value);
+            backup_position();
+            next_token();
             break;
         case tk_T_INT8:
-            if(is_rule_for_pointer_type == 1)
-                printf("var: type (builtin ptr) 'int8'");
-            printf("var: type (builtin) 'int8'");
-            backup_position();
             is_rule_for_builtint_type = 1;
-            _token = apxlex();
+            builtin_type_pseudosemantic = _strdup(_semantic_value);
+            backup_position();
+            next_token();
             break;
         case tk_T_INT:
-            if(is_rule_for_pointer_type == 1)
-                printf("var: type (builtin ptr) 'int'");
-            printf("var: type (builtin) 'int'");
-            backup_position();
             is_rule_for_builtint_type = 1;
-            _token = apxlex();
+            builtin_type_pseudosemantic = _strdup(_semantic_value);
+            backup_position();
+            next_token();
             break;
         case tk_T_RUNE:
-            if(is_rule_for_pointer_type == 1)
-                printf("var: type (builtin ptr) 'rune'");
-            printf("var: type (builtin) 'rune'");
-            backup_position();
             is_rule_for_builtint_type = 1;
-            _token = apxlex();
+            builtin_type_pseudosemantic = _strdup(_semantic_value);
+            backup_position();
+            next_token();
             break;
         case tk_T_STRING:
-            if(is_rule_for_pointer_type == 1)
-                printf("var: type (builtin ptr) 'string'");
-            printf("var: type (builtin) 'string'");
-            backup_position();
             is_rule_for_builtint_type = 1;
-            _token = apxlex();
+            builtin_type_pseudosemantic = _strdup(_semantic_value);
+            backup_position();
+            next_token();
             break;
         case tk_T_UINT16:
-            if(is_rule_for_pointer_type == 1)
-                printf("var: type (builtin ptr) 'uint16'");
-            printf("var: type (builtin) 'uint16'");
-            backup_position();
             is_rule_for_builtint_type = 1;
-            _token = apxlex();
+            builtin_type_pseudosemantic = _strdup(_semantic_value);
+            backup_position();
+            next_token();
             break;
         case tk_T_UINT32:
-            if(is_rule_for_pointer_type == 1)
-                printf("var: type (builtin ptr) 'uint32'");
-            printf("var: type (builtin) 'uint32'");
-            backup_position();
             is_rule_for_builtint_type = 1;
-            _token = apxlex();
+            builtin_type_pseudosemantic = _strdup(_semantic_value);
+            backup_position();
+            next_token();
             break;
         case tk_T_UINT64:
-            if(is_rule_for_pointer_type == 1)
-                printf("var: type (builtin ptr) 'uint64'");
-            printf("var: type (builtin) 'uint64'");
-            backup_position();
             is_rule_for_builtint_type = 1;
-            _token = apxlex();
+            builtin_type_pseudosemantic = _strdup(_semantic_value);
+            backup_position();
+            next_token();
             break;
         case tk_T_UINT8:
-            if(is_rule_for_pointer_type == 1)
-                printf("var: type (builtin ptr) 'uint8'");
-            printf("var: type (builtin) 'uint8'");
-            backup_position();
             is_rule_for_builtint_type = 1;
-            _token = apxlex();
+            builtin_type_pseudosemantic = _strdup(_semantic_value);
+            backup_position();
+            next_token();
             break;
         case tk_T_UINT:
-            if(is_rule_for_pointer_type == 1)
-                printf("var: type (builtin ptr) 'uint'");
-            printf("var: type (builtin) 'uint'");
-            backup_position();
             is_rule_for_builtint_type = 1;
-            _token = apxlex();
+            builtin_type_pseudosemantic = _strdup(_semantic_value);
+            backup_position();
+            next_token();
             break;
         case tk_T_UINTPTR:
-            if(is_rule_for_pointer_type == 1)
-                printf("var: type (builtin ptr) 'uintptr'");
-            printf("var: type (builtin) 'uintptr'");
-            backup_position();
             is_rule_for_builtint_type = 1;
-            _token = apxlex();
+            builtin_type_pseudosemantic = _strdup(_semantic_value);
+            backup_position();
+            next_token();
             break;
     } 
 }
@@ -460,6 +457,16 @@ int is_builtin_type(token_type tok)
             return 0;
     }
 }
+
+
+void reset_states_var_const()
+{
+    is_rule_for_builtint_type = 0;
+    is_rule_for_pointer_type = 0;
+    is_rule_for_qualified_type = 0;
+    is_rule_for_var = 0;
+}
+
 /*SPECIAL RULE BUILTIN TYPE END*/
 char* decl_type;
 void parse_grammar()
@@ -480,24 +487,23 @@ void parse_grammar()
             is_rule_for_var = 1;
             rule_top_var_const();
             rule_special_terminator();
-            is_rule_for_builtint_type = 0;
-            is_rule_for_pointer_type = 0;
-            is_rule_for_qualified_type = 0;
+            reset_states_var_const();
             parse_grammar();
             break;
         case tk_CONST:
-            is_rule_for_var = 0;
             rule_top_var_const();
             rule_special_terminator();
-            is_rule_for_builtint_type = 0;
-            is_rule_for_pointer_type = 0;
-            is_rule_for_qualified_type = 0;
+            reset_states_var_const();
             parse_grammar();
             break;
+        // case tk_CLASS:
+        //     rule_top_class();
+        //     // ...
+        //     break;
         case tk_IDENT:
         case tk_NUM:
         case tk_STRINGLIT:
-            apxerror_fatal("unexpected '%s', expected declaration or statement", get_queued_semantic_value());
+            apxerror_custom_position_fatal(line, col,"expected declaration or statement");
     }
 }
 
