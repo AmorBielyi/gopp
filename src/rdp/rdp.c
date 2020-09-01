@@ -39,6 +39,7 @@ void syntax_error(char *msg)
     printf("\n%s: expected %s, found '%s'", filename, msg, _semantic_value );exit(1);
 }
 
+
 int lookahead(token_type token)
 {
     if (_token == token){
@@ -67,6 +68,52 @@ int expect(token_type token, char *what_expected)
     syntax_error(what_expected);
 }
 
+token_type get_builtin_type(token_type token)
+{
+ switch(token)
+ {
+    case tk_T_BOOL:
+        return tk_T_BOOL;
+    case tk_T_BYTE:
+        return tk_T_BYTE;
+    case tk_T_COMPLEX128:
+        return tk_T_COMPLEX64;
+    case tk_T_COMPLEX64:
+        return tk_T_COMPLEX64;
+    case tk_T_FLOAT32:
+        return tk_T_FLOAT32;
+    case tk_T_FLOAT64:
+        return tk_T_FLOAT64;
+    case tk_T_INT16:
+        return tk_T_INT16;
+    case tk_T_INT32:
+        return tk_T_INT32;
+    case tk_T_INT64:
+        return tk_T_INT64;
+    case tk_T_INT8:
+        return tk_T_INT8;
+    case tk_T_INT:
+        return tk_T_INT;
+    case tk_T_RUNE:
+        return tk_T_RUNE;
+    case tk_T_STRING:
+        return tk_T_STRING;
+    case tk_T_UINT16:
+        return tk_T_UINT16;
+    case tk_T_UINT32:
+        return tk_T_UINT32;
+    case tk_T_UINT64:
+        return tk_T_UINT64;
+    case tk_T_UINT8:
+        return tk_T_UINT8;
+    case tk_T_UINT:
+        return tk_T_UINT;
+    case tk_T_UINTPTR:
+        return tk_T_UINTPTR;
+ } 
+ return -1;
+}
+
 /*
     ACTIONS
 */
@@ -85,9 +132,117 @@ void action_include_body_do_alias(void)
     printf(" alias: '%s'", _semantic_value);
 }
 
+void action_var_pointer(void)
+{
+    printf("var: pointer = true");
+}
+
+void action_user_type(void)
+{
+    printf("\nvar: usertype: '%s'\n", _semantic_value);
+}
+
+void action_user_type_do_qualified(char *package_name)
+{
+    printf("\nvar: usertype (qualified) '%s', package '%s'\n", _semantic_value, package_name);
+}
+
+void action_ident_list(void)
+{
+    printf("ident '%s'", _semantic_value);
+}
+
+void action_value_list(void)
+{
+    printf(" value '%s'", _semantic_value);
+}
+
+void action_var_do_builtin_type(void)
+{
+    printf("\nvar: type (builtin) '%s' ", _semantic_value);
+}
+
 /*
     RULES
 */
+
+void terminator(void)
+{
+    expect(tk_SEMI, "';'");
+}
+
+
+
+void value_list(void)
+{
+    do 
+    {
+        //printf("\ntoken: '%i'", _token);
+        if (expect(tk_NUM, "value"))
+            action_value_list();
+    }while(accept(tk_COMMA));
+}
+
+void ident_list(void)
+{
+    do
+    {
+        if(expect(tk_IDENT, "identifier"));
+            action_ident_list();
+    }while(accept(tk_COMMA));
+}
+
+void qualified_user_type(void)
+{
+    char *backed_semantic = _strdup(_semantic_value);
+            expect(tk_IDENT, "qualified user type");
+            action_user_type_do_qualified(backed_semantic);
+    return;
+}
+
+void user_type(void )
+{
+    if (accept(tk_IDENT))
+    {
+        if (lookahead(tk_DOT))
+            qualified_user_type();
+        else 
+            action_user_type();   
+    }       
+}
+
+void builtin_type(void)
+{
+    action_var_do_builtin_type();
+}
+
+void var_type(void)
+{
+    if (lookahead(get_builtin_type(_token)))
+        builtin_type();
+    else 
+        user_type();
+    if (lookahead(tk_MUL))
+    {
+        action_var_pointer();
+    }
+    ident_list();
+    if (lookahead(tk_ASSIGN))
+        value_list();
+    
+        
+}
+void var_list(void)
+{
+    if(accept(tk_VAR))
+    {
+        var_type();
+        var_list();
+    }
+        
+        
+}
+
 void include_body(void)
 {
     expect(tk_STRINGLIT, "source");
@@ -99,6 +254,7 @@ void include_body(void)
             action_include_body_do_alias();
         }
         printf("\n");
+        terminator();
 }
 
 void includes_list()
@@ -117,6 +273,7 @@ void package(void)
     else
         error("missed package");
     action_package();
+    terminator();
 }
 
 void source(void)
@@ -124,6 +281,7 @@ void source(void)
     next_token();
     package();
     includes_list();
+    var_list();
 }
 
 void apxparse()
