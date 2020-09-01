@@ -1,0 +1,64 @@
+source: 
+	package includes_list;
+package: 
+	tk_PACKAGE tk_IDENT ;
+includes_list:
+	 tk_INCLUDE include_body includes_list 
+         | 
+	 tk_GOINCLUDE include_body includes_list;
+include_body: 
+	tk_STRINGLIT 
+        | 
+        tk_STRINGLIT tk_AS tk_IDENT; 
+
+var_list:
+	tk_VAR var_type ident_list
+	|
+	tk_VAR var_type ident_list tk_ASSIGN assign_list
+
+var_type: 
+	user_type
+	|
+	user_type tk_MUL
+	|
+	builtin_type
+	|
+	builtin_type tk_MUL
+
+user_type:
+	tk_IDENT
+	|
+	qualified_user_type
+
+qualified_user_type:
+	tk_IDENT tk_DOT tk_IDENT
+
+builtin_type:
+	tk_T_INT
+	|
+        tk_T_BOOL 
+	.... 
+
+ident_list:
+	tk_IDENT
+	|
+	tk_COMMA ident_list;
+
+assign_list:
+	assing
+	|
+	tk_COMMA assign_list
+	
+
+assign:
+	tk_IDENT
+        |
+	tk_STRINGLIT
+	| 
+	tk_NUM 
+	
+
+	
+
+
+

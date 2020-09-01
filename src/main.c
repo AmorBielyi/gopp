@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
             struct timeb start, end;
             ftime(&start);
 
-            apxparse(); // call bison that call internally our yylex() by extern
+            apxparse(); // 
 
             fclose(source_fp);
             if (TOKENSDUMP == 1)
