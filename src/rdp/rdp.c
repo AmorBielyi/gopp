@@ -122,9 +122,17 @@ void action_package(void)
     printf("package name: '%s'\n", _semantic_value);
 }
 
+int include_type = 0;
+enum include_types {
+    INCLUDE_TYPE_INCLUDE = 1,
+    INCLUDE_TYPE_GOINCLUDE
+};
 void action_include_body_do_source(void)
 {
-    printf("include: source '%s'", _semantic_value);
+    if (include_type == INCLUDE_TYPE_INCLUDE)
+        printf("include: source '%s'", _semantic_value);
+    if (include_type == INCLUDE_TYPE_GOINCLUDE)
+        printf("goinclude: source '%s'", _semantic_value);
 }
 
 void action_include_body_do_alias(void)
@@ -132,19 +140,33 @@ void action_include_body_do_alias(void)
     printf(" alias: '%s'", _semantic_value);
 }
 
-void action_var_pointer(void)
+int statement_type = 0;
+enum statement_types {
+    STATEMENT_TYPE_VAR = 1,
+    STATEMENT_TYPE_CONST
+};
+void action_pointer(void)
 {
-    printf("var: pointer = true");
+    if (statement_type == STATEMENT_TYPE_VAR)
+        printf("var: pointer = true");
+    if(statement_type == STATEMENT_TYPE_CONST)
+        printf("const: pointer = true");
 }
 
 void action_user_type(void)
 {
-    printf("\nvar: usertype: '%s'\n", _semantic_value);
+    if (statement_type == STATEMENT_TYPE_VAR)
+        printf("\nvar: usertype: '%s'\n", _semantic_value);
+    if (statement_type == STATEMENT_TYPE_CONST)
+        printf("\nconst: usertype: '%s'\n", _semantic_value);
 }
 
 void action_user_type_do_qualified(char *package_name)
 {
-    printf("\nvar: usertype (qualified) '%s', package '%s'\n", _semantic_value, package_name);
+    if (statement_type == STATEMENT_TYPE_VAR)
+        printf("\nvar: usertype (qualified) '%s', package '%s'\n", _semantic_value, package_name);
+    if (statement_type == STATEMENT_TYPE_CONST)
+        printf("\nconst: usertype (qualified) '%s', package '%s'\n", _semantic_value, package_name);
 }
 
 void action_ident_list(void)
@@ -159,7 +181,10 @@ void action_value_list(void)
 
 void action_var_do_builtin_type(void)
 {
-    printf("\nvar: type (builtin) '%s' ", _semantic_value);
+    if (statement_type == STATEMENT_TYPE_VAR)
+        printf("\nvar: type (builtin) '%s' ", _semantic_value);
+    if (statement_type == STATEMENT_TYPE_CONST)
+        printf("\nconst: type (builtin) '%s' ", _semantic_value);
 }
 
 /*
@@ -202,13 +227,12 @@ void qualified_user_type(void)
 
 void user_type(void )
 {
-    if (accept(tk_IDENT))
-    {
+   if (accept(tk_IDENT)){
         if (lookahead(tk_DOT))
             qualified_user_type();
         else 
             action_user_type();   
-    }       
+   }      
 }
 
 void builtin_type(void)
@@ -216,7 +240,7 @@ void builtin_type(void)
     action_var_do_builtin_type();
 }
 
-void var_type(void)
+void type(void)
 {
     if (lookahead(get_builtin_type(_token)))
         builtin_type();
@@ -224,23 +248,26 @@ void var_type(void)
         user_type();
     if (lookahead(tk_MUL))
     {
-        action_var_pointer();
+        action_pointer();
     }
-    ident_list();
-    if (lookahead(tk_ASSIGN))
-        value_list();
     
         
 }
-void var_list(void)
+void init(void)
 {
-    if(accept(tk_VAR))
-    {
-        var_type();
-        var_list();
-    }
-        
-        
+    type();
+    ident_list();
+    if(lookahead(tk_ASSIGN))
+        value_list(); 
+}
+void var(void)
+{
+    init();
+}
+
+void constt(void)
+{
+       init();
 }
 
 void include_body(void)
@@ -257,13 +284,45 @@ void include_body(void)
         terminator();
 }
 
+void statement(void)
+{
+    
+    if (accept(tk_VAR))
+    {
+        statement_type = STATEMENT_TYPE_VAR;
+        var();
+        terminator();
+        statement();
+    }
+    if (accept(tk_CONST))
+    {
+        statement_type = STATEMENT_TYPE_CONST;
+        constt();
+        terminator();
+        statement();
+    }
+}
+
+void statement_list(void)
+{
+    statement();
+}
+
 void includes_list()
 {
     if (accept(tk_INCLUDE))
     {
-            include_body();
-            includes_list();  
+        include_type = INCLUDE_TYPE_INCLUDE;
+        include_body();
+        includes_list();  
     }
+    if (accept(tk_GOINCLUDE))
+    {
+        include_type = INCLUDE_TYPE_GOINCLUDE;
+        include_body();
+        includes_list();
+    }
+    
 }
 
 void package(void)
@@ -281,7 +340,7 @@ void source(void)
     next_token();
     package();
     includes_list();
-    var_list();
+    statement_list();
 }
 
 void apxparse()

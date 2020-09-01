@@ -1,5 +1,5 @@
 source: 
-	package includes_list;
+	package includes_list statement_list;
 package: 
 	tk_PACKAGE tk_IDENT terminator ;
 includes_list:
@@ -11,13 +11,25 @@ include_body:
         | 
         tk_STRINGLIT tk_AS tk_IDENT; 
 
-// NEW !!!!!!!
-var_list:
-	tk_VAR var_type ident_list
+statement_list:
+	statement terminator()
 	|
-	tk_VAR var_type ident_list tk_ASSIGN value_list
+	statement terminator() statement_list;
 
-var_type: 
+statement:
+	var 
+	|
+	constt 
+
+// NEW !!!!!!!
+var:
+	tk_VAR init()
+
+init():
+	type ident_list 
+	|
+	type ident_list tk_ASSIGN value_list
+type: 
 	user_type
 	|
 	user_type tk_MUL
@@ -56,6 +68,9 @@ assign:
 	tk_STRINGLIT
 	| 
 	tk_NUM 
+
+constt:
+	tk_CONST init()
 	
 
 	

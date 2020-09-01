@@ -15,9 +15,11 @@ include "hello" as m;
 include "pakc";
 include "hello" as m;
 include "pakc";
-
-var MyType a,b,c,d = 1,2,3,4,5555
-var pkg1.MyType x,y
-var pkg2.MyType2 x,y = 55,66
+const int j = 1;
+var MyType a,b,c,d = 1,2,3,4,5555;
+var pkg1.MyType x,y;
+var pkg2.MyType2 x,y = 55,66;
 var int b = 1;
+const int b = 0;
+const int h = 1;
 
