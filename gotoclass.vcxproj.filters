@@ -22,11 +22,11 @@
     <Filter Include="Файлы заголовков\Lexer">
       <UniqueIdentifier>{05af25f4-ac87-48c9-8087-623be2bb897c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Исходные файлы\Parser">
-      <UniqueIdentifier>{d5c76a17-f3b5-4aea-9c53-d4cc204d6830}</UniqueIdentifier>
+    <Filter Include="Файлы заголовков\rdp">
+      <UniqueIdentifier>{b1ab13e2-b8cb-4eb2-aa51-28815f2b2a92}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Файлы заголовков\Parser">
-      <UniqueIdentifier>{28cfd92b-ac7d-440d-a156-04ecf1bb2e0c}</UniqueIdentifier>
+    <Filter Include="Исходные файлы\Rdp">
+      <UniqueIdentifier>{ca757e5c-7516-4e8e-9931-d86db21a46e8}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -36,21 +36,21 @@
     <ClCompile Include="src\lexer\lexer.c">
       <Filter>Исходные файлы\Lexer</Filter>
     </ClCompile>
-    <ClCompile Include="src\parser\parser.c">
-      <Filter>Исходные файлы\Parser</Filter>
+    <ClCompile Include="src\rdp\rdp.c">
+      <Filter>Исходные файлы\Rdp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="grammar\mw.y">
-      <Filter>Grammar</Filter>
-    </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\parser\parser.h">
-      <Filter>Файлы заголовков\Parser</Filter>
-    </ClInclude>
     <ClInclude Include="src\lexer\lexer.h">
       <Filter>Файлы заголовков\Lexer</Filter>
     </ClInclude>
+    <ClInclude Include="src\rdp\rdp.h">
+      <Filter>Файлы заголовков\rdp</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="bison_formal_grammar.txt">
+      <Filter>Grammar</Filter>
+    </Text>
   </ItemGroup>
 </Project>

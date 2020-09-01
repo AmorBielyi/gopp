@@ -140,24 +140,24 @@
   <ItemGroup>
     <ClCompile Include="src\lexer\lexer.c" />
     <ClCompile Include="src\main.c" />
-    <ClCompile Include="src\parser\parser.c" />
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="grammar\mw.y">
-      <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">win_bison -o $(ProjectDir)src\bisonparser\parser.c %(Identity) --verbose</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)src\bisonparser\parser.c;$(ProjectDir)src\bisonparser\parser.h</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">win_bison -o $(ProjectDir)src\bisonparser\parser.c %(Identity) --verbose</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)src\bisonparser\parser.c;$(ProjectDir)src\bisonparser\parser.h</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">win_bison -o $(ProjectDir)src\bisonparser\parser.c %(Identity) --verbose</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)src\bisonparser\parser.c;$(ProjectDir)src\bisonparser\parser.h</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">win_bison -o $(ProjectDir)src\bisonparser\parser.c %(Identity) --verbose</Command>
-      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)src\bisonparser\parser.c;$(ProjectDir)src\bisonparser\parser.h</Outputs>
-    </CustomBuild>
+    <ClCompile Include="src\rdp\rdp.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\lexer\lexer.h" />
-    <ClInclude Include="src\parser\parser.h" />
+    <ClInclude Include="src\rdp\rdp.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="bison_formal_grammar.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
