@@ -20,6 +20,8 @@ statement:
 	var 
 	|
 	constt 
+	|
+	class
 
 // NEW !!!!!!!
 var:
@@ -70,10 +72,47 @@ assign:
 	tk_NUM 
 
 constt:
-	tk_CONST init()
+	tk_CONST init
 	
 
-	
+// CLASS GRAMMAR 
+
+class:
+	class_with_modifier
+	|
+	_class
+
+class_without_modifier:
+	tk_CLASS class_signature tk_LCBRACKET class_body RCBRACKET
+	 
+_class
+	access_modifier tk_CLASS class_signature tk_LCBRACKET class_body RCBRACKET
+
+access_modifier:*
+	tk_PUBLIC
+	|
+	tk_PRIVATE
+
+class_signature 
+	tk_IDENT 
+	| 
+	tk_IDENT class_extensions
+
+class_extensions
+	class_extension_extends
+	|
+	class_extension_implements
+	|
+	class_extension_extends class_extension_implements 
+
+class_extension_extends 
+	tk_EXTENDS tk_IDENT 
+
+class_extension_implements
+	tk_IMPLEMENTS tk_IDENT 
+
+class_body 
+	.... // TODO
 
 
 

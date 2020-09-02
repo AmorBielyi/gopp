@@ -23,3 +23,85 @@ var int b = 1;
 const int b = 0;
 const int h = 1;
 
+class MyClass2
+{
+
+}
+
+class MyClass3 extends BaseClass3 implements Interface3
+{
+
+}
+class MyClass3 extends BaseClass3 
+{
+
+}
+class MyClass3 
+{
+
+}
+
+
+class MyClass1 implements Interface1
+{
+
+}
+
+class MyClass1 extends BaseClass1
+{
+
+}
+
+class MyClass1 extends BaseClass1 implements Interface1
+{
+
+}
+
+
+// /* 
+// 	test whole signature of class with private access modifier
+// */
+private class MyClass2
+{ 
+	
+}
+
+private class MyClass2 implements Interface2
+{
+
+}
+
+private class MyClass2 extends BaseClass2
+{
+
+}
+
+private class MyClass2 extends BaseClass2 implements Interface2
+{
+
+}
+
+
+// /* 
+// 	test whole signature of class with public access modifier
+// */
+public class MyClass3
+{ 
+	
+}
+
+public class MyClass3 implements Interface3
+{
+
+}
+
+public class MyClass3 extends BaseClass3
+{
+
+}
+
+public class MyClass3 extends BaseClass3 implements Interface3
+{
+
+}
+

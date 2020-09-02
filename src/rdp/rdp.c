@@ -187,9 +187,35 @@ void action_var_do_builtin_type(void)
         printf("\nconst: type (builtin) '%s' ", _semantic_value);
 }
 
+void action_class_signature_do_name(void)
+{
+    printf("\nclass: name '%s'", _semantic_value);
+}
+
+void action_class_extension_extends_do_superclass(void)
+{
+    printf("\nsuperclass '%s'", _semantic_value);
+}
+
+void action_class_extension_implements_do_interface(void)
+{
+    printf("\ninterface '%s'", _semantic_value);
+}
+
+void action_class_with_modifier_do_access_modifier_private(void)
+{
+    printf("\naccess modifier = private ");
+}
+
+void action_class_with_modifier_do_access_modifier_public()
+{
+    printf("\naccess modifier = public ");
+}
+
 /*
     RULES
 */
+
 
 void terminator(void)
 {
@@ -197,6 +223,71 @@ void terminator(void)
 }
 
 
+
+void class_extension_implements(void)
+{
+    expect(tk_IDENT, "name of interface");
+    action_class_extension_implements_do_interface();
+}
+void class_extension_extends (void)
+{
+    expect(tk_IDENT, "name of superclass");
+    action_class_extension_extends_do_superclass();
+}
+
+void class_extensions(void)
+{
+    if (lookahead(tk_EXTENDS))
+    {
+        class_extension_extends();
+        
+    }
+
+    if (lookahead(tk_IMPLEMENTS))
+    {
+        class_extension_implements();
+    }
+    
+}
+
+void class_signature(void)
+{
+    expect(tk_IDENT, "class name");
+    action_class_signature_do_name();
+    class_extensions();
+
+}
+
+void _class(void)
+{
+    class_signature();
+    expect(tk_LCBRACKET, "'{'");
+   // class_body();
+    expect(tk_RCBRACKET, "'}'");
+    // semi?
+}
+
+int access_modifier = 0;
+enum access_modifiers {
+    ACCESS_MODIFIER_PRIVATE = 1,
+    ACCESS_MODIFIER_PUBLIC
+};
+void class_with_modifier(void)
+{
+    if (access_modifier == ACCESS_MODIFIER_PRIVATE)
+    {
+        action_class_with_modifier_do_access_modifier_private();
+    }
+    if (access_modifier == ACCESS_MODIFIER_PUBLIC)
+    {
+        action_class_with_modifier_do_access_modifier_public();
+    }
+
+    if (accept(tk_CLASS))
+    {
+        _class();
+    }
+}
 
 void value_list(void)
 {
@@ -220,8 +311,8 @@ void ident_list(void)
 void qualified_user_type(void)
 {
     char *backed_semantic = _strdup(_semantic_value);
-            expect(tk_IDENT, "qualified user type");
-            action_user_type_do_qualified(backed_semantic);
+    expect(tk_IDENT, "qualified user type");
+    action_user_type_do_qualified(backed_semantic);
     return;
 }
 
@@ -301,6 +392,24 @@ void statement(void)
         terminator();
         statement();
     }
+    if (accept(tk_PUBLIC))
+    {
+        access_modifier = ACCESS_MODIFIER_PUBLIC;
+        class_with_modifier();
+        statement();
+    }
+    if (accept(tk_PRIVATE))
+    {
+        access_modifier = ACCESS_MODIFIER_PRIVATE;
+        class_with_modifier();
+        statement();
+    }
+    if (accept(tk_CLASS))
+    {
+        _class();
+        statement();
+    }
+
 }
 
 void statement_list(void)
