@@ -28,9 +28,7 @@ var:
 	tk_VAR init()
 
 init():
-	type ident_list 
-	|
-	type ident_list tk_ASSIGN value_list
+	type variable_body 
 type: 
 	user_type
 	|
@@ -54,17 +52,25 @@ builtin_type:
         tk_T_BOOL 
 	.... 
 
-ident_list:
+variable_body:
+	mix
+	
+mix:
+	without_value
+	|
+	with_value
+	
+without_value:
 	tk_IDENT
 	|
-	tk_COMMA ident_list;
+	tk_IDENT tk_COMMA variable_body
 
-value_list:
-	assing
+with_value:
+	tk_IDENT tk_ASSIGN value 
 	|
-	tk_COMMA assign_list
-	
-assign:
+	tk_IDENT tk_ASSIGN value tk_COMMA variable_body
+
+value:
 	tk_IDENT
         |
 	tk_STRINGLIT
@@ -82,10 +88,10 @@ class:
 	|
 	_class
 
-class_without_modifier:
+_class:
 	tk_CLASS class_signature tk_LCBRACKET class_body RCBRACKET
 	 
-_class
+class_with_access_modifier
 	access_modifier tk_CLASS class_signature tk_LCBRACKET class_body RCBRACKET
 
 access_modifier:*

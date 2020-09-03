@@ -148,9 +148,9 @@ enum statement_types {
 void action_pointer(void)
 {
     if (statement_type == STATEMENT_TYPE_VAR)
-        printf("var: pointer = true");
+        printf("var: pointer = true ");
     if(statement_type == STATEMENT_TYPE_CONST)
-        printf("const: pointer = true");
+        printf("const: pointer = true ");
 }
 
 void action_user_type(void)
@@ -169,12 +169,12 @@ void action_user_type_do_qualified(char *package_name)
         printf("\nconst: usertype (qualified) '%s', package '%s'\n", _semantic_value, package_name);
 }
 
-void action_ident_list(void)
+void action_mix_do_identname(void)
 {
     printf("ident '%s'", _semantic_value);
 }
 
-void action_value_list(void)
+void action_value(void)
 {
     printf(" value '%s'", _semantic_value);
 }
@@ -289,23 +289,35 @@ void class_with_modifier(void)
     }
 }
 
-void value_list(void)
+void value(void)
 {
-    do 
-    {
         //printf("\ntoken: '%i'", _token);
         if (expect(tk_NUM, "value"))
-            action_value_list();
-    }while(accept(tk_COMMA));
+            action_value();
 }
-
-void ident_list(void)
+void with_value(void)
+{
+    value();
+}
+void mix(void)
 {
     do
     {
-        if(expect(tk_IDENT, "identifier"));
-            action_ident_list();
+        if(expect(tk_IDENT, "variable name"))
+        {
+            action_mix_do_identname();
+            if (lookahead(tk_ASSIGN))
+            {
+                with_value();
+            }
+                
+        }
+            
     }while(accept(tk_COMMA));
+}
+void variable_body(void)
+{
+    mix();
 }
 
 void qualified_user_type(void)
@@ -347,9 +359,10 @@ void type(void)
 void init(void)
 {
     type();
-    ident_list();
-    if(lookahead(tk_ASSIGN))
-        value_list(); 
+    variable_body();
+    //ident_list();
+    // if(lookahead(tk_ASSIGN))
+    //     value_list(); 
 }
 void var(void)
 {
